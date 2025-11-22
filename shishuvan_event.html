@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Jungle Cubs Gym - Shishuvan Event</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  /* Updated Brand Colors: --green: #287844, --yellow: #f9ca2b */
+  :root{--green:#287844;--yellow:#f9ca2b;--radius:8px;--max-width:600px}
+  *{box-sizing:border-box}
+  body{margin:0;padding:1rem;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;background:#f5f7fa;color:#333;line-height:1.5}
+  
+  /* --- LOGO CONTAINER STYLES --- */
+  .logo-container {
+    text-align: center;
+    padding: 1.5rem 0.5rem 0.5rem;
+  }
+  
+  .logo-img {
+    max-width: 250px; /* Control max size of the logo */
+    height: auto;
+    border-radius: 8px; /* Optional: adds rounded corners to the image */
+    box-shadow: 0 4px 6px rgba(0,0,0,.1);
+  }
+  
+  /* --- STYLED HEADER: Green Background with Yellow Text (Modified for subtitle) --- */
+  h1{
+    /* H1 removed, using .event-header div for styling */
+    display: none; /* Hide H1 */
+  }
+  .event-header {
+    text-align:center;
+    font-size: 1.8rem;
+    font-weight: 800;
+    background-color: var(--green); /* New Green */
+    color: var(--yellow); /* New Yellow/Accent */
+    padding: 1rem 0.5rem; /* Added padding for background visibility */
+    border-radius: var(--radius); /* Rounded corners */
+    box-shadow: 0 4px 6px rgba(0,0,0,.1); /* Added shadow for lift */
+    margin: 0.5rem auto 0.25rem;
+    max-width: var(--max-width);
+  }
+
+  h4{text-align:center;margin:.25rem 0 1rem; color: #555;} /* Subtle subtitle */
+  
+  form{background:#fff;padding:1.5rem 1rem;border-radius:var(--radius);box-shadow:0 2px 8px rgba(0,0,0,.08);max-width:var(--max-width);margin:0 auto}
+  label{font-weight:600;margin:1rem 0 .25rem;display:block}
+  /* Updated input styles for consistent height and rounded corners */
+  input,select,textarea{
+    width:100%;
+    padding:.75rem;
+    border:1px solid #ccc;
+    border-radius:var(--radius);
+    font-size:16px;
+    height: 48px; /* Consistent height */
+  }
+  
+  /* Custom date input styling */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+  }
+  input[type="date"] {
+    position: relative;
+  }
+  input[type="date"]::after {
+    content: "📅"; 
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.25rem;
+    color: #666;
+    pointer-events: none;
+  }
+  
+  #childAge{background:#e6e6e6;color:#666;cursor:not-allowed}
+  button{margin-top:1.5rem;width:100%;padding:1rem;font-size:1.25rem;font-weight:700;background:var(--green);color:var(--yellow);border:none;border-radius:var(--radius);cursor:pointer}
+  
+  /* Adjusted hover color for consistency */
+  button:disabled{background:#1f6037;cursor:not-allowed} 
+  button:hover:not(:disabled){background:#1f6037} 
+
+  small{color:#555;display:block;margin-top:.25rem}
+  
+  /* Styles for side-by-side fields */
+  .form-row {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+  }
+  .form-column {
+      flex: 1;
+  }
+  .form-column label {
+      margin-top: 1rem;
+  }
+  
+  /* Mobile Responsive Styles */
+  @media (max-width: 768px) {
+    body { padding: 0.5rem; }
+    .event-header { font-size: 1.5rem; padding: 0.75rem 0.5rem; margin: 0.25rem auto 0.25rem; }
+    h4 { font-size: 0.9rem; margin: 0.25rem 0 0.75rem; }
+    form { padding: 1rem 0.75rem; margin: 0 auto; max-width: 100%; }
+    .form-row { flex-direction: column; gap: 0; }
+    .form-column { width: 100%; }
+    .form-column label { margin-top: 0.75rem; }
+    button { font-size: 1.1rem; padding: 0.875rem; margin-top: 1rem; }
+  }
+  
+  @media (max-width: 480px) {
+    body { padding: 0.25rem; }
+    .event-header { font-size: 1.3rem; padding: 0.75rem 0.25rem; }
+    h4 { font-size: 0.8rem; }
+    form { padding: 0.75rem 0.5rem; }
+    input, select, textarea { padding: 0.625rem; font-size: 16px; height: 44px; }
+    button { font-size: 1rem; padding: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Jungle Cubs Gym Logo Placeholder -->
+<div class="logo-container">
+    <!-- 🎯 CRITICAL: Logo colors updated to reflect the new brand colors -->
+    <img 
+        src="https://junglecubsgyms.com/imgw/logo_light.png" 
+        alt="Jungle Cubs Gym Logo" 
+        class="logo-img"
+        onerror="this.onerror=null; this.src='https://placehold.co/250x100/287844/f9ca2b?text=Logo+Error';"
+    >
+</div>
+
+<!-- Event Title is now a div to control background width better, keeping it centered -->
+<div class="event-header">Jungle Cubs Gym - Shishuvan Event</div>
+<h4>Shishuvan, Matunga</h4>
+
+<!-- 🎯 CRITICAL: PASTE THE URL OF YOUR NEWLY DEPLOYED code_shishuvan.gs WEB APP HERE -->
+<form method="POST" action="https://script.google.com/macros/s/AKfycbz9FkemRhNqm2Icp15HQDbJpjtIDZIigLEoLQHVelCaQ6s6Hf3100eiFC7_wfwZ16C0/exec">
+  
+  <!-- MANDATORY FIELD 1: Parent Name -->
+  <label>Parent Name *</label>
+  <input name="parentName" required>
+
+  <!-- MANDATORY FIELD 2: Mobile -->
+  <label>Mobile *</label>
+  <input type="tel" name="mobile" required pattern="[0-9]{10}" maxlength="10" minlength="10"
+         title="Enter 10 digit mobile number">
+  <small>Enter 10-digit mobile number.</small>
+
+  <!-- OPTIONAL FIELD: Child Name -->
+  <label>Child Name</label>
+  <input name="childName">
+
+  <!-- OPTIONAL FIELDS: DOB and Age (side-by-side) -->
+  <div class="form-row">
+    <div class="form-column">
+      <label>Child Date of Birth</label>
+      <input type="date" name="childDOB" id="childDOB">
+    </div>
+    <div class="form-column">
+      <label>Child Age (auto)</label>
+      <input type="text" name="childAge" id="childAge" readonly>
+    </div>
+  </div>
+
+  <!-- OPTIONAL FIELD: Location (Manual input, if needed) -->
+  <label>Location</label>
+  <input name="location">
+  <small>Optional: Enter location details (e.g., specific center/area).</small>
+
+  <button type="submit" id="submitBtn">Register</button>
+  <p id="msg" class="error"></p>
+</form>
+
+<script>
+// Function to calculate age in years and months from a DOB string (YYYY-MM-DD)
+function calcAge(dobStr) {
+  if (!dobStr) return '';
+  const dob = new Date(dobStr);
+  const now = new Date();
+  
+  // Basic check for future date
+  if (dob > now) return 'Future DOB';
+
+  let years = now.getFullYear() - dob.getFullYear();
+  let months = now.getMonth() - dob.getMonth();
+  
+  if (months < 0) { years--; months += 12; }
+
+  // If age is less than 1 year
+  if (years === 0) {
+      if (months === 0) {
+          // Calculate days if less than a month old
+          const days = Math.floor((now - dob) / (1000 * 60 * 60 * 24));
+          return days > 0 ? `${days} days` : 'Newborn';
+      }
+      return `${months} mo`;
+  }
+  
+  return `${years} yr ${months} mo`;
+}
+
+document.getElementById('childDOB').addEventListener('change', () => {
+  document.getElementById('childAge').value = calcAge(document.getElementById('childDOB').value);
+});
+</script>
+</body>
+</html>
