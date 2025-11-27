@@ -482,20 +482,33 @@ lines.push('--------------------------------------------');
       updatePersonalLine(need);
 
 
-      // Payment section visible only if need === Yes
-      if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
-        const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
-        upiButton.href = upi;
-        qrImg.src = buildQrUrl(upi);
-        qrImg.alt = "UPI QR for ₹400";
-        paySection.classList.remove("hidden");
-        txnRefEl.required = true;
-      } else {
-        paySection.classList.add("hidden");
-        txnRefEl.required = false;
-        txnRefEl.value = "";
-        txnRefHidden.value = "";
-      }
+// Payment section visible only if need === Yes
+if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
+  const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
+
+
+  // Keep href for platforms that handle upi:// directly,
+  // but also store it so our click handler can build an Android intent.
+  upiButton.href = upi;
+  upiButton.dataset.upi = upi;
+
+
+  qrImg.src = buildQrUrl(upi);
+  qrImg.alt = "UPI QR for ₹400";
+  paySection.classList.remove("hidden");
+  txnRefEl.required = true;
+} else {
+  paySection.classList.add("hidden");
+  txnRefEl.required = false;
+  txnRefEl.value = "";
+  txnRefHidden.value = "";
+  upiButton.removeAttribute("data-upi");
+  upiButton.href = "#";
+}
+
+
+
+
 
 
       // Enable main button:
