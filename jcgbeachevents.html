@@ -547,32 +547,62 @@ lines.push('--------------------------------------------');
     if (dobEl.value) dobEl.dispatchEvent(new Event('change'));
 
 
-// --- UPI button: make it work reliably on Android using intent:// ---
+// --- UPI button: handle Android, in-app browsers, and others ---
 upiButton.addEventListener('click', function (e) {
-  // We still want the rest of the form logic to work separately,
-  // so this handler ONLY deals with opening the UPI app.
   e.preventDefault();
 
 
   const upiLink = upiButton.href;  // e.g. "upi://pay?pa=..."
   if (!upiLink || !upiLink.startsWith('upi://')) {
-    return; // nothing to do
+    alert('UPI link is not ready yet. Please check that all required fields are filled.');
+    return;
   }
 
 
-  const isAndroid = /Android/i.test(navigator.userAgent);
+  const ua = navigator.userAgent || '';
+  const isAndroid = /Android/i.test(ua);
+  const isInApp = /WhatsApp|FBAN|FBAV|Instagram|Twitter|Line|WeChat/i.test(ua);
 
 
+  // 1) In-app browser on Android (WhatsApp / Insta / FB etc.)
+  if (isAndroid && isInApp) {
+    alert(
+      'To pay using UPI, please open this page in your phone’s browser (Chrome/Samsung Internet):\n\n' +
+      '• Tap the ⋮ or menu button in the top-right\n' +
+      '• Choose "Open in browser"\n' +
+      '• Then tap the "Pay ₹400 via UPI" button again.'
+    );
+    return;
+  }
+
+
+  // 2) Normal Android browser (Chrome / Samsung Internet)
   if (isAndroid) {
-    // Convert "upi://pay?..."  →  "intent://pay?...#Intent;scheme=upi;end"
+    // Convert "upi://pay?..." → "intent://pay?...#Intent;scheme=upi;end"
     const withoutScheme = upiLink.replace(/^upi:\/\//, ''); // "pay?pa=..."
     const intentUrl = 'intent://' + withoutScheme + '#Intent;scheme=upi;end';
-    window.location.href = intentUrl;
-  } else {
-    // iOS / desktop etc. – use the plain UPI link
+
+
+    // Try opening in a new tab/window first
+    const win = window.open(intentUrl, '_blank');
+    if (!win) {
+      // If popup blocked, navigate current page
+      window.location.href = intentUrl;
+    }
+    return;
+  }
+
+
+  // 3) iOS / desktop etc. – use the plain UPI link
+  const win = window.open(upiLink, '_blank');
+  if (!win) {
     window.location.href = upiLink;
   }
 });
+
+
+
+
 
 
 
