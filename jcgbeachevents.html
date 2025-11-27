@@ -51,15 +51,25 @@
 </head>
 <body>
   <div class="box">
+
+
+    <!-- ✅ NEW: Jungle Cubs Gym Logo -->
+    <div style="text-align:center; margin-bottom: 10px;">
+      <img src="https://junglecubsgyms.com/imgw/logo_light.png"
+           alt="Jungle Cubs Gym Logo"
+           style="height:80px; width:auto; object-fit:contain;">
+    </div>
+
+
     <h1>Jungle Cubs Beach Events — Registration</h1>
 
 
     <!-- Configure these -->
     <script>
       const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbzH8wt2CymozYbRRWTGW6gsPqwByL_uUNOcd-fRjeGLWkH9gGlj0hLbHgDN7Zz4WNSOYw/exec"; // your Apps Script /exec
-      const BUSINESS_UPI    = "junglecubsgym7@oksbii";          // e.g., junglecubs@icici
-      const BUSINESS_NAME   = "Jungle Cubs";      // shown in UPI apps
-      const WHATSAPP_TARGET = "919082786189";         // digits only (no +)
+      const BUSINESS_UPI    = "junglecubsgym7@oksbi";          // UPI ID
+      const BUSINESS_NAME   = "Jungle Cubs";                   // shown in UPI apps
+      const WHATSAPP_TARGET = "919082786189";                  // digits only (no +)
     </script>
 
 
@@ -99,10 +109,11 @@
           </label>
         </div>
         <div>
-          <label>Mobile (10 digits)
+          <label>Mobile
             <input type="tel" name="mobile" id="mobile"
                    inputmode="numeric" pattern="^\d{10}$" maxlength="10" minlength="10"
                    placeholder="9812345678" required />
+(Will be added to WhatsApp for communication)
           </label>
         </div>
       </div>
@@ -110,22 +121,22 @@
 
       <div class="row">
         <div>
-          <label>Status
+          <label>Are you a Jungle Cubs Gym Parent?
             <select name="status" id="status" required>
               <option value="" selected disabled>-- Select Status --</option>
               <option value="In-house Parent">In-house Parent (Jungle Cubs Gym Parent)</option>
-              <option value="Outsider">Outsider (Not Jungle Cubs Gym Parent)</option>
+              <option value="Outsider">Outsider (Not a Jungle Cubs Gym Parent)</option>
             </select>
           </label>
         </div>
 
 
         <div id="feesWrap" class="hidden">
-          <label>Fees Paid
+          <label>Fees Paid Status
             <select name="feesPaid" id="feesPaid">
-              <option value="" selected disabled>-- Select --</option>
-              <option>Less than 6 months fees paid</option>
-              <option>6 months or more fees paid</option>
+              <option value="" selected disabled>-- How many months fees paid? --</option>
+              <option>Fees Paid for 6 months or more (Complimentary Beach Event)</option>
+              <option>Less than 6 months fees paid (Eg: 2/3/4/5 months)</option>
             </select>
           </label>
         </div>
@@ -136,7 +147,7 @@
         <div id="centreWrap" class="hidden">
           <label>Centre
             <select name="centre" id="centre">
-              <option value="" selected disabled>-- Select Centre --</option>
+              <option value="" selected disabled>-- Select your Centre --</option>
               <option>Hughes Road</option><option>Worli</option><option>Wadala</option><option>Matunga</option>
               <option>Lalbaug</option><option>Chembur</option><option>Ghatkopar</option><option>Powai</option>
               <option>Mulund</option><option>Thane Ram Maruti Road</option><option>Thane Hiranandani Estate</option>
@@ -150,11 +161,10 @@
           <label>Beach Event Date
             <select name="beachEventDate" id="beachEventDate" required>
               <option value="" selected disabled>-- Select Date & Time --</option>
-              <option>15th November, Saturday ; 5pm to 6pm (Juhu)</option>
-              <option>16th November, Sunday ; 7:30am to 8:30am (Juhu)</option>
-              <option>22nd November, Saturday ; 5pm to 6pm (Juhu)</option>
- <option>29nd November, Saturday ; 5pm to 6pm (Juhu)</option>
-              <option>30th November, Sunday ; 7:30am to 8:30am (Girgaon)</option>
+              <option>13th December, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)</option>
+              <option>14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)</option>
+              <option>20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu)</option>
+              <option>21th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)</option>
             </select>
           </label>
         </div>
@@ -176,29 +186,72 @@
         <!-- Payment section (shown only when payment is needed) -->
         <div id="paySection" class="hidden" style="margin-top:12px;">
           <div class="muted" style="margin-bottom:8px;">
-            Please press the <strong>Pay</strong> button to pay via your UPI app,
-            or scan the <strong>QR code</strong> to pay.
+         <br>
+
+
+<strong>Please read these points carefully:</strong>
+      <br><br>
+
+
+      <strong>✅ WhatsApp Group Confirmation</strong><br>
+      After registration, you will be sent a link to a common WhatsApp group.<br>
+      Kindly join that group to get all event updates.<br>
+      You will be added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
+      Important details and instructions will be shared in this group.<br>
+      Kindly acknowledge the messages to help us track communication.
+      <br><br>
+
+
+      <strong>📍 Cancellation & Refund Policy</strong><br>
+      Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
+
+
+      <strong>Refund Policy:</strong><br>
+      Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
+
+
+      <strong>Rescheduling:</strong><br>
+      An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
+      Rescheduling is subject to seat availability and will be confirmed closer to the event date.
+
+
+<br>
+
+
+
+
+<b>Please press the <strong>Pay</strong> button to pay via your UPI app,
+            or scan the <strong>QR code</strong> to pay. <b><br>
+
+
+
+
           </div>
           <div class="pay-wrap">
             <!-- LEFT: Pay button -->
             <div class="pay-col">
-              <a id="upiButton" class="button-style secondary" href="#" target="_blank" rel="noopener">
+              <!-- ✅ FIXED: let JS set the real upi://pay link -->
+              <a id="upiButton" class="button-style secondary"
+                 href="#"
+                 target="_blank" rel="noopener">
                 Pay ₹400 via UPI (opens UPI app)
               </a>
             </div>
             <!-- RIGHT: QR -->
             <div class="qr-box">
-              <div style="font-weight:600;margin-bottom:6px;">UPI QR for ₹400</div>
+              <div style="font-weight:600;margin-bottom:6px;">Jungle Cubs Gym UPI QR for ₹400</div>
               <img id="qrImg" src="" alt="UPI QR" style="width:260px;height:260px;object-fit:contain" />
-              <div class="hint">Scan to pay ₹400</div>
+              <div class="hint">Scan to pay ₹400 to Jungle Cubs Gym</div>
             </div>
           </div>
 
 
           <!-- Transaction reference below payment options -->
           <div id="txnWrap" style="margin-top:12px;">
-            <label>UPI Payment Reference (required after payment)
-              <input type="text" id="txnRef" placeholder="e.g., UPI Ref / UTR" />
+            <label>Kindly input your UPI Payment Reference Number (Required after payment)
+              <input type="text" id="txnRef" placeholder="e.g. UPI Ref / UTR" />
+              You can simply send a payment screenshot in whatsapp also.
+              If sending screenshot, kindly enter that in above box, eg: Photo sent / screenshot sent / etc
             </label>
           </div>
         </div>
@@ -285,7 +338,12 @@
 
     // WhatsApp message builder (outsiders include the closing line; in-house do not)
     function buildWhatsappText(parent, child, status, need, eventStr, feesPaid, txnRef) {
-      let statusLabel = status || '';
+      
+const parentB = `*${parent || '-' }*`;
+  const childB  = `*${child  || '-' }*`;
+
+
+let statusLabel = status || '';
       const st = (status || '').toLowerCase();
 
 
@@ -298,22 +356,24 @@
 
 
       const lines = [];
-      lines.push('🏖️ Jungle Cubs Beach Event Registration');
-      lines.push(`Parent: ${parent || '-'}`);
-      lines.push(`Child: ${child || '-'}`);
+      lines.push('🏖️ *Jungle Cubs Beach Event Registration*');
+lines.push('--------------------------------------------');
+   lines.push(`Parent: ${parentB}`);
+  lines.push(`Child: ${childB}`);
       lines.push(`Status: ${statusLabel}`);
       lines.push(`Event: ${eventStr || '-'}`);
 
 
       if (st === 'in-house parent' && need === 'No') {
-        lines.push('Beach Event Payment Needed: No');
+        lines.push('Beach Event Payment Needed: Kindly give us some time to check our records');
         lines.push('');
-        lines.push(`Thank you, ${parent || 'Parent'}, — enjoy your complimentary beach event with ${child || 'your child'}.`);
+        lines.push(`Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}.`);
       } else if (need === 'Yes') {
         if (st === 'in-house parent') lines.push('Beach Event Payment Needed: Yes');
         else                          lines.push('Payment Needed: Yes (₹400)');
-        lines.push(`Payment Reference: ${txnRef || '-'}`);
-        lines.push(`Thank you for the payment of ₹400, ${parent || 'Parent'}, — enjoy your beach event with ${child || 'your child'}.`);
+        lines.push(`Payment Reference: ${txnRef || '-'} - Kindly give us sometime to verify the payment status.`);
+    lines.push('');
+        lines.push(`Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}`);
         if (st === 'outsider') {
           lines.push('');
           lines.push('We hope to see you soon at Jungle Cubs Gym!');
@@ -325,17 +385,62 @@
     }
 
 
-    function updatePersonalLine(need) {
-      const parent = parentNameEl.value || "Parent";
-      const child  = childNameEl.value || "your child";
-      if (need === "Yes") {
-        personalMsg.textContent = `Hello ${parent}, kindly pay ₹400 towards the beach event for ${child}.`;
-      } else if (need === "No") {
-        personalMsg.textContent = `Hello ${parent}, enjoy the beach event — you do not have to pay any fees for ${child}.`;
-      } else {
-        personalMsg.textContent = `Please complete the required selections.`;
-      }
-    }
+ function updatePersonalLine(need) {
+  const parent = parentNameEl.value || "Parent";
+  const child  = childNameEl.value || "your child";
+
+
+  if (need === "Yes") {
+    personalMsg.innerHTML = `
+      Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the beach event for <strong>${child}</strong>.
+    `;
+  }
+
+
+  else if (need === "No") {
+    personalMsg.innerHTML = `
+      Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to pay any fees for <strong>${child}</strong>.
+      <br><br>
+      <em>Please give us some time to verify the payment records at our end. We will get in touch with you if we need to confirm any details.</em>
+      <br><br>
+
+
+      <strong>Please read these points carefully:</strong>
+      <br><br>
+
+
+      <strong>✅ WhatsApp Group Confirmation</strong><br>
+      After registration, you will be sent a link to a common WhatsApp group.<br>
+      Kindly join that group to get all event updates.<br>
+      You will be added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
+      Important details and instructions will be shared in this group.<br>
+      Kindly acknowledge the messages to help us track communication.
+      <br><br>
+
+
+      <strong>📍 Cancellation & Refund Policy</strong><br>
+      Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
+
+
+      <strong>Refund Policy:</strong><br>
+      Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
+
+
+      <strong>Rescheduling:</strong><br>
+      An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
+      Rescheduling is subject to seat availability and will be confirmed closer to the event date.
+    `;
+  }
+
+
+  else {
+    personalMsg.innerHTML = `Please complete the required selections.`;
+  }
+}
+
+
+
+
 
 
     function updateUI() {
