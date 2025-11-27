@@ -545,6 +545,40 @@ lines.push('--------------------------------------------');
     // Init state
     updateUI();
     if (dobEl.value) dobEl.dispatchEvent(new Event('change'));
+
+
+// --- UPI button: make it work reliably on Android using intent:// ---
+upiButton.addEventListener('click', function (e) {
+  // We still want the rest of the form logic to work separately,
+  // so this handler ONLY deals with opening the UPI app.
+  e.preventDefault();
+
+
+  const upiLink = upiButton.href;  // e.g. "upi://pay?pa=..."
+  if (!upiLink || !upiLink.startsWith('upi://')) {
+    return; // nothing to do
+  }
+
+
+  const isAndroid = /Android/i.test(navigator.userAgent);
+
+
+  if (isAndroid) {
+    // Convert "upi://pay?..."  →  "intent://pay?...#Intent;scheme=upi;end"
+    const withoutScheme = upiLink.replace(/^upi:\/\//, ''); // "pay?pa=..."
+    const intentUrl = 'intent://' + withoutScheme + '#Intent;scheme=upi;end';
+    window.location.href = intentUrl;
+  } else {
+    // iOS / desktop etc. – use the plain UPI link
+    window.location.href = upiLink;
+  }
+});
+
+
+
+
+
+
   </script>
 </body>
 </html>
