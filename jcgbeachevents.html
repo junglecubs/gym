@@ -37,14 +37,16 @@
       margin-top: 14px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px;
       font-size: .95rem; color: #333;
     }
-    .muted { color:#666; font-size:.92rem; }
+    .muted { color:#666; font-size:.92rem; white-space: pre-line; }
     .pay-wrap {
       display:grid; grid-template-columns: 1fr 1fr; gap:14px;
       margin-top:12px; align-items:stretch;
       background:#fff; border:1px solid #e9ecef; border-radius:10px; padding:12px;
     }
-    .pay-col { display:flex; flex-direction:column; justify-content:center; }
+    .pay-col { display:flex; flex-direction:column; justify-content:flex-start; }
     .qr-box { background:#fff; border:1px dashed #cfd6dc; border-radius:10px; padding:10px; text-align:center; }
+    .hint { font-size:0.85rem; color:#555; margin-top:4px; }
+    .small-note { font-size:0.8rem; color:#555; margin-top:6px; }
     .hidden { display:none; }
     @media (max-width: 780px) { .row, .pay-wrap { grid-template-columns: 1fr; } }
   </style>
@@ -53,7 +55,7 @@
   <div class="box">
 
 
-    <!-- ✅ NEW: Jungle Cubs Gym Logo -->
+    <!-- Logo -->
     <div style="text-align:center; margin-bottom: 10px;">
       <img src="https://junglecubsgyms.com/imgw/logo_light.png"
            alt="Jungle Cubs Gym Logo"
@@ -66,10 +68,10 @@
 
     <!-- Configure these -->
     <script>
-      const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbzH8wt2CymozYbRRWTGW6gsPqwByL_uUNOcd-fRjeGLWkH9gGlj0hLbHgDN7Zz4WNSOYw/exec"; // your Apps Script /exec
-      const BUSINESS_UPI    = "junglecubsgym7@oksbi";          // UPI ID
-      const BUSINESS_NAME   = "Jungle Cubs";                   // shown in UPI apps
-      const WHATSAPP_TARGET = "919082786189";                  // digits only (no +)
+      const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbzH8wt2CymozYbRRWTGW6gsPqwByL_uUNOcd-fRjeGLWkH9gGlj0hLbHgDN7Zz4WNSOYw/exec";
+      const BUSINESS_UPI    = "junglecubsgym7@oksbi";
+      const BUSINESS_NAME   = "Jungle Cubs";
+      const WHATSAPP_TARGET = "919082786189";
     </script>
 
 
@@ -113,7 +115,7 @@
             <input type="tel" name="mobile" id="mobile"
                    inputmode="numeric" pattern="^\d{10}$" maxlength="10" minlength="10"
                    placeholder="9812345678" required />
-(Will be added to WhatsApp for communication)
+            <span class="small-note">(Will be added to WhatsApp for communication)</span>
           </label>
         </div>
       </div>
@@ -166,6 +168,7 @@
               <option>20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu)</option>
               <option>21th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)</option>
             </select>
+            <span class="small-note">(Please check Day-Date / Time / Venue & Age Group)</span>
           </label>
         </div>
       </div>
@@ -186,57 +189,33 @@
         <!-- Payment section (shown only when payment is needed) -->
         <div id="paySection" class="hidden" style="margin-top:12px;">
           <div class="muted" style="margin-bottom:8px;">
-         <br>
-
-
-<strong>Please read these points carefully:</strong>
-      <br><br>
-
-
-      <strong>✅ WhatsApp Group Confirmation</strong><br>
-      After registration, you will be sent a link to a common WhatsApp group.<br>
-      Kindly join that group to get all event updates.<br>
-      You will be added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
-      Important details and instructions will be shared in this group.<br>
-      Kindly acknowledge the messages to help us track communication.
-      <br><br>
-
-
-      <strong>📍 Cancellation & Refund Policy</strong><br>
-      Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
-
-
-      <strong>Refund Policy:</strong><br>
-      Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
-
-
-      <strong>Rescheduling:</strong><br>
-      An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
-      Rescheduling is subject to seat availability and will be confirmed closer to the event date.
-
-
-<br>
-
-
-
-
-<b>Please press the <strong>Pay</strong> button to pay via your UPI app,
-            or scan the <strong>QR code</strong> to pay. <b><br>
-
-
-
-
+            Please press the <strong>Pay</strong> button to pay via your UPI app,
+            or scan the <strong>QR code</strong> to pay.
           </div>
           <div class="pay-wrap">
-            <!-- LEFT: Pay button -->
+            <!-- LEFT: Pay buttons -->
             <div class="pay-col">
-              <!-- ✅ FIXED: let JS set the real upi://pay link -->
+              <!-- Generic UPI -->
               <a id="upiButton" class="button-style secondary"
                  href="#"
                  target="_blank" rel="noopener">
                 Pay ₹400 via UPI (opens UPI app)
               </a>
+
+
+              <!-- NEW: Google Pay specific -->
+              <a id="gpayButton" class="button-style secondary"
+                 href="#"
+                 style="margin-top:8px; background:#0F9D58;"
+                 target="_blank" rel="noopener">
+                Pay ₹400 with Google Pay
+              </a>
+              <div class="small-note">
+                Prefer Google Pay? Use the button above for a direct Google Pay payment.
+              </div>
             </div>
+
+
             <!-- RIGHT: QR -->
             <div class="qr-box">
               <div style="font-weight:600;margin-bottom:6px;">Jungle Cubs Gym UPI QR for ₹400</div>
@@ -250,8 +229,10 @@
           <div id="txnWrap" style="margin-top:12px;">
             <label>Kindly input your UPI Payment Reference Number (Required after payment)
               <input type="text" id="txnRef" placeholder="e.g. UPI Ref / UTR" />
-              You can simply send a payment screenshot in whatsapp also.
-              If sending screenshot, kindly enter that in above box, eg: Photo sent / screenshot sent / etc
+              <span class="small-note">
+                You can also send a payment screenshot on WhatsApp. If sending a screenshot,
+                you may write "Photo sent / screenshot sent" in the box above.
+              </span>
             </label>
           </div>
         </div>
@@ -266,18 +247,38 @@
 
 
   <script>
-    // Attach endpoint before programmatic submit
-    function ensureAction() { document.getElementById("beachForm").action = ENDPOINT_URL; }
+    const mobileEl      = document.getElementById('mobile');
+    const dobEl         = document.getElementById("childDOB");
+    const ageEl         = document.getElementById("childAge");
+    const form          = document.getElementById("beachForm");
+    const statusEl      = document.getElementById("status");
+    const feesWrap      = document.getElementById("feesWrap");
+    const feesEl        = document.getElementById("feesPaid");
+    const centreWrap    = document.getElementById("centreWrap");
+    const centreEl      = document.getElementById("centre");
+    const paymentText   = document.getElementById("paymentText");
+    const paymentNeededHidden = document.getElementById("paymentNeeded");
+    const personalMsg   = document.getElementById("personalMsg");
+    const parentNameEl  = document.getElementById("parentName");
+    const childNameEl   = document.getElementById("childName");
+    const beachDateEl   = document.getElementById("beachEventDate");
+    const summaryWrap   = document.getElementById("summaryWrap");
+    const paySection    = document.getElementById("paySection");
+    const upiButton     = document.getElementById("upiButton");
+    const gpayButton    = document.getElementById("gpayButton");
+    const qrImg         = document.getElementById("qrImg");
+    const txnRefEl      = document.getElementById("txnRef");
+    const txnRefHidden  = document.getElementById("transactionRefHidden");
+    const registerBtn   = document.getElementById("registerSendBtn");
 
 
     // Enforce exactly 10 digits on mobile
-    const mobileEl = document.getElementById('mobile');
-    mobileEl.addEventListener('input', () => { mobileEl.value = mobileEl.value.replace(/\D/g,'').slice(0,10); });
+    mobileEl.addEventListener('input', () => {
+      mobileEl.value = mobileEl.value.replace(/\D/g,'').slice(0,10);
+    });
 
 
     // Age (years & months)
-    const dobEl = document.getElementById("childDOB");
-    const ageEl = document.getElementById("childAge");
     dobEl.addEventListener("change", () => {
       if (!dobEl.value) { ageEl.value = ""; return; }
       const dob = new Date(dobEl.value), today = new Date();
@@ -290,36 +291,14 @@
     });
 
 
-    // Elements
-    const form        = document.getElementById("beachForm");
-    const statusEl    = document.getElementById("status");
-    const feesWrap    = document.getElementById("feesWrap");
-    const feesEl      = document.getElementById("feesPaid");
-    const centreWrap  = document.getElementById("centreWrap");
-    const centreEl    = document.getElementById("centre");
-    const paymentText = document.getElementById("paymentText");
-    const paymentNeededHidden = document.getElementById("paymentNeeded");
-    const personalMsg = document.getElementById("personalMsg");
-    const parentNameEl= document.getElementById("parentName");
-    const childNameEl = document.getElementById("childName");
-    const beachDateEl = document.getElementById("beachEventDate");
-    const summaryWrap = document.getElementById("summaryWrap");
-    const paySection  = document.getElementById("paySection");
-    const upiButton   = document.getElementById("upiButton");
-    const qrImg       = document.getElementById("qrImg");
-    const txnRefEl    = document.getElementById("txnRef");
-    const txnRefHidden= document.getElementById("transactionRefHidden");
-    const registerBtn = document.getElementById("registerSendBtn");
-
-
-    // Return 'Yes' | 'No' | 'Pending'
+    // Payment logic
     function computePaymentNeeded(status, feesPaid) {
       const s = (status || "").toLowerCase();
       const f = (feesPaid || "").toLowerCase();
       if (!s) return 'Pending';
       if (s === "outsider") return 'Yes';
       if (s === "in-house parent") {
-        if (!f) return 'Pending';                 // wait for Fees Paid choice
+        if (!f) return 'Pending';
         if (f.includes("less")) return 'Yes';
         if (f.includes("6 months") || f.includes("more")) return 'No';
       }
@@ -331,25 +310,28 @@
       const tn = `Beach Event fee for ${child || 'child'} - ${parent || 'parent'}`;
       return `upi://pay?pa=${encodeURIComponent(BUSINESS_UPI)}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(tn)}`;
     }
+
+
     function buildQrUrl(upiLink) {
       return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
     }
 
 
-    // WhatsApp message builder (outsiders include the closing line; in-house do not)
+    // WhatsApp message builder (bold parent/child; outsiders get extra line)
     function buildWhatsappText(parent, child, status, need, eventStr, feesPaid, txnRef) {
-      
-const parentB = `*${parent || '-' }*`;
-  const childB  = `*${child  || '-' }*`;
+      const parentB = `*${parent || '-' }*`;
+      const childB  = `*${child  || '-' }*`;
 
 
-let statusLabel = status || '';
+      let statusLabel = status || '';
       const st = (status || '').toLowerCase();
 
 
       if (st === 'in-house parent') {
-        if (need === 'No') statusLabel = 'In-house Parent (6 months + Fees Paid)';
-        else               statusLabel = 'In-house Parent (Fees paid for less than 6 months)';
+        if (need === 'No')
+          statusLabel = 'In-house Parent (6 months + Fees Paid)';
+        else
+          statusLabel = 'In-house Parent (Fees paid for less than 6 months)';
       } else if (st === 'outsider') {
         statusLabel = 'Outsider (Not Jungle Cubs Gym Parent)';
       }
@@ -357,23 +339,27 @@ let statusLabel = status || '';
 
       const lines = [];
       lines.push('🏖️ *Jungle Cubs Beach Event Registration*');
-lines.push('--------------------------------------------');
-   lines.push(`Parent: ${parentB}`);
-  lines.push(`Child: ${childB}`);
+      lines.push(`Parent: ${parentB}`);
+      lines.push(`Child: ${childB}`);
       lines.push(`Status: ${statusLabel}`);
       lines.push(`Event: ${eventStr || '-'}`);
 
 
       if (st === 'in-house parent' && need === 'No') {
-        lines.push('Beach Event Payment Needed: Kindly give us some time to check our records');
+        lines.push('Beach Event Payment Needed: No');
         lines.push('');
         lines.push(`Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}.`);
       } else if (need === 'Yes') {
-        if (st === 'in-house parent') lines.push('Beach Event Payment Needed: Yes');
-        else                          lines.push('Payment Needed: Yes (₹400)');
-        lines.push(`Payment Reference: ${txnRef || '-'} - Kindly give us sometime to verify the payment status.`);
-    lines.push('');
-        lines.push(`Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}`);
+        if (st === 'in-house parent')
+          lines.push('Beach Event Payment Needed: Yes');
+        else
+          lines.push('Payment Needed: Yes (₹400)');
+
+
+        lines.push(`Payment Reference: ${txnRef || '-'}`);
+        lines.push(`Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}.`);
+
+
         if (st === 'outsider') {
           lines.push('');
           lines.push('We hope to see you soon at Jungle Cubs Gym!');
@@ -385,62 +371,41 @@ lines.push('--------------------------------------------');
     }
 
 
- function updatePersonalLine(need) {
-  const parent = parentNameEl.value || "Parent";
-  const child  = childNameEl.value || "your child";
+    // Big explanatory text under Payment Needed
+    function updatePersonalLine(need) {
+      const parent = parentNameEl.value || "Parent";
+      const child  = childNameEl.value || "your child";
 
 
-  if (need === "Yes") {
-    personalMsg.innerHTML = `
-      Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the beach event for <strong>${child}</strong>.
-    `;
-  }
-
-
-  else if (need === "No") {
-    personalMsg.innerHTML = `
-      Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to pay any fees for <strong>${child}</strong>.
-      <br><br>
-      <em>Please give us some time to verify the payment records at our end. We will get in touch with you if we need to confirm any details.</em>
-      <br><br>
-
-
-      <strong>Please read these points carefully:</strong>
-      <br><br>
-
-
-      <strong>✅ WhatsApp Group Confirmation</strong><br>
-      After registration, you will be sent a link to a common WhatsApp group.<br>
-      Kindly join that group to get all event updates.<br>
-      You will be added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
-      Important details and instructions will be shared in this group.<br>
-      Kindly acknowledge the messages to help us track communication.
-      <br><br>
-
-
-      <strong>📍 Cancellation & Refund Policy</strong><br>
-      Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
-
-
-      <strong>Refund Policy:</strong><br>
-      Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
-
-
-      <strong>Rescheduling:</strong><br>
-      An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
-      Rescheduling is subject to seat availability and will be confirmed closer to the event date.
-    `;
-  }
-
-
-  else {
-    personalMsg.innerHTML = `Please complete the required selections.`;
-  }
-}
-
-
-
-
+      if (need === "Yes") {
+        personalMsg.innerHTML = `
+Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the beach event for <strong>${child}</strong>.`;
+      } else if (need === "No") {
+        personalMsg.innerHTML = `
+Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to pay any fees for <strong>${child}</strong>.
+<br><br>
+<em>Please give us some time to verify the payment records at our end. We will get in touch with you if we need to confirm any details.</em>
+<br><br>
+<strong>Please read these points carefully:</strong>
+<br><br>
+<strong>✅ WhatsApp Group Confirmation</strong><br>
+After registration, you will be sent a link to a common WhatsApp group.<br>
+Kindly join that group to get all event updates.<br>
+You will be later added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
+Important details and instructions will be shared in this group.<br>
+Kindly acknowledge the messages to help us track communication.
+<br><br>
+<strong>📍 Cancellation & Refund Policy</strong><br>
+Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
+<strong>Refund Policy:</strong><br>
+Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
+<strong>Rescheduling:</strong><br>
+An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
+Rescheduling is subject to seat availability and will be confirmed closer to the event date.`;
+      } else {
+        personalMsg.innerHTML = `Please complete the required selections.`;
+      }
+    }
 
 
     function updateUI() {
@@ -462,7 +427,6 @@ lines.push('--------------------------------------------');
       paymentNeededHidden.value = need;
 
 
-      // If no status yet → keep hidden/disabled
       if (!statusVal) {
         summaryWrap.classList.add("hidden");
         paySection.classList.add("hidden");
@@ -473,47 +437,38 @@ lines.push('--------------------------------------------');
       }
 
 
-      // Show summary
       summaryWrap.classList.remove("hidden");
-
-
-      // Payment text + personal line
       paymentText.textContent = (need === "Yes") ? "Yes (₹400)" : (need === "No" ? "No" : "—");
       updatePersonalLine(need);
 
 
-// Payment section visible only if need === Yes
-if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
-  const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
+      if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
+        const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
 
 
-  // Keep href for platforms that handle upi:// directly,
-  // but also store it so our click handler can build an Android intent.
-  upiButton.href = upi;
-  upiButton.dataset.upi = upi;
+        // Store UPI for handlers
+        upiButton.href = upi;
+        upiButton.dataset.upi = upi;
+        if (gpayButton) gpayButton.dataset.upi = upi;
 
 
-  qrImg.src = buildQrUrl(upi);
-  qrImg.alt = "UPI QR for ₹400";
-  paySection.classList.remove("hidden");
-  txnRefEl.required = true;
-} else {
-  paySection.classList.add("hidden");
-  txnRefEl.required = false;
-  txnRefEl.value = "";
-  txnRefHidden.value = "";
-  upiButton.removeAttribute("data-upi");
-  upiButton.href = "#";
-}
+        qrImg.src = buildQrUrl(upi);
+        qrImg.alt = "UPI QR for ₹400";
+        paySection.classList.remove("hidden");
+        txnRefEl.required = true;
+      } else {
+        paySection.classList.add("hidden");
+        txnRefEl.required = false;
+        txnRefEl.value = "";
+        txnRefHidden.value = "";
 
 
+        upiButton.removeAttribute("data-upi");
+        upiButton.href = "#";
+        if (gpayButton) gpayButton.removeAttribute("data-upi");
+      }
 
 
-
-
-      // Enable main button:
-      // - form must be valid
-      // - if need === Yes, txnRef must be non-empty
       const formValid = form.checkValidity();
       const txnOk = (need === "Yes") ? !!txnRefEl.value.trim() : (need === "No");
       registerBtn.disabled = !(formValid && (need === "No" || (need === "Yes" && txnOk)));
@@ -533,6 +488,68 @@ if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
     });
 
 
+    // UPI button: generic (any UPI app, with Android intent where possible)
+    upiButton.addEventListener("click", function (e) {
+      const upi = this.dataset.upi;
+      if (!upi) return;
+
+
+      e.preventDefault();
+
+
+      const ua = navigator.userAgent || "";
+      const isAndroid = /Android/i.test(ua);
+
+
+      if (isAndroid) {
+        const withoutScheme = upi.replace(/^upi:\/\//, "");
+        const intentUrl = "intent://" + withoutScheme + "#Intent;scheme=upi;end";
+        const win = window.open(intentUrl, "_blank");
+        if (!win) window.location.href = intentUrl;
+      } else {
+        const win = window.open(upi, "_blank");
+        if (!win) window.location.href = upi;
+      }
+    });
+
+
+    // Google Pay–specific button
+    if (gpayButton) {
+      gpayButton.addEventListener("click", function (e) {
+        e.preventDefault();
+
+
+        const upi = this.dataset.upi;
+        if (!upi) {
+          alert("UPI link is not ready yet. Please fill all required fields first.");
+          return;
+        }
+
+
+        const ua = navigator.userAgent || "";
+        const isAndroid = /Android/i.test(ua);
+        const isIOS    = /iPhone|iPad|iPod/i.test(ua);
+
+
+        if (isAndroid) {
+          const withoutScheme = upi.replace(/^upi:\/\//, "");
+          const intentUrl =
+            "intent://" + withoutScheme +
+            "#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end";
+          const w = window.open(intentUrl, "_blank");
+          if (!w) window.location.href = intentUrl;
+        } else if (isIOS) {
+          const iosUrl = "gpay://" + upi.replace(/^upi:\/\//, "");
+          const w = window.open(iosUrl, "_blank");
+          if (!w) window.location.href = iosUrl;
+        } else {
+          const w = window.open(upi, "_blank");
+          if (!w) window.location.href = upi;
+        }
+      });
+    }
+
+
     // Main unified button: build WA text, open WA, then submit
     registerBtn.addEventListener('click', () => {
       const need = paymentNeededHidden.value;
@@ -548,80 +565,15 @@ if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
       const waUrl = `https://wa.me/${WHATSAPP_TARGET}?text=${encodeURIComponent(waText)}`;
 
 
-      // Open WA first, then submit form
       window.open(waUrl, '_blank', 'noopener');
-      document.getElementById("beachForm").action = ENDPOINT_URL;
+      form.action = ENDPOINT_URL;
       form.submit();
     });
 
 
-    // Init state
+    // Init
     updateUI();
     if (dobEl.value) dobEl.dispatchEvent(new Event('change'));
-
-
-// --- UPI button: handle Android, in-app browsers, and others ---
-upiButton.addEventListener('click', function (e) {
-  e.preventDefault();
-
-
-  const upiLink = upiButton.href;  // e.g. "upi://pay?pa=..."
-  if (!upiLink || !upiLink.startsWith('upi://')) {
-    alert('UPI link is not ready yet. Please check that all required fields are filled.');
-    return;
-  }
-
-
-  const ua = navigator.userAgent || '';
-  const isAndroid = /Android/i.test(ua);
-  const isInApp = /WhatsApp|FBAN|FBAV|Instagram|Twitter|Line|WeChat/i.test(ua);
-
-
-  // 1) In-app browser on Android (WhatsApp / Insta / FB etc.)
-  if (isAndroid && isInApp) {
-    alert(
-      'To pay using UPI, please open this page in your phone’s browser (Chrome/Samsung Internet):\n\n' +
-      '• Tap the ⋮ or menu button in the top-right\n' +
-      '• Choose "Open in browser"\n' +
-      '• Then tap the "Pay ₹400 via UPI" button again.'
-    );
-    return;
-  }
-
-
-  // 2) Normal Android browser (Chrome / Samsung Internet)
-  if (isAndroid) {
-    // Convert "upi://pay?..." → "intent://pay?...#Intent;scheme=upi;end"
-    const withoutScheme = upiLink.replace(/^upi:\/\//, ''); // "pay?pa=..."
-    const intentUrl = 'intent://' + withoutScheme + '#Intent;scheme=upi;end';
-
-
-    // Try opening in a new tab/window first
-    const win = window.open(intentUrl, '_blank');
-    if (!win) {
-      // If popup blocked, navigate current page
-      window.location.href = intentUrl;
-    }
-    return;
-  }
-
-
-  // 3) iOS / desktop etc. – use the plain UPI link
-  const win = window.open(upiLink, '_blank');
-  if (!win) {
-    window.location.href = upiLink;
-  }
-});
-
-
-
-
-
-
-
-
-
-
   </script>
 </body>
 </html>
