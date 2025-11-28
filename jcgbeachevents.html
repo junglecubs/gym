@@ -99,7 +99,7 @@
       <div class="row">
         <div>
           <label>Location
-            <input type="text" name="location" placeholder="Area / City" required />
+            <input type="text" name="location" id="location" placeholder="Area / City" required />
           </label>
         </div>
         <div>
@@ -323,7 +323,19 @@
     }
 
 
-    // WhatsApp text with bold names and different flows
+    function splitEventLines(eventStr) {
+      const clean = (eventStr || '').trim();
+      if (!clean) return { dateLine: '', timeLine: '', ageLine: '' };
+      const parts = clean.split(';').map(p => p.trim());
+      return {
+        dateLine: parts[0] || '',
+        timeLine: parts[1] || '',
+        ageLine:  parts.slice(2).join('; ').trim()
+      };
+    }
+
+
+    // WhatsApp text with bold names, nice formatting, footer
     function buildWhatsappText(parent, child, status, need, eventStr, feesPaid, txnRef) {
       const parentClean = (parent || '-').trim();
       const childClean  = (child  || '-').trim();
@@ -347,27 +359,42 @@
       }
 
 
+      const { dateLine, timeLine, ageLine } = splitEventLines(eventStr);
+
+
       const lines = [];
       lines.push('🏖️ *Jungle Cubs Beach Event Registration*');
-      lines.push(`Parent: ${parentB}`);
-      lines.push(`Child: ${childB}`);
-      lines.push(`Status: ${statusLabel}`);
-      lines.push(`Event: ${eventStr || '-'}`);
+      lines.push('');
+      lines.push(`👨‍👩‍👧 Parent: ${parentB}`);
+      lines.push(`🧒 Child: ${childB}`);
+      if (st === 'outsider') {
+        lines.push(`🌱 Status: ${statusLabel}`);
+      } else {
+        lines.push(`🏫 Status: ${statusLabel}`);
+      }
+      lines.push('');
+      lines.push('📅 Event:');
+      if (dateLine) lines.push(dateLine);
+      if (timeLine) lines.push(timeLine);
+      if (ageLine)  lines.push(ageLine);
 
 
       if (st === 'in-house parent' && need === 'No') {
-        lines.push('Beach Event Payment Needed: No');
         lines.push('');
-        lines.push(`Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}. Kindly allow us some time to verify our payment records.`);
+        lines.push('💰 Beach Event Payment Needed: *No*');
+        lines.push('');
+        lines.push(`✨ Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}.`);
+        lines.push('Kindly allow us some time to verify our payment records.');
       } else if (need === 'Yes') {
-        if (st === 'in-house parent')
-          lines.push('Beach Event Payment Needed: Yes');
-        else
-          lines.push('Payment Needed: Yes (₹400)');
-
-
-        lines.push(`Payment Reference: ${txnRef || '-'}`);
-        lines.push(`Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}.`);
+        lines.push('');
+        if (st === 'in-house parent') {
+          lines.push('💰 Beach Event Payment Needed: *Yes*');
+        } else {
+          lines.push('💰 Payment Needed: *Yes (₹400)*');
+        }
+        lines.push(`🧾 Payment Reference: *${(txnRef || '-').trim()}*`);
+        lines.push('');
+        lines.push(`✨ Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}.`);
 
 
         if (st === 'outsider') {
@@ -375,6 +402,15 @@
           lines.push('We hope to see you soon at Jungle Cubs Gym!');
         }
       }
+
+
+      lines.push('');
+      lines.push('———');
+      lines.push('Follow us on Instagram:');
+      lines.push('https://instagram.com/junglecubsgym');
+      lines.push('');
+      lines.push('Visit us at:');
+      lines.push('https://junglecubsgyms.com');
 
 
       return lines.join('\n');
@@ -531,7 +567,7 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
 
         if (isAndroid) {
           const intentUrl =
-            "intent://upi/pay?" + upiParams +
+            "intent://pay?" + upiParams +
             "#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end";
           const w = window.open(intentUrl, "_blank");
           if (!w) window.location.href = intentUrl;
