@@ -184,53 +184,43 @@
             Please press the <strong>Pay</strong> button to pay via your UPI app,
             or scan the <strong>QR code</strong> to pay.
           </div>
-<div class="pay-wrap">
+          <div class="pay-wrap">
 
 
-  <!-- LEFT: Pay buttons -->
-  <div class="pay-col">
+            <!-- LEFT: Pay buttons -->
+            <div class="pay-col">
+              <!-- Google Pay specific FIRST -->
+              <a id="gpayButton" class="button-style secondary"
+                 href="#"
+                 style="background:#0F9D58; margin-bottom:8px;"
+                 target="_blank" rel="noopener">
+                Pay ₹400 with Google Pay
+              </a>
+              <span class="small-note">
+                Pay via <strong>GPay app</strong> with the button above.
+              </span>
 
 
-    <!-- Google Pay specific FIRST -->
-    <a id="gpayButton" class="button-style secondary"
-       href="#"
-       style="background:#0F9D58; margin-bottom:8px;"
-       target="_blank" rel="noopener">
-      Pay ₹400 with Google Pay
-    </a>
-    <span class="small-note">
-      Pay via <strong>GPay app</strong> with the button above.
-    </span>
+              <!-- Generic UPI SECOND -->
+              <a id="upiButton" class="button-style secondary"
+                 href="#"
+                 style="margin-top:14px;"
+                 target="_blank" rel="noopener">
+                Pay ₹400 via UPI (any app)
+              </a>
+              <span class="small-note">
+                Pay via <strong>other UPI apps</strong> with the button above.
+              </span>
+            </div>
 
 
-    <!-- Generic UPI SECOND -->
-    <a id="upiButton" class="button-style secondary"
-       href="#"
-       style="margin-top:14px;"
-       target="_blank" rel="noopener">
-      Pay ₹400 via UPI (any app)
-    </a>
-    <span class="small-note">
-      Pay via <strong>other UPI apps</strong> with the button above.
-    </span>
-
-
-  </div>
-
-
-  <!-- RIGHT: QR -->
-  <div class="qr-box">
-    <div style="font-weight:600;margin-bottom:6px;">Jungle Cubs Gym UPI QR for ₹400</div>
-    <img id="qrImg" src="" alt="UPI QR" style="width:260px;height:260px;object-fit:contain" />
-    <div class="hint">Scan to pay ₹400 to Jungle Cubs Gym</div>
-  </div>
-
-
-</div>
-
-
-
-
+            <!-- RIGHT: QR -->
+            <div class="qr-box">
+              <div style="font-weight:600;margin-bottom:6px;">Jungle Cubs Gym UPI QR for ₹400</div>
+              <img id="qrImg" src="" alt="UPI QR" style="width:260px;height:260px;object-fit:contain" />
+              <div class="hint">Scan to pay ₹400 to Jungle Cubs Gym</div>
+            </div>
+          </div>
 
 
           <!-- Transaction reference below payment options -->
@@ -268,7 +258,6 @@
     const childNameEl   = document.getElementById("childName");
     const dobEl         = document.getElementById("childDOB");
     const ageEl         = document.getElementById("childAge");
-    const locationEl    = document.getElementById("location");
     const mobileEl      = document.getElementById("mobile");
     const statusEl      = document.getElementById("status");
     const feesWrap      = document.getElementById("feesWrap");
@@ -336,8 +325,12 @@
 
     // WhatsApp text with bold names and different flows
     function buildWhatsappText(parent, child, status, need, eventStr, feesPaid, txnRef) {
-      const parentB = `*${parent || '-' }*`;
-      const childB  = `*${child  || '-' }*`;
+      const parentClean = (parent || '-').trim();
+      const childClean  = (child  || '-').trim();
+
+
+      const parentB = `*${parentClean}*`;
+      const childB  = `*${childClean}*`;
 
 
       let statusLabel = status || '';
@@ -400,24 +393,7 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
         personalMsg.innerHTML = `
 Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to pay any fees for <strong>${child}</strong>.
 <br><br>
-<em>Please give us some time to verify the payment records at our end. We will get in touch with you if we need to confirm any details.</em>
-<br><br>
-<strong>Please read these points carefully:</strong>
-<br><br>
-<strong>✅ WhatsApp Group Confirmation</strong><br>
-After registration, you will be sent a link to a common WhatsApp group.<br>
-Kindly join that group to get all event updates.<br>
-You will be later added to a WhatsApp group for your specific event date 2 days prior to the event.<br>
-Important details and instructions will be shared in this group.<br>
-Kindly acknowledge the messages to help us track communication.
-<br><br>
-<strong>📍 Cancellation & Refund Policy</strong><br>
-Please check Day-Date / Time / Venue & Age Group carefully.<br><br>
-<strong>Refund Policy:</strong><br>
-Refund of the beach event fee will not be possible after payment under any circumstances.<br><br>
-<strong>Rescheduling:</strong><br>
-An inconvenience fee of ₹100 will be applicable for rescheduling.<br>
-Rescheduling is subject to seat availability and will be confirmed closer to the event date.`;
+<em>Please give us some time to verify the payment records at our end. We will get in touch with you if we need to confirm any details.</em>`;
       } else {
         personalMsg.innerHTML = `Please complete the required selections.`;
       }
@@ -531,17 +507,21 @@ Rescheduling is subject to seat availability and will be confirmed closer to the
     }
 
 
-    // Google Pay–specific button
+    // Google Pay–specific button (proper params so GPay shows 400 & Jungle Cubs)
     if (gpayButton) {
       gpayButton.addEventListener("click", function (e) {
         e.preventDefault();
 
 
-        const upi = this.dataset.upi;
-        if (!upi) {
-          alert("UPI link is not ready yet. Please fill all required fields first.");
-          return;
-        }
+        const parent = parentNameEl.value || "parent";
+        const child  = childNameEl.value || "child";
+
+
+        const upiParams =
+          "pa=" + encodeURIComponent(BUSINESS_UPI) +
+          "&pn=" + encodeURIComponent(BUSINESS_NAME) +
+          "&am=400&cu=INR" +
+          "&tn=" + encodeURIComponent("Beach Event fee for " + child);
 
 
         const ua = navigator.userAgent || "";
@@ -550,17 +530,17 @@ Rescheduling is subject to seat availability and will be confirmed closer to the
 
 
         if (isAndroid) {
-          const withoutScheme = upi.replace(/^upi:\/\//, "");
           const intentUrl =
-            "intent://" + withoutScheme +
+            "intent://upi/pay?" + upiParams +
             "#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end";
           const w = window.open(intentUrl, "_blank");
           if (!w) window.location.href = intentUrl;
         } else if (isIOS) {
-          const iosUrl = "gpay://" + upi.replace(/^upi:\/\//, "");
+          const iosUrl = "gpay://upi/pay?" + upiParams;
           const w = window.open(iosUrl, "_blank");
           if (!w) window.location.href = iosUrl;
         } else {
+          const upi = "upi://pay?" + upiParams;
           const w = window.open(upi, "_blank");
           if (!w) window.location.href = upi;
         }
