@@ -404,7 +404,7 @@ Please type "Paid" and hit register below. And also send us screenshot in next s
       if (st === 'in-house parent' && need === 'No') {
         lines.push('');
         lines.push('💰 Beach Event Payment Needed: *No*');
-	lines.push(`🏫 Centre: *${centre}*`);
+	lines.push(`🏫 Centre: *${centreEl.value}*`);
         lines.push('');
         lines.push(`✨ Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}.`);
         lines.push('Kindly allow us some time to verify our payment records.');
@@ -412,7 +412,7 @@ Please type "Paid" and hit register below. And also send us screenshot in next s
         lines.push('');
         if (st === 'in-house parent') {
           lines.push('💰 Beach Event Payment Needed: *Yes*');
-	  lines.push(`🏫 Centre: *${centre}*`);
+	  lines.push(`🏫 Centre: *${centreEl.value}*`);
         } else {
           lines.push('💰 Payment Needed: *Yes (₹400)*');
         }
