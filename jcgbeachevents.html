@@ -181,7 +181,7 @@
               <option>13th December, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)</option>
               <option>14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)</option>
               <option>20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu)</option>
-              <option>21st December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Girgaon)</option>
+              <option>21th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)</option>
             </select>
             <span class="small-note">(Please check Day-Date / Time / Venue &amp; Age Group)</span>
           </label>
@@ -248,10 +248,11 @@
 
           <!-- Transaction reference below payment options -->
           <div id="txnWrap" style="margin-top:12px;">
-            <label>Kindly type Paid and Whatsapp us a Screenshot of your Payment (Required after payment)
-              <input type="text" id="txnRef" placeholder="Paid?" />
+            <label>Kindly input your UPI Payment Reference Number (Required after payment)
+              <input type="text" id="txnRef" placeholder="e.g. UPI Ref / UTR" />
               <span class="small-note">
-Please type "Paid" and hit register below. And also send us screenshot in next step on Whatsapp.
+                You can also send a payment screenshot on WhatsApp. If sending a screenshot,
+                you may write "Photo sent / screenshot sent" in the box above.
               </span>
             </label>
           </div>
@@ -269,8 +270,8 @@ Please type "Paid" and hit register below. And also send us screenshot in next s
   <script>
     // ----- CONFIG -----
     const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbzH8wt2CymozYbRRWTGW6gsPqwByL_uUNOcd-fRjeGLWkH9gGlj0hLbHgDN7Zz4WNSOYw/exec";
-    const BUSINESS_UPI    = "junglecubsgym7@oksbi";
-    const BUSINESS_NAME   = "Jungle Cubs";
+    const BUSINESS_UPI    = "aparna.jcg@oksbi";
+    const BUSINESS_NAME   = "Aparna Jungle Cubs Gym";
     const WHATSAPP_TARGET = "919082786189";
 
 
@@ -404,7 +405,6 @@ Please type "Paid" and hit register below. And also send us screenshot in next s
       if (st === 'in-house parent' && need === 'No') {
         lines.push('');
         lines.push('💰 Beach Event Payment Needed: *No*');
-	lines.push(`🏫 Centre: *${centreEl.value}*`);
         lines.push('');
         lines.push(`✨ Thank you, ${parentB}, — enjoy your complimentary beach event with ${childB}.`);
         lines.push('Kindly allow us some time to verify our payment records.');
@@ -412,7 +412,6 @@ Please type "Paid" and hit register below. And also send us screenshot in next s
         lines.push('');
         if (st === 'in-house parent') {
           lines.push('💰 Beach Event Payment Needed: *Yes*');
-	  lines.push(`🏫 Centre: *${centreEl.value}*`);
         } else {
           lines.push('💰 Payment Needed: *Yes (₹400)*');
         }
