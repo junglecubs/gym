@@ -187,9 +187,9 @@
     14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)
   </option>
 
-  <option data-event-date="2025-12-20">
-    20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu)
-  </option>
+<option data-event-date="2025-12-20" data-sold-out="true">
+  20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — SOLD OUT
+</option>
 
   <option data-event-date="2025-12-21">
     21st December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Girgaon)
@@ -641,20 +641,30 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
     });
 
     // Disable past beach event dates
-(function disablePastEventDates() {
+(function disablePastAndSoldOutDates() {
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // normalize to midnight
+  today.setHours(0, 0, 0, 0);
 
   const options = beachDateEl.querySelectorAll('option[data-event-date]');
 
   options.forEach(opt => {
     const eventDateStr = opt.getAttribute('data-event-date');
+    const isSoldOut = opt.getAttribute('data-sold-out') === 'true';
     if (!eventDateStr) return;
 
     const eventDate = new Date(eventDateStr);
+
+    // Disable past dates
     if (eventDate < today) {
       opt.disabled = true;
-      opt.style.color = '#999';   // greyed out
+      opt.style.color = '#999';
+    }
+
+    // Disable sold-out dates
+    if (isSoldOut) {
+      opt.disabled = true;
+      opt.style.color = '#b00020';   // red tone
+      opt.style.fontWeight = '600';
     }
   });
 })();
@@ -667,4 +677,5 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
 </body>
 
 </html>
+
 
