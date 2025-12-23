@@ -1,140 +1,271 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Jungle Cubs Beach Events — Registration</title>
   <style>
+    /* --- JUNGLE CUBS BRAND COLORS --- */
+    :root {
+      --jc-yellow: #f9ca2b;
+      --jc-green:  #287844;
+      --jc-red:    #c72e31;
+      --jc-brown:  #763230;
+      --bg-color:  #f4f8f5; /* Very light green tint for page background */
+    }
+
+    /* --- RESET & BASIC --- */
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      background: #f5f7fa; line-height: 1.5; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center; padding: 1rem;
+      background: var(--bg-color); 
+      line-height: 1.5; 
+      min-height: 100vh;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 1rem;
+      color: #333;
     }
+
+    /* --- CARD DESIGN --- */
     .box {
-      background: #fff; padding: 1.5rem; border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.08); max-width: 860px; width: 100%;
+      background: #fff; 
+      padding: 2rem; 
+      border-radius: 16px;
+      /* Soft modern shadow */
+      box-shadow: 0 10px 30px -5px rgba(40, 120, 68, 0.15); 
+      max-width: 800px; 
+      width: 100%;
+      border-top: 6px solid var(--jc-yellow); /* Brand pop at the top */
     }
-    h1 { color: #28a745; font-size: 1.6rem; margin-bottom: .75rem; font-weight: 800; text-align: center; }
-    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    label { font-weight: 600; color: #333; display: block; margin-top: .5rem; }
+    
+    /* --- TYPOGRAPHY --- */
+    h1 { 
+      color: var(--jc-green); 
+      font-size: 1.8rem; 
+      margin-bottom: 1rem; 
+      font-weight: 800; 
+      text-align: center; 
+      letter-spacing: -0.5px;
+    }
+
+    label { 
+      font-weight: 700; 
+      color: var(--jc-brown); /* Brand Brown */
+      display: block; 
+      margin-top: 1rem; 
+      font-size: 0.95rem;
+    }
+
+    .small-note { 
+      font-size: 0.8rem; 
+      color: #666; 
+      margin-top: 4px; 
+      display: block; 
+      font-weight: 400;
+    }
+
+    /* --- INPUTS --- */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    
     input, select {
-      width: 100%; padding: .75rem; border: 1px solid #dcdfe3; border-radius: 10px; margin-top: .35rem;
-      font-size: 1rem; background: #fff;
+      width: 100%; 
+      padding: 0.85rem; 
+      border: 1px solid #dcdfe3; 
+      border-radius: 8px; 
+      margin-top: 6px;
+      font-size: 1rem; 
+      background: #fff;
+      transition: all 0.2s ease;
     }
-    input[readonly] { background: #f0f0f0; color: #555; cursor: not-allowed; }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--jc-green);
+      box-shadow: 0 0 0 3px rgba(40, 120, 68, 0.1);
+    }
+
+    input[readonly] { 
+      background: #f7f7f7; 
+      color: #888; 
+      cursor: not-allowed; 
+      border-color: #eee;
+    }
+
+    /* --- BUTTONS --- */
     .button-style {
-      display: block; width: 100%; text-align: center; padding: 1rem; margin: 16px 0 0;
-      font-weight: 800; font-size: 1.1rem; border: none; border-radius: 10px;
-      cursor: pointer; text-decoration: none; transition: background-color .25s ease;
+      display: block; 
+      width: 100%; 
+      text-align: center; 
+      padding: 1rem; 
+      margin: 24px 0 0;
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      border: none; 
+      border-radius: 50px; /* Pill shape for modern look */
+      cursor: pointer; 
+      text-decoration: none; 
+      transition: transform 0.1s ease, background-color 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-    .primary { background: #28a745; color: #ffeb3b; }
-    .primary:hover:not([disabled]) { background: #1e7e34; }
-    .primary[disabled] { background:#9fcaa9; cursor:not-allowed; }
-    .secondary { background: #6c757d; color: #fff; }
-    .secondary:hover { background: #5a6268; }
+
+    .button-style:active { transform: translateY(1px); box-shadow: none; }
+
+    /* PRIMARY: Green BG + Yellow Text */
+    .primary { 
+      background: var(--jc-green); 
+      color: var(--jc-yellow); 
+    }
+    .primary:hover:not([disabled]) { 
+      background: #1e6336; /* Slightly darker green */
+      color: #fff; /* White text on hover */
+    }
+    .primary[disabled] { 
+      background: #a8c4b1; 
+      color: #f1f1f1; 
+      cursor: not-allowed; 
+      box-shadow: none;
+    }
+
+    /* SECONDARY: Brown BG */
+    .secondary { 
+      background: var(--jc-brown); 
+      color: #fff; 
+      font-size: 1rem;
+      padding: 0.8rem;
+      border-radius: 8px; /* Less rounded for secondary */
+    }
+    .secondary:hover { background: #5d2624; }
+
+    /* --- PAYMENT SECTION --- */
     .summary {
-      margin-top: 14px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 10px; padding: 12px;
-      font-size: .95rem; color: #333;
+      margin-top: 20px; 
+      background: #fffdf0; /* Very light yellow tint */
+      border: 1px solid #f0e6c5; 
+      border-radius: 12px; 
+      padding: 16px;
+      font-size: .95rem; 
+      color: #333;
     }
-    .muted { color:#666; font-size:.92rem; }
-    .muted.rich { white-space: normal; }
+
     .pay-wrap {
-      display:grid; grid-template-columns: 1fr 1fr; gap:14px;
-      margin-top:12px; align-items:stretch;
-      background:#fff; border:1px solid #e9ecef; border-radius:10px; padding:12px;
+      display:grid; grid-template-columns: 1fr 1fr; gap:16px;
+      margin-top:16px; align-items:stretch;
+      background: #fff; 
+      border: 1px solid #eee; 
+      border-radius: 10px; 
+      padding: 16px;
     }
-    .pay-col { display:flex; flex-direction:column; justify-content:flex-start; }
-    .qr-box { background:#fff; border:1px dashed #cfd6dc; border-radius:10px; padding:10px; text-align:center; }
-    .hint { font-size:0.85rem; color:#555; margin-top:4px; }
-    .small-note { font-size:0.8rem; color:#555; margin-top:6px; display:block; }
+    
+    .qr-box { 
+      background:#fff; 
+      border: 2px dashed #ddd; 
+      border-radius: 10px; 
+      padding: 10px; 
+      text-align:center; 
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    
+    .qr-box img { display: block; }
+    .pay-col { display:flex; flex-direction:column; justify-content:center; }
+
+    .hint { font-size:0.85rem; color:#555; margin-top:8px; font-weight: 500;}
+    .muted.rich { margin-top: 8px; line-height: 1.5; color: #444; }
+
+    /* --- CONFIRMATION CHECKBOX --- */
+    .payment-confirm {
+      margin-top: 16px;
+      padding: 12px;
+      background: #eaf3ed; /* Light green tint */
+      border-radius: 8px;
+      border: 1px solid #cce0d3;
+    }
+    .payment-confirm-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      font-size: 14px;
+      line-height: 1.4;
+      color: var(--jc-green); /* Green text for confirmation */
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0;
+    }
+    .payment-confirm-label input {
+      margin-top: 3px;
+      width: 20px; height: 20px;
+      flex-shrink: 0;
+      accent-color: var(--jc-green); /* Green checkbox */
+    }
+    .payment-confirm-label span {
+      flex: 1;
+      display: block;
+      min-width: 0; 
+    }
+
+    /* --- UTILITIES --- */
     .hidden { display:none; }
-    @media (max-width: 780px) { .row, .pay-wrap { grid-template-columns: 1fr; } }
+    
+    @media (max-width: 780px) { 
+      .row, .pay-wrap { grid-template-columns: 1fr; } 
+      .box { padding: 1.25rem; }
+    }
   </style>
 </head>
 <body>
-  <div class="box">
 
-
-    <!-- Logo -->
-    <div style="text-align:center; margin-bottom: 10px;">
-      <img src="https://junglecubsgyms.com/imgw/logo_light.png"
-           alt="Jungle Cubs Gym Logo"
-           style="height:80px; width:auto; object-fit:contain;">
+  <div class="box"> <div style="text-align:center; margin-bottom: 20px;">
+      <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym Logo" style="height:90px; width:auto; object-fit:contain;">
     </div>
-
 
     <h1>Jungle Cubs Beach Events — Registration</h1>
 
-
-<!-- Beach Event Preview Video (YouTube) -->
-<div style="margin: 10px auto 16px; max-width: 640px;">
-  <div style="position: relative; width: 100%; padding-bottom: 56.25%; border-radius: 12px; overflow: hidden;">
-    <iframe
-      src="https://www.youtube.com/embed/en-luNR_Hrs?autoplay=1&mute=1&controls=0&loop=1&playlist=en-luNR_Hrs&playsinline=1&modestbranding=1&rel=0&showinfo=0"
-      frameborder="0"
-      allow="autoplay; encrypted-media"
-      allowfullscreen
-      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-    ></iframe>
-  </div>
-
-
-  <p style="font-size: 0.9rem; color: #555; margin-top: 4px; text-align: center;">
-    A quick glimpse of our Jungle Cubs Beach Events 🌊
-  </p>
-</div>
-
-
-
-
-
+    <div style="margin: 0 auto 24px; max-width: 640px; border: 4px solid var(--jc-yellow); border-radius: 14px; overflow: hidden;">
+      <div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+        <iframe src="https://www.youtube.com/embed/en-luNR_Hrs?autoplay=1&mute=1&controls=0&loop=1&playlist=en-luNR_Hrs&playsinline=1&modestbranding=1&rel=0&showinfo=0" 
+                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+      </div>
+    </div>
+    <p style="font-size: 0.95rem; color: #555; margin-top: -16px; margin-bottom: 20px; text-align: center; font-style: italic;">
+        A quick glimpse of our Jungle Cubs Beach Events 🌊
+    </p>
 
     <form id="beachForm" method="post" action="">
+
       <div class="row">
-        <div>
-          <label>Parent Name
-            <input type="text" name="parentName" id="parentName" required />
-          </label>
-        </div>
-        <div>
-          <label>Child Name
-            <input type="text" name="childName" id="childName" required />
-          </label>
-        </div>
+        <div><label>Parent Name<input type="text" name="parentName" id="parentName" required /></label></div>
+        <div><label>Child Name<input type="text" name="childName" id="childName" required /></label></div>
       </div>
 
-
       <div class="row">
-        <div>
-          <label>Child DOB
-            <input type="date" name="childDOB" id="childDOB" required />
-          </label>
-        </div>
-        <div>
-          <label>Child Age (years &amp; months)
-            <input type="text" name="childAge" id="childAge" readonly />
-          </label>
-        </div>
+        <div><label>Child DOB<input type="date" name="childDOB" id="childDOB" required /></label></div>
+        <div><label>Child Age (years &amp; months)<input type="text" name="childAge" id="childAge" readonly /></label></div>
       </div>
 
-
       <div class="row">
-        <div>
-          <label>Location
-            <input type="text" name="location" id="location" placeholder="Area / City" required />
-          </label>
-        </div>
+        <div><label>Location<input type="text" name="location" id="location" placeholder="Area / City" required /></label></div>
         <div>
           <label>Mobile
-            <input type="tel" name="mobile" id="mobile"
-                   inputmode="numeric" pattern="^\d{10}$" maxlength="10" minlength="10"
-                   placeholder="9812345678" required />
+            <input type="tel" name="mobile" id="mobile" inputmode="numeric" pattern="^\d{10}$" maxlength="10" placeholder="9812345678" required />
             <span class="small-note">(Will be added to WhatsApp for communication)</span>
           </label>
         </div>
       </div>
 
+      <div class="row">
+        <div>
+          <label>Have you previously attended our beach event?
+            <select name="attendedBefore" id="attendedBefore" required>
+              <option value="" selected disabled>-- Select an option --</option>
+              <option value="Yes">Yes</option>
+              <option value="No">No</option>
+            </select>
+          </label>
+        </div>
+      </div>
 
       <div class="row">
         <div>
@@ -146,8 +277,6 @@
             </select>
           </label>
         </div>
-
-
         <div id="feesWrap" class="hidden">
           <label>Fees Paid Status
             <select name="feesPaid" id="feesPaid">
@@ -158,7 +287,6 @@
           </label>
         </div>
       </div>
-
 
       <div class="row">
         <div id="centreWrap" class="hidden">
@@ -172,121 +300,83 @@
             </select>
           </label>
         </div>
-
-
         <div>
           <label>Beach Event Date
             <select name="beachEventDate" id="beachEventDate" required>
-  <option value="" selected disabled>-- Select Date & Time --</option>
 
-  <option data-event-date="2025-12-13">
-    13th December, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)
-  </option>
+              <option value="" selected disabled>-- Select Date & Time --</option>
 
-  <option data-event-date="2025-12-14">
-    14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)
-  </option>
+              <option data-event-date="2025-12-13">
+                13th December, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)
+              </option>
 
-<option data-event-date="2025-12-20" data-sold-out="true">
-  20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — SOLD OUT
-</option>
+              <option data-event-date="2025-12-14">
+                14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)
+              </option>
 
-  <option data-event-date="2025-12-21">
-    21st December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Girgaon)
-  </option>
-</select>
+              <option data-event-date="2025-12-20" data-sold-out="true">
+                20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — SOLD OUT
+              </option>
 
+              <option data-event-date="2025-12-21">
+                21st December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Girgaon)
+              </option>
+
+              <option data-event-date="2026-01-03" data-sold-out="true">
+                03rd January, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — To Be Announced
+              </option>
+
+            </select>
             <span class="small-note">(Please check Day-Date / Time / Venue &amp; Age Group)</span>
           </label>
         </div>
       </div>
 
-
-      <!-- Hidden backend fields -->
       <input type="hidden" name="paymentNeeded" id="paymentNeeded" value="Pending" />
       <input type="hidden" name="paid" value="No" />
       <input type="hidden" name="transactionRef" id="transactionRefHidden" value="" />
 
-
-      <!-- Summary / Payment / Comms (hidden until Status chosen) -->
       <div id="summaryWrap" class="summary hidden">
-        <strong>Payment Needed:</strong> <span id="paymentText">—</span>
-        <div class="muted rich" id="personalMsg" style="margin-top:6px;"></div>
+        <strong style="color: var(--jc-green); font-size:1.05rem;">Payment Needed:</strong> <span id="paymentText" style="font-weight:bold;">—</span>
+        <div class="muted rich" id="personalMsg"></div>
 
-
-        <!-- Payment section (shown only when payment is needed) -->
         <div id="paySection" class="hidden" style="margin-top:12px;">
-          <div class="muted" style="margin-bottom:8px;">
-            Please press the <strong>Pay</strong> button to pay via your UPI app,
-            or scan the <strong>QR code</strong> to pay.
+          <div style="font-size:0.9rem; margin-bottom:12px; color:#555;">
+            Please press the <strong>Pay</strong> button or scan the <strong>QR code</strong>.
           </div>
+          
           <div class="pay-wrap">
-
-
-            <!-- LEFT: Pay buttons -->
             <div class="pay-col">
-              <!-- Google Pay specific FIRST -->
-              <a id="gpayButton" class="button-style secondary"
-                 href="#"
-                 style="background:#0F9D58; margin-bottom:8px;"
-                 target="_blank" rel="noopener">
-                Pay ₹400 with Google Pay
-              </a>
-              <span class="small-note">
-                Pay via <strong>GPay app</strong> with the button above.
-              </span>
+              <a id="gpayButton" class="button-style" href="#" style="background:#0F9D58; color:white; margin:0 0 8px 0;" target="_blank">Pay ₹400 with Google Pay</a>
+              <span class="small-note">Pay via <strong>GPay app</strong> with the button above.</span>
 
-
-              <!-- Generic UPI SECOND -->
-              <a id="upiButton" class="button-style secondary"
-                 href="#"
-                 style="margin-top:14px;"
-                 target="_blank" rel="noopener">
-                Pay ₹400 via UPI (any app)
-              </a>
-              <span class="small-note">
-                Pay via <strong>other UPI apps</strong> with the button above.
-              </span>
+              <a id="upiButton" class="button-style secondary" href="#" style="margin-top:16px; background:var(--jc-red);" target="_blank">Pay ₹400 via UPI (any app)</a>
+              <span class="small-note">Pay via <strong>other UPI apps</strong> with the button above.</span>
             </div>
-
-
-            <!-- RIGHT: QR -->
             <div class="qr-box">
-              <div style="font-weight:600;margin-bottom:6px;">Jungle Cubs Gym UPI QR for ₹400</div>
-              <img id="qrImg" src="" alt="UPI QR" style="width:260px;height:260px;object-fit:contain" />
-              <div class="hint">Scan to pay ₹400 to Jungle Cubs Gym</div>
+              <div style="font-weight:700; margin-bottom:8px; color:var(--jc-green);">Jungle Cubs Gym UPI QR</div>
+              <img id="qrImg" src="" alt="UPI QR" style="width:200px; height:200px; object-fit:contain;" />
+              <div class="hint">Scan to pay ₹400</div>
             </div>
-          </div>
-
-
-          <!-- Transaction reference below payment options -->
-          <div id="txnWrap" style="margin-top:12px;">
-            <label>Kindly input your UPI Payment Reference Number (Required after payment)
-              <input type="text" id="txnRef" placeholder="e.g. UPI Ref / UTR" />
-              <span class="small-note">
-                You can also send a payment screenshot on WhatsApp. If sending a screenshot,
-                you may write "Photo sent / screenshot sent" in the box above.
-              </span>
+          </div> <div id="paymentConfirmBlock" class="payment-confirm">
+            <label class="payment-confirm-label">
+              <input type="checkbox" id="paymentConfirmed" name="paymentConfirmed">
+              <span>I have made the payment and I will send a screenshot of the payment on WhatsApp.</span>
             </label>
           </div>
-        </div>
-      </div>
 
-
-      <button id="registerSendBtn" class="button-style primary" type="button" disabled>
+        </div> </div> <button id="registerSendBtn" class="button-style primary" type="button" disabled>
         Register &amp; Send WhatsApp
       </button>
     </form>
-  </div>
+  </div> <script>
+document.addEventListener("DOMContentLoaded", function () {
 
-
-  <script>
     // ----- CONFIG -----
-    const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbzH8wt2CymozYbRRWTGW6gsPqwByL_uUNOcd-fRjeGLWkH9gGlj0hLbHgDN7Zz4WNSOYw/exec";
+    const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbz0LAoulgRotpvi7RbRPluwZh2L3FoR1ilI3f2f27t-ZRVgz8mN8fYFujlylIIDMgbr/exec";
     const BUSINESS_UPI    = "aparna.jcg@oksbi";
     const BUSINESS_NAME   = "Aparna Jungle Cubs Gym";
     const WHATSAPP_TARGET = "919082786189";
-
 
     // ----- ELEMENTS -----
     const form          = document.getElementById("beachForm");
@@ -295,6 +385,7 @@
     const dobEl         = document.getElementById("childDOB");
     const ageEl         = document.getElementById("childAge");
     const mobileEl      = document.getElementById("mobile");
+    const attendedBeforeEl = document.getElementById("attendedBefore");
     const statusEl      = document.getElementById("status");
     const feesWrap      = document.getElementById("feesWrap");
     const feesEl        = document.getElementById("feesPaid");
@@ -309,19 +400,22 @@
     const upiButton     = document.getElementById("upiButton");
     const gpayButton    = document.getElementById("gpayButton");
     const qrImg         = document.getElementById("qrImg");
-    const txnRefEl      = document.getElementById("txnRef");
     const txnRefHidden  = document.getElementById("transactionRefHidden");
     const registerBtn   = document.getElementById("registerSendBtn");
+    const paymentConfirmedEl = document.getElementById("paymentConfirmed");
+    const paymentConfirmBlock = document.getElementById("paymentConfirmBlock");
 
+    registerBtn.disabled = true;
+
+    if (paymentConfirmedEl) {
+      paymentConfirmedEl.addEventListener("change", updateUI);
+    }
 
     // ----- HELPERS -----
-    // Mobile: enforce exactly 10 digits
     mobileEl.addEventListener('input', () => {
       mobileEl.value = mobileEl.value.replace(/\D/g,'').slice(0,10);
     });
 
-
-    // Age: years & months
     dobEl.addEventListener("change", () => {
       if (!dobEl.value) { ageEl.value = ""; return; }
       const dob = new Date(dobEl.value), today = new Date();
@@ -332,7 +426,6 @@
       if (years < 0) { years = 0; months = 0; }
       ageEl.value = `${years} years ${months} months`;
     });
-
 
     function computePaymentNeeded(status, feesPaid) {
       const s = (status || "").toLowerCase();
@@ -347,17 +440,14 @@
       return 'Pending';
     }
 
-
     function buildUpiLink(amount, parent, child) {
       const tn = `Beach Event fee for ${child || 'child'} - ${parent || 'parent'}`;
       return `upi://pay?pa=${encodeURIComponent(BUSINESS_UPI)}&pn=${encodeURIComponent(BUSINESS_NAME)}&am=${encodeURIComponent(amount)}&cu=INR&tn=${encodeURIComponent(tn)}`;
     }
 
-
     function buildQrUrl(upiLink) {
       return `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
     }
-
 
     function splitEventLines(eventStr) {
       const clean = (eventStr || '').trim();
@@ -370,20 +460,17 @@
       };
     }
 
-
-    // WhatsApp text with bold names, nice formatting, footer
+    // WhatsApp text with bold names, nice formatting, footer (RESTORED)
     function buildWhatsappText(parent, child, status, need, eventStr, feesPaid, txnRef) {
       const parentClean = (parent || '-').trim();
       const childClean  = (child  || '-').trim();
-
+      const attendedBefore = attendedBeforeEl.value || "";
 
       const parentB = `*${parentClean}*`;
       const childB  = `*${childClean}*`;
 
-
       let statusLabel = status || '';
       const st = (status || '').toLowerCase();
-
 
       if (st === 'in-house parent') {
         if (need === 'No')
@@ -394,15 +481,15 @@
         statusLabel = 'Outsider (Not Jungle Cubs Gym Parent)';
       }
 
-
       const { dateLine, timeLine, ageLine } = splitEventLines(eventStr);
-
 
       const lines = [];
       lines.push('🏖️ *Jungle Cubs Beach Event Registration*');
       lines.push('');
       lines.push(`👨‍👩‍👧 Parent: ${parentB}`);
       lines.push(`🧒 Child: ${childB}`);
+      lines.push(`👣 Attended Beach Event Before: *${attendedBefore}*`);
+
       if (st === 'outsider') {
         lines.push(`🌱 Status: ${statusLabel}`);
       } else {
@@ -432,13 +519,11 @@
         lines.push('');
         lines.push(`✨ Thank you for the payment of ₹400, ${parentB}, — enjoy your beach event with ${childB}.`);
 
-
         if (st === 'outsider') {
           lines.push('');
           lines.push('We hope to see you soon at Jungle Cubs Gym!');
         }
       }
-
 
       lines.push('');
       lines.push('———');
@@ -448,15 +533,12 @@
       lines.push('Visit us at:');
       lines.push('https://junglecubsgyms.com');
 
-
       return lines.join('\n');
     }
-
 
     function updatePersonalLine(need) {
       const parent = parentNameEl.value || "Parent";
       const child  = childNameEl.value || "your child";
-
 
       if (need === "Yes") {
         personalMsg.innerHTML = `
@@ -471,11 +553,12 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
       }
     }
 
-
     function updateUI() {
+      registerBtn.style.display = "block";
+      registerBtn.disabled = true;
+
       const statusVal = (statusEl.value || "");
       const inHouse   = statusVal === "In-house Parent";
-
 
       // Show/hide in-house extras
       const showInHouseExtras = inHouse;
@@ -485,72 +568,65 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
       centreEl.required= showInHouseExtras;
       if (!inHouse) { feesEl.value = ""; centreEl.value = ""; }
 
-
       // Determine need: Yes / No / Pending
       const need = computePaymentNeeded(statusVal, feesEl.value);
       paymentNeededHidden.value = need;
 
-
       if (!statusVal) {
         summaryWrap.classList.add("hidden");
         paySection.classList.add("hidden");
+        paymentConfirmBlock.style.display = "none";
         paymentText.textContent = "—";
         personalMsg.textContent = "";
         registerBtn.disabled = true;
-        return;
+      } else {
+        // ALWAYS show summary once status is selected
+        summaryWrap.classList.remove("hidden");
       }
 
-
-      summaryWrap.classList.remove("hidden");
       paymentText.textContent = (need === "Yes") ? "Yes (₹400)" : (need === "No" ? "No" : "—");
       updatePersonalLine(need);
 
-
       if (need === "Yes" && BUSINESS_UPI && BUSINESS_UPI.includes("@")) {
+        paymentConfirmBlock.style.display = "block";
         const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
-
 
         // Store UPI for handlers
         upiButton.href = upi;
         upiButton.dataset.upi = upi;
         if (gpayButton) gpayButton.dataset.upi = upi;
 
-
         qrImg.src = buildQrUrl(upi);
         qrImg.alt = "UPI QR for ₹400";
         paySection.classList.remove("hidden");
-        txnRefEl.required = true;
       } else {
+        paymentConfirmBlock.style.display = "none";
+        if(paymentConfirmedEl) paymentConfirmedEl.checked = false;
         paySection.classList.add("hidden");
-        txnRefEl.required = false;
-        txnRefEl.value = "";
-        txnRefHidden.value = "";
-
 
         upiButton.removeAttribute("data-upi");
         upiButton.href = "#";
         if (gpayButton) gpayButton.removeAttribute("data-upi");
       }
 
+      // Sync hidden transaction ref with payment confirmation checkbox
+      if (paymentConfirmedEl && txnRefHidden) {
+        if (paymentConfirmedEl.checked) {
+          txnRefHidden.value = "Payment screenshot will be shared on WhatsApp";
+        } else {
+          txnRefHidden.value = "";
+        }
+      }
 
       const formValid = form.checkValidity();
-      const txnOk = (need === "Yes") ? !!txnRefEl.value.trim() : (need === "No");
-      registerBtn.disabled = !(formValid && (need === "No" || (need === "Yes" && txnOk)));
+      const paymentOk = (need === "Yes") ? paymentConfirmedEl.checked : true;
+      registerBtn.disabled = !(formValid && paymentOk);
     }
-
-
-    // Mirror txn ref to hidden field for backend save
-    txnRefEl.addEventListener('input', (e) => {
-      txnRefHidden.value = e.target.value.trim();
-      updateUI();
-    });
-
 
     // Re-evaluate on all inputs/selects
     ['change','input','blur'].forEach(evt => {
       document.querySelectorAll('input, select').forEach(el => el.addEventListener(evt, updateUI));
     });
-
 
     // Generic UPI button: use intent on Android, direct UPI on others
     if (upiButton) {
@@ -558,13 +634,10 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
         const upi = this.dataset.upi;
         if (!upi) return;
 
-
         e.preventDefault();
-
 
         const ua = navigator.userAgent || "";
         const isAndroid = /Android/i.test(ua);
-
 
         if (isAndroid) {
           const withoutScheme = upi.replace(/^upi:\/\//, "");
@@ -578,16 +651,13 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
       });
     }
 
-
     // Google Pay–specific button (proper params so GPay shows 400 & Jungle Cubs)
     if (gpayButton) {
       gpayButton.addEventListener("click", function (e) {
         e.preventDefault();
 
-
         const parent = parentNameEl.value || "parent";
         const child  = childNameEl.value || "child";
-
 
         const upiParams =
           "pa=" + encodeURIComponent(BUSINESS_UPI) +
@@ -595,11 +665,9 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
           "&am=400&cu=INR" +
           "&tn=" + encodeURIComponent("Beach Event fee for " + child);
 
-
         const ua = navigator.userAgent || "";
         const isAndroid = /Android/i.test(ua);
         const isIOS    = /iPhone|iPad|iPod/i.test(ua);
-
 
         if (isAndroid) {
           const intentUrl =
@@ -619,63 +687,60 @@ Hello <strong>${parent}</strong>, enjoy the beach event — you do not have to p
       });
     }
 
-
     // Main unified button: build WA text, open WA, then submit
     registerBtn.addEventListener('click', () => {
       const need = paymentNeededHidden.value;
       if (!form.checkValidity()) { form.reportValidity(); return; }
-      if (need === 'Yes' && !txnRefEl.value.trim()) { txnRefEl.reportValidity(); return; }
-
+      if (need === 'Yes' && !paymentConfirmedEl.checked) {
+        alert("Please confirm that you have completed the payment.");
+        return;
+      }
 
       const waText = buildWhatsappText(
         parentNameEl.value, childNameEl.value,
         statusEl.value, need, beachDateEl.value,
-        feesEl.value, txnRefEl.value.trim()
+        feesEl.value, txnRefHidden.value.trim()
       );
       const waUrl = `https://wa.me/${WHATSAPP_TARGET}?text=${encodeURIComponent(waText)}`;
-
 
       window.open(waUrl, '_blank', 'noopener');
       form.action = ENDPOINT_URL;
       form.submit();
     });
 
-    // Disable past beach event dates
-(function disablePastAndSoldOutDates() {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+    // Disable past beach event dates (RESTORED)
+    (function disablePastAndSoldOutDates() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-  const options = beachDateEl.querySelectorAll('option[data-event-date]');
+      const options = beachDateEl.querySelectorAll('option[data-event-date]');
 
-  options.forEach(opt => {
-    const eventDateStr = opt.getAttribute('data-event-date');
-    const isSoldOut = opt.getAttribute('data-sold-out') === 'true';
-    if (!eventDateStr) return;
+      options.forEach(opt => {
+        const eventDateStr = opt.getAttribute('data-event-date');
+        const isSoldOut = opt.getAttribute('data-sold-out') === 'true';
+        if (!eventDateStr) return;
 
-    const eventDate = new Date(eventDateStr);
+        const eventDate = new Date(eventDateStr);
 
-    // Disable past dates
-    if (eventDate < today) {
-      opt.disabled = true;
-      opt.style.color = '#999';
-    }
+        // Disable past dates
+        if (eventDate < today) {
+          opt.disabled = true;
+          opt.style.color = '#999';
+        }
 
-    // Disable sold-out dates
-    if (isSoldOut) {
-      opt.disabled = true;
-      opt.style.color = '#b00020';   // red tone
-      opt.style.fontWeight = '600';
-    }
-  });
-})();
+        // Disable sold-out dates
+        if (isSoldOut) {
+          opt.disabled = true;
+          opt.style.color = '#c72e31';   // Jungle Red
+          opt.style.fontWeight = '600';
+        }
+      });
+    })();
 
-
-    // Init
+    // Run once on page load to set correct initial UI state
     updateUI();
-    if (dobEl.value) dobEl.dispatchEvent(new Event('change'));
-  </script>
+
+ });
+</script>
 </body>
-
 </html>
-
-
