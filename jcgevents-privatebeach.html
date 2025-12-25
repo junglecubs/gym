@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jungle Cubs Private Beach Event</title>
+  <style>
+    /* --- JUNGLE CUBS BRAND COLORS --- */
+    :root {
+      --jc-yellow: #f9ca2b;
+      --jc-green:  #287844;
+      --bg-color:  #f4f8f5;
+    }
+
+    /* --- RESET & BASIC --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-color); 
+      line-height: 1.5; 
+      min-height: 100vh;
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      padding: 1rem;
+      color: #333;
+    }
+
+    /* --- CARD DESIGN --- */
+    .box {
+      background: #fff; 
+      padding: 2rem; 
+      border-radius: 16px;
+      box-shadow: 0 10px 30px -5px rgba(40, 120, 68, 0.15); 
+      max-width: 600px; 
+      width: 100%;
+      border-top: 6px solid var(--jc-yellow);
+    }
+    
+    /* --- TYPOGRAPHY --- */
+    h1 { 
+      color: var(--jc-green); 
+      font-size: 1.6rem; 
+      margin-bottom: 0.5rem; 
+      font-weight: 800; 
+      text-align: center; 
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+
+    label { 
+      font-weight: 700; 
+      color: #4a4a4a; 
+      display: block; 
+      margin-top: 1rem; 
+      font-size: 0.9rem;
+    }
+
+    /* --- INPUTS --- */
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    
+    input, select {
+      width: 100%; 
+      padding: 0.8rem; 
+      border: 1px solid #dcdfe3; 
+      border-radius: 8px; 
+      margin-top: 6px;
+      font-size: 1rem; 
+      background: #fff;
+    }
+    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--jc-green);
+      box-shadow: 0 0 0 3px rgba(40, 120, 68, 0.1);
+    }
+
+    input[readonly] { 
+      background: #f7f7f7; 
+      color: #777; 
+      cursor: not-allowed; 
+    }
+
+    /* --- BUTTONS --- */
+    .button-style {
+      display: block; 
+      width: 100%; 
+      padding: 1rem; 
+      margin: 24px 0 0;
+      font-weight: 800; 
+      font-size: 1.1rem; 
+      border: none; 
+      border-radius: 50px; 
+      cursor: pointer; 
+      background: var(--jc-green); 
+      color: var(--jc-yellow); 
+      transition: all 0.2s ease;
+    }
+
+    .button-style:hover:not(:disabled) { 
+      background: #1e6336; 
+      color: #fff; 
+    }
+    .button-style:disabled {
+      background: #ccc;
+      color: #eee;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) { 
+      .row { grid-template-columns: 1fr; } 
+      .box { padding: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="box">
+    <div style="text-align:center; margin-bottom: 20px;">
+      <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym" style="height:80px; width:auto;">
+    </div>
+
+    <h1>10th January Beach Event 🏖️</h1>
+    <p class="subtitle">Registration Form</p>
+
+     <div style="margin: 0 auto 24px; max-width: 640px; border: 4px solid var(--jc-yellow); border-radius: 14px; overflow: hidden;">
+      <div style="position: relative; width: 100%; padding-bottom: 56.25%;">
+        <iframe src="https://www.youtube.com/embed/en-luNR_Hrs?autoplay=1&mute=1&controls=0&loop=1&playlist=en-luNR_Hrs&playsinline=1&modestbranding=1&rel=0&showinfo=0" 
+                frameborder="0" allow="autoplay; encrypted-media" allowfullscreen 
+                style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe>
+      </div>
+    </div>
+    <p style="font-size: 0.95rem; color: #555; margin-top: -16px; margin-bottom: 20px; text-align: center; font-style: italic;">
+        A glimpse of our Jungle Cubs Beach Events 🌊
+    </p>
+
+
+    <form id="privateEventForm" method="post" action="">
+      
+      <div class="row">
+        <div><label>Parent Name<input type="text" name="parentName" id="parentName" required /></label></div>
+        <div><label>Child Name<input type="text" name="childName" id="childName" required /></label></div>
+      </div>
+
+      <div class="row">
+        <div><label>Child DOB<input type="date" name="childDOB" id="childDOB" required /></label></div>
+        <div><label>Child Age<input type="text" name="childAge" id="childAge" readonly placeholder="Auto-calculated" /></label></div>
+      </div>
+
+      <div class="row">
+        <div><label>Your Location<input type="text" name="location" id="location" placeholder="Area / City" required /></label></div>
+        <div>
+          <label>Mobile Number
+            <input type="tel" name="mobile" id="mobile" inputmode="numeric" pattern="^\d{10}$" maxlength="10" placeholder="9812345678" required />
+          </label>
+        </div>
+      </div>
+
+      <div>
+        <label>Event Date
+          <select name="beachEventDate" id="beachEventDate" readonly>
+            <option value="2026-01-10" selected>10th January 2026 (Saturday) - 5pm to 6pm (Juhu)</option>
+          </select>
+        </label>
+      </div>
+
+      <button id="submitBtn" class="button-style" type="submit">
+        Register &amp; Send WhatsApp
+      </button>
+ <p class="subtitle">WhatsApp will open. Please Send us the pre-filled message.</p>
+
+    </form>
+  </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // --- SETTINGS ---
+    // IMPORTANT: Replace this with your new Web App URL after deployment
+    const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbx2zh5Uzm11qiYg0YHS3PdkgT1g5DmdFR3HVQxvOkM66E0Yu1Y4mSwt-3LCtiZ8Up8kVA/exec"; 
+    const WHATSAPP_TARGET = "919082786189"; // Admin number
+
+    // --- ELEMENTS ---
+    const form       = document.getElementById("privateEventForm");
+    const dobEl      = document.getElementById("childDOB");
+    const ageEl      = document.getElementById("childAge");
+    const mobileEl   = document.getElementById("mobile");
+    const parentEl   = document.getElementById("parentName");
+    const childEl    = document.getElementById("childName");
+    const dateEl     = document.getElementById("beachEventDate");
+    const submitBtn  = document.getElementById("submitBtn");
+
+    // --- LOGIC: Mobile Formatting ---
+    mobileEl.addEventListener('input', () => {
+      mobileEl.value = mobileEl.value.replace(/\D/g,'').slice(0,10);
+    });
+
+    // --- LOGIC: Age Calculation ---
+    dobEl.addEventListener("change", () => {
+      if (!dobEl.value) { ageEl.value = ""; return; }
+      const dob = new Date(dobEl.value);
+      const today = new Date();
+      
+      let years = today.getFullYear() - dob.getFullYear();
+      let months = today.getMonth() - dob.getMonth();
+      
+      if (today.getDate() < dob.getDate()) {
+        months--;
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+      // Safety check
+      if (years < 0) { years = 0; months = 0; }
+      
+      ageEl.value = `${years} years ${months} months`;
+    });
+
+    // --- LOGIC: Form Submission ---
+    form.addEventListener('submit', function(e) {
+      e.preventDefault(); // Stop default until we handle WA
+      
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      // 1. Build WhatsApp Message
+      const parent = parentEl.value;
+      const child  = childEl.value;
+      const dateText = dateEl.options[dateEl.selectedIndex].text;
+
+      const text = 
+`🏖️*Jungle Cubs Gym Events*🏖️
+*10th January Beach Event* 🌊
+
+Hey ${parent}, thank you for registering!
+
+👨‍👩‍👧 *Parent:* ${parent}
+🧒 *Child:* ${child}
+📅 *Date:* ${dateText}
+
+Event time: Evening 5pm to 6pm. 
+Location: Juhu Beach (Near Novotel)
+
+We will send you more details as the event date approaches.
+
+Get ready for a high energy morning with ${child} at the beach!
+-----------------------------------
+To know more about us:
+https://instagram.com/junglecubsgym
+Visit our Website:
+https://junglecubsgyms.com/`;
+
+      const waUrl = `https://wa.me/${WHATSAPP_TARGET}?text=${encodeURIComponent(text)}`;
+
+      // 2. Open WhatsApp in new tab
+      window.open(waUrl, '_blank');
+
+      // 3. Submit Form to Google Script
+      form.action = ENDPOINT_URL;
+      submitBtn.textContent = "Registering...";
+      submitBtn.disabled = true;
+      form.submit();
+    });
+ });
+</script>
+</body>
+</html>
