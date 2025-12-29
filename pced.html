@@ -246,6 +246,50 @@ small {
   cursor: pointer;
 }
 
+/* ===== Interest Selection ===== */
+.interest-group {
+  margin-top: 16px;
+}
+
+.interest-label {
+  font-weight: 600;
+  color: var(--jc-green);
+  margin-bottom: 10px;
+  display: block;
+}
+
+.interest-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  border: 1.5px solid #e6e6e6;
+  border-radius: var(--radius);
+  cursor: pointer;
+
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.interest-option:hover {
+  background: #fdf8ec;
+  border-color: var(--jc-yellow);
+}
+
+.interest-option input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--jc-green);
+  cursor: pointer;
+}
+
+.interest-option span {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: #333;
+}
+
 
 </style>
 
@@ -305,9 +349,27 @@ small {
     <option>Pune, Kharadi</option>
     <option>Pune, Kothrud</option>
     <option>Thane – Indo Scots Global</option>
-    <option>Vashi, Navi Mumbai</option>    <option>Wadala, Mumbai</option>
+    <option>Vashi, Navi Mumbai</option>
+    <option>Wadala, Mumbai</option>
     <option>Worli, Mumbai</option>
   </select>
+
+<div class="interest-group">
+  <label class="interest-label">
+    Interested to take a Trial Class or want to enrol directly?
+  </label>
+
+  <label class="interest-option">
+    <input type="checkbox" name="interestType" value="Trial">
+    <span>Request for a Trial Class</span>
+  </label>
+
+  <label class="interest-option">
+    <input type="checkbox" name="interestType" value="Enroll">
+    <span>Request for enrolling in Program</span>
+  </label>
+</div>
+
 
 
   <label>Mobile *</label>
@@ -358,7 +420,7 @@ small {
 
 
 <script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwCSctMpjGdjYAVua6IgZLfgDqs-8U03F9pEHJPv8XkJToju6A_clc2vVdsMbB0GvSewA/exec'; // ← replace with real URL
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwJcrBbQNBCKQKNoBz532OsfOq5IRbq1kwpqvafI4B6p16uwa9fUbiAWbPhjWI6ytah_w/exec'; // ← replace with real URL
 
 
 const waLinks = {
@@ -380,7 +442,8 @@ const waLinks = {
   'Pune, Kharadi': 'https://wa.me/+918850931091',
   'Pune, Kothrud': 'https://wa.me/+918850931091',
   'Thane – Indo Scots Global': 'https://wa.me/+919136665247',
-  'Vashi, Navi Mumbai': 'https://wa.me/+919987717846',  'Wadala, Mumbai': 'https://wa.me/+919152890087',
+  'Vashi, Navi Mumbai': 'https://wa.me/+919987717846',
+  'Wadala, Mumbai': 'https://wa.me/+919152890087',
   'Worli, Mumbai': 'https://wa.me/+919987717913'
 };
 
@@ -414,19 +477,30 @@ document.getElementById('enquiryForm').addEventListener('submit', async e => {
   const fd = new FormData(e.target);
   const centre = fd.get('preferredCenter');
 
+// ✅ Collect Interest Type (Trial / Enroll / Both)
+const interestSelections = Array.from(
+  document.querySelectorAll('input[name="interestType"]:checked')
+).map(cb => cb.value);
 
-  const data = {
-    parentName: fd.get('parentName'),
-    childName: fd.get('childName'),
-    childDOB: fd.get('childDOB'),
-    childAge: document.getElementById('childAge').value,
-    location: fd.get('location'),
-    preferredCenter: centre,
-    mobile: fd.get('mobile'),
-    parentEmail: fd.get('parentEmail') || '',
-    source: fd.get('source') || '',
-    notes: fd.get('notes') || ''
-  };
+const interestType =
+  interestSelections.length > 0
+    ? interestSelections.join(', ')
+    : '';
+
+
+const data = {
+  parentName: fd.get('parentName'),
+  childName: fd.get('childName'),
+  childDOB: fd.get('childDOB'),
+  childAge: document.getElementById('childAge').value,
+  location: fd.get('location'),
+  preferredCenter: centre,
+  interestType: interestType, // ✅ NEW FIELD
+  mobile: fd.get('mobile'),
+  parentEmail: fd.get('parentEmail') || '',
+  source: fd.get('source') || '',
+  notes: fd.get('notes') || ''
+};
 
 
   const res = await fetch(SHEET_URL, { method: 'POST', body: JSON.stringify(data) });
@@ -448,6 +522,7 @@ leaf.style.animation = 'leafFloat 1.8s ease-out forwards';
     `Age: ${data.childAge}\n` +
     `Location: ${data.location}\n` +
     `Centre: ${centre}\n` +
+	`Interest: ${interestType || 'Not specified'}\n` +
     `Mobile: ${data.mobile}\n` +
     `Email: ${data.parentEmail || 'N/A'}\n\n` +
     `Notes:\n${data.notes || 'None'}`;
