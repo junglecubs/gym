@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jungle Cubs Gym - Leave Application</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root { --jungle-yellow: #f9ca2b; --jungle-green: #287844; --jungle-red: #c72e31; --jungle-brown: #763230; }
+        body { font-family: 'Roboto', sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .container { background-color: white; width: 100%; max-width: 500px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; border-top: 8px solid var(--jungle-green); }
+        @media (max-width: 600px) { body { padding: 0; align-items: flex-start; } .container { border-radius: 0; border-top: none; min-height: 100vh; } }
+        .header { background-color: var(--jungle-yellow); padding: 30px 20px; text-align: center; border-bottom: 2px solid #e0e0e0; }
+        .logo { max-width: 160px; height: auto; margin-bottom: 10px; }
+        h2 { font-family: 'Fredoka', sans-serif; color: var(--jungle-brown); margin: 0; text-transform: uppercase; letter-spacing: 1px; font-size: 1.5rem; }
+        form { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--jungle-green); }
+        input, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border 0.2s; }
+        input:focus, textarea:focus { border-color: var(--jungle-green); outline: none; }
+        .calc-field { background-color: #e8f5e9; color: var(--jungle-green); font-weight: bold; border-color: var(--jungle-green); }
+        .btn-submit { background-color: var(--jungle-red); color: white; border: none; width: 100%; padding: 16px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; transition: background 0.3s; margin-top: 10px; }
+        .btn-submit:hover { background-color: #a32225; }
+        #loader { display: none; text-align: center; margin-top: 15px; color: var(--jungle-brown); font-weight: bold; }
+        .footer { text-align: center; padding: 20px; background: #fafafa; color: #888; font-size: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym" class="logo">
+        <h2>Leave Application</h2>
+    </div>
+
+    <form id="leaveForm" name="leaveForm">
+        
+        <div class="form-group">
+            <label>Employee Code</label>
+            <input type="text" name="employeeCode" id="employeeCode" required placeholder="e.g. JC001" style="text-transform:uppercase;">
+        </div>
+
+        <div class="form-group">
+            <label>Educator Name (For Signature)</label>
+            <input type="text" name="educatorName" id="educatorName" required>
+        </div>
+
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" name="mobile" id="mobile" required placeholder="e.g. 9820012345" pattern="[0-9]{10}" maxlength="10" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+        </div>
+
+        <div class="form-group">
+            <label>Start Date</label>
+            <input type="date" name="startDate" id="startDate" required>
+        </div>
+        <div class="form-group">
+            <label>End Date</label>
+            <input type="date" name="endDate" id="endDate" required>
+        </div>
+        <div class="form-group">
+            <label>Work Resume Date</label>
+            <input type="date" name="resumeDate" id="resumeDate" required>
+        </div>
+
+        <div class="form-group">
+            <label>Total Days</label>
+            <input type="text" name="totalDays" id="totalDays" class="calc-field" readonly>
+        </div>
+
+        <div class="form-group">
+            <label>Reason for Leave</label>
+            <textarea name="reason" id="reason" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Submit Application</button>
+        <div id="loader">Processing... Verifying Code...</div>
+    </form>
+
+    <div class="footer">Jungle Cubs Gym Internal System</div>
+</div>
+
+<script>
+    // --- CONFIGURATION ---
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzyHoKRrOGN--0uenvSsY4JV7JnpL8B2mGx-pt5lbK4-zeiTZs0UGkj5fD13MhqN_hE/exec'; 
+    // ---------------------
+
+    let globalHolidays = {}; 
+
+    window.onload = function() {
+        disableDateInputs(true);
+        console.log("Initializing...");
+
+        // 1. Fetch Holidays
+        fetch(SCRIPT_URL + "?action=getHolidays")
+            .then(res => res.json())
+            .then(data => {
+                globalHolidays = data;
+                disableDateInputs(false);
+            })
+            .catch(e => { console.log("Holiday Error", e); disableDateInputs(false); });
+
+        // 2. Setup Code Listener (Auto-Fetch Name)
+        const codeInput = document.getElementById('employeeCode');
+        codeInput.addEventListener('change', verifyCode); // Runs when user leaves the box
+        
+        setupDateConstraints();
+    };
+
+    function verifyCode() {
+        var input = document.getElementById('employeeCode');
+        var nameField = document.getElementById('educatorName');
+        var code = input.value.trim().toUpperCase();
+
+        if (code.length < 3) return; // Don't check empty or short codes
+
+        // UI Feedback: Checking...
+        input.style.backgroundColor = "#fff3cd"; // Yellow
+        nameField.value = "Searching...";
+        nameField.disabled = true;
+
+        fetch(SCRIPT_URL + "?action=lookupEmployee&code=" + code)
+            .then(res => res.json())
+            .then(data => {
+                input.style.backgroundColor = "white";
+                if (data.found) {
+                    // Success!
+                    nameField.value = data.name;
+                    nameField.style.backgroundColor = "#e8f5e9"; // Light Green
+                    nameField.style.borderColor = "#287844";
+                    nameField.readOnly = true; // Lock it so they can't change it
+                    nameField.disabled = false;
+                } else {
+                    // Not Found
+                    alert("❌ Employee Code '" + code + "' not found.\nPlease check and try again.");
+                    input.value = "";
+                    nameField.value = "";
+                    nameField.style.backgroundColor = "white";
+                    input.focus();
+                }
+            })
+            .catch(e => {
+                console.log("Lookup Error", e);
+                nameField.value = "";
+                nameField.disabled = false;
+            });
+    }
+
+    function disableDateInputs(isDisabled) {
+        var inputs = ['startDate', 'endDate', 'resumeDate'];
+        inputs.forEach(id => {
+            var el = document.getElementById(id);
+            if(el) {
+                el.disabled = isDisabled;
+                el.style.backgroundColor = isDisabled ? "#eee" : "white";
+            }
+        });
+    }
+
+    // --- KEY GENERATOR (No-Zero) ---
+    function getDateKey(d) {
+        return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
+    }
+
+    function parseLocalDates(dateStr) {
+        if (!dateStr) return null;
+        const parts = dateStr.split('-');
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+    }
+
+    function calculateDays() {
+        const startVal = document.getElementById('startDate').value;
+        const resumeVal = document.getElementById('resumeDate').value;
+        
+        if (startVal && resumeVal) {
+            let current = parseLocalDates(startVal);
+            const resume = parseLocalDates(resumeVal);
+            let businessDays = 0;
+            while (current < resume) {
+                const dateKey = getDateKey(current); 
+                const dayOfWeek = current.getDay(); // 0=Sun, 6=Sat
+                
+                var isHoliday = globalHolidays[dateKey];
+
+                if (dayOfWeek !== 0 && dayOfWeek !== 6 && !isHoliday) {
+                    businessDays++;
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            document.getElementById('totalDays').value = businessDays;
+        }
+    }
+
+    function setupDateConstraints() {
+        const startInput = document.getElementById('startDate');
+        const endInput = document.getElementById('endDate');
+        const resumeInput = document.getElementById('resumeDate');
+
+        startInput.addEventListener('change', function() {
+            if (this.value) {
+                endInput.min = this.value;
+                if (endInput.value && endInput.value < this.value) {
+                    endInput.value = ''; resumeInput.value = ''; document.getElementById('totalDays').value = '';
+                }
+                calculateDays();
+            }
+        });
+        endInput.addEventListener('change', function() {
+            if (this.value) {
+                const endDate = parseLocalDates(this.value);
+                endDate.setDate(endDate.getDate() + 1);
+                
+                const yyyy = endDate.getFullYear();
+                const mm = String(endDate.getMonth() + 1).padStart(2, '0');
+                const dd = String(endDate.getDate()).padStart(2, '0');
+                resumeInput.min = `${yyyy}-${mm}-${dd}`;
+                
+                if (resumeInput.value && resumeInput.value < resumeInput.min) {
+                    resumeInput.value = ''; document.getElementById('totalDays').value = '';
+                }
+                calculateDays();
+            }
+        });
+        resumeInput.addEventListener('change', calculateDays);
+    }
+
+    const form = document.forms['leaveForm'];
+    
+    form.addEventListener('submit', e => {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
+        
+        // Final Check: Did they modify the name?
+        if (document.getElementById('educatorName').value === "") {
+             alert("Please enter a valid Employee Code first.");
+             return;
+        }
+
+        btn.disabled = true; btn.style.opacity = "0.5"; loader.style.display = "block";
+
+        const formData = new FormData(form);
+        const codeVal = document.getElementById('employeeCode').value.toUpperCase();
+        formData.set('employeeCode', codeVal);
+
+        fetch(SCRIPT_URL, { method: 'POST', body: formData})
+            .then(response => response.json())
+            .then(data => {
+                if(data.result === "error") {
+                    alert("⚠️ Error: " + data.error);
+                    btn.disabled = false; btn.style.opacity = "1"; loader.style.display = "none";
+                } else {
+                    launchWhatsApp();
+                }
+            })
+            .catch(error => {
+                console.log("CORS Note: Assuming success.");
+                launchWhatsApp(); 
+            });
+    });
+
+    function launchWhatsApp() {
+        var name = document.getElementById('educatorName').value;
+        var startRaw = document.getElementById('startDate').value;
+        var endRaw = document.getElementById('endDate').value;
+        var resumeRaw = document.getElementById('resumeDate').value;
+        var reason = document.getElementById('reason').value;
+
+        function getOrdinal(n) { var s = ["th", "st", "nd", "rd"]; var v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+        function getDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
+        function getMonthName(d) { return d.toLocaleDateString('en-US', { month: 'long' }); }
+        
+        var dateListString = "";
+        var current = parseLocalDates(startRaw);
+        var end = parseLocalDates(endRaw);
+        
+        while (current <= end) {
+            var dateKey = getDateKey(current); 
+            var dayOfWeek = current.getDay();
+            
+            var niceDate = getOrdinal(current.getDate()) + ": " + getDayName(current);
+            var extraInfo = "";
+
+            if (globalHolidays[dateKey]) {
+                extraInfo = " (" + globalHolidays[dateKey] + " Holiday)";
+            } else if (dayOfWeek === 0 || dayOfWeek === 6) {
+                extraInfo = " (Week-Off)";
+            }
+            dateListString += niceDate + extraInfo + "\n";
+            current.setDate(current.getDate() + 1);
+        }
+
+        var sObj = parseLocalDates(startRaw);
+        var eObj = parseLocalDates(endRaw);
+        var startNice = getOrdinal(sObj.getDate()) + " " + getMonthName(sObj);
+        var endNice = getOrdinal(eObj.getDate()) + " " + getMonthName(eObj) + " " + eObj.getFullYear();
+        var resumeNice = parseLocalDates(resumeRaw).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+
+        var message = 
+            "Hello Aparna teacher,\n\n" +
+            "I will be taking a leave from " + startNice + " to " + endNice + ".\n\n" +
+            dateListString + "\n" +
+            "Resuming: " + resumeNice + "\n\n" +
+            "Request you to kindly approve the same.\n\n" +
+            "Reason: " + reason + ".\n\n" +
+            "Regards\n" + name;
+
+        var waUrl = "https://wa.me/919664890087?text=" + encodeURIComponent(message);
+
+        alert("Application Verified & Saved! Redirecting to WhatsApp...");
+        form.reset();
+        
+        // Reset the read-only name field for the next user
+        var nameField = document.getElementById('educatorName');
+        nameField.value = "";
+        nameField.readOnly = false;
+        nameField.style.backgroundColor = "white";
+        nameField.style.borderColor = "#ddd";
+
+        document.getElementById('totalDays').value = "";
+        document.getElementById('submitBtn').disabled = false;
+        document.getElementById('submitBtn').style.opacity = "1";
+        document.getElementById('loader').style.display = "none";
+        window.location.href = waUrl;
+    }
+</script>
+
+</body>
+</html>

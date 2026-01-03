@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jungle Cubs Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* --- THEME COLORS --- */
+    :root { 
+      --bg: #f4f6f8; --sidebar: #ffffff; --active: #e8f5e9; 
+      --green: #287844; --text: #333; --border: #e0e0e0; --red: #c72e31; --orange: #f39c12;
+    }
+    body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
+    
+    /* --- LAYOUT --- */
+    .sidebar { width: 250px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; }
+    .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+    
+    /* --- SIDEBAR --- */
+    .brand { font-size: 18px; font-weight: bold; color: var(--green); margin-bottom: 40px; display: flex; align-items: center; gap: 10px; }
+    .nav-item { padding: 12px 15px; margin-bottom: 5px; cursor: pointer; border-radius: 8px; font-weight: 500; color: #555; transition: 0.2s; }
+    .nav-item:hover { background-color: #f5f5f5; }
+    .nav-item.active { background-color: var(--active); color: var(--green); font-weight: bold; }
+    
+    /* --- VIEWS --- */
+    .view-section { display: none; } 
+    .view-section.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
+
+    h2 { margin-top: 0; color: #2c3e50; border-bottom: 2px solid var(--green); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; }
+
+    /* --- CARDS & TABLES --- */
+    .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid var(--green); }
+    .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 15px 0; }
+    .stat-box { background: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; }
+    .stat-label { display: block; font-size: 11px; color: #666; text-transform: uppercase; }
+    .stat-value { font-weight: bold; font-size: 16px; color: #333; }
+    .stat-value.apply { color: var(--orange); }
+    
+    .btn-approve, .btn-reject { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1; margin: 5px; color: white; transition: 0.2s; }
+    .btn-approve { background: var(--green); }
+    .btn-reject { background: var(--red); }
+    .btn-approve:hover { opacity: 0.9; }
+
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    th { background: #eee; text-align: left; padding: 15px; font-size: 12px; text-transform: uppercase; color: #666; }
+    td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+    .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+    .status-Approved { background: #e8f5e9; color: var(--green); }
+    .status-Rejected { background: #fdecea; color: var(--red); }
+    .status-Pending { background: #fff3cd; color: var(--orange); }
+
+    /* --- ATTENDANCE VIEW --- */
+    .att-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .att-col { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .att-col h3 { margin-top: 0; color: #555; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    
+    .att-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f0f0f0; }
+    .att-card:last-child { border-bottom: none; }
+    .att-info { display: flex; flex-direction: column; }
+    .att-name { font-weight: bold; color: #333; }
+    .att-loc { font-size: 12px; color: #777; }
+    .att-status { font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; }
+    .att-in { background: #e8f5e9; color: var(--green); }
+    .att-out { background: #eee; color: #666; }
+    .att-fail { background: #fdecea; color: var(--red); }
+
+    /* --- TEAM STATS --- */
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+    .member-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); text-align: center; }
+    .member-avatar { width: 50px; height: 50px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 10px; }
+    .progress-bar { background: #eee; height: 8px; border-radius: 4px; margin: 15px 0; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 4px; }
+    .limit-text { font-size: 12px; color: #777; }
+
+    /* --- CALENDAR --- */
+    .cal-header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 8px 8px 0 0; border-bottom: 1px solid #eee; }
+    .cal-btn { background: none; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .cal-day-name { text-align: center; font-weight: bold; color: #888; padding: 10px; background: #f9f9f9; font-size: 12px; text-transform: uppercase; }
+    .cal-cell { min-height: 100px; border: 1px solid #f0f0f0; padding: 5px; position: relative; }
+    .cal-date-num { font-size: 12px; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; width: 25px; height: 25px; line-height: 25px; text-align: center; border-radius: 50%; }
+    .cal-date-num.today { background: var(--green); color: white; }
+    .cal-event { font-size: 10px; background: #e8f5e9; color: var(--green); padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--green); }
+    .cal-holiday { background: #fdecea; color: var(--red); border-left: 2px solid var(--red); }
+    .today-status-box { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+    /* --- LOGIN --- */
+    #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--green); display: flex; justify-content: center; align-items: center; z-index: 999; }
+    .login-box { background: white; padding: 30px; border-radius: 10px; text-align: center; width: 300px; }
+    #pinInput { width: 100%; padding: 10px; font-size: 18px; text-align: center; margin-bottom: 15px; }
+
+  </style>
+</head>
+<body>
+
+  <div id="login-screen">
+    <div class="login-box">
+      <h3 style="color:var(--green)">Admin Access</h3>
+      <input type="password" id="pinInput" placeholder="Enter PIN">
+      <button onclick="checkPin()" class="btn-approve" style="width:100%">Login</button>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="brand">🦁 Jungle Cubs HR</div>
+<button onclick="fetchData()" style="width:100%; margin-bottom:15px; padding:8px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer;">🔄 Refresh Data</button>
+    <div class="nav-item active" onclick="switchTab('pending')">🔔 Pending Approvals</div>
+    <div class="nav-item" onclick="switchTab('attendance')">📍 Live Attendance</div>
+    <div class="nav-item" onclick="switchTab('calendar')">📅 Calendar</div>
+    <div class="nav-item" onclick="switchTab('history')">📜 Leave History</div>
+    <div class="nav-item" onclick="switchTab('team')">👥 Team Stats</div>
+    <div id="loading-indicator" style="margin-top:auto; font-size:12px; color:#999; display:none;">Syncing...</div>
+  </div>
+
+  <div class="main-content">
+    
+    <div id="view-pending" class="view-section active">
+      <h2>Pending Actions</h2>
+      <div id="pending-container">Loading...</div>
+    </div>
+
+    <div id="view-attendance" class="view-section">
+     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+            <h2>Live Attendance (Today)</h2>
+            <button onclick="forceOutAll()" style="background:#c72e31; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:12px; cursor:pointer; display:flex; align-items:center; gap:5px;">
+                ⚠️ Force Close All
+            </button>
+        </div>
+      <div class="att-split">
+        <div class="att-col">
+          <h3>☀️ Morning (Head Office)</h3>
+          <div id="att-morning"><p style="color:#999;">No check-ins yet.</p></div>
+        </div>
+        <div class="att-col">
+          <h3>🌙 Evening (Centres)</h3>
+          <div id="att-evening"><p style="color:#999;">No check-ins yet.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-calendar" class="view-section">
+      <h2>Leave Calendar</h2>
+      <div class="today-status-box"><strong>📅 Status Today:</strong> <span id="today-status-text">Checking...</span></div>
+      <div class="cal-header">
+        <button class="cal-btn" onclick="changeMonth(-1)">◀ Prev</button>
+        <strong id="cal-month-year" style="font-size:16px;">January 2026</strong>
+        <button class="cal-btn" onclick="changeMonth(1)">Next ▶</button>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+    </div>
+
+    <div id="view-history" class="view-section">
+      <h2>Leave History</h2>
+      <input type="text" id="searchBox" onkeyup="filterHistory()" placeholder="Search name, status..." style="padding:10px; width:100%; box-sizing:border-box; margin-bottom:15px; border:1px solid #ddd; border-radius:5px;">
+      <table>
+        <thead><tr><th>Date</th><th>Employee</th><th>Leave Dates</th><th>Days</th><th>Reason</th><th>Status</th></tr></thead>
+        <tbody id="history-body"></tbody>
+      </table>
+    </div>
+
+    <div id="view-team" class="view-section">
+      <h2>Employee Statistics</h2>
+      <div class="team-grid" id="team-grid"></div>
+    </div>
+
+  </div>
+
+<script>
+    // --- CONFIGURATION ---
+    // ⚠️ PASTE YOUR GOOGLE WEB APP URL HERE
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzyHoKRrOGN--0uenvSsY4JV7JnpL8B2mGx-pt5lbK4-zeiTZs0UGkj5fD13MhqN_hE/exec'; 
+    const CORRECT_PIN = "1234"; 
+    // ---------------------
+
+    let dashboardData = {}; 
+    let globalHolidays = {}; 
+    let currentCalDate = new Date();
+
+    function checkPin() {
+      if(document.getElementById('pinInput').value === CORRECT_PIN) {
+        document.getElementById('login-screen').style.display = 'none';
+        initDashboard();
+      } else { alert("Wrong PIN"); }
+    }
+
+    function initDashboard() {
+      document.getElementById('loading-indicator').style.display = 'block';
+      
+      // 1. Fetch Holidays via API
+      fetch(SCRIPT_URL + "?action=getHolidays")
+        .then(res => res.json())
+        .then(data => {
+             globalHolidays = data;
+             fetchData();
+        })
+        .catch(e => {
+            console.error("Holiday Fetch Error:", e);
+            // Fallback: Continue loading even if holidays fail
+            fetchData();
+        });
+    }
+
+    function fetchData() {
+      // 2. Fetch Dashboard Data via API
+      fetch(SCRIPT_URL + "?action=getDashboardData")
+        .then(res => res.json())
+        .then(data => {
+            dashboardData = data;
+            
+            // Call ALL Render Functions
+            renderPending();
+            renderAttendance();
+            renderHistory();
+            renderTeam();
+            renderCalendar();
+            updateTodayStatus();
+            
+            document.getElementById('loading-indicator').style.display = 'none';
+        })
+        .catch(e => {
+            alert("Error loading data. Check console for details.");
+            console.error("Dashboard Fetch Error:", e);
+            document.getElementById('loading-indicator').style.display = 'none';
+        });
+    }
+
+    // --- RENDER 1: PENDING ---
+    function renderPending() {
+      var container = document.getElementById('pending-container');
+      container.innerHTML = "";
+      if(!dashboardData.pending || dashboardData.pending.length === 0) { 
+          container.innerHTML = "<p>All caught up! No pending approvals.</p>"; return; 
+      }
+      
+      dashboardData.pending.forEach(leave => {
+        var used = leave.usedLeaves || 0;
+        var limit = leave.totalLimit || 0;
+        var total = used + leave.days;
+        var statusHtml = (limit > 0 && limit-total < 0) ? `<div style='color:var(--red); font-weight:bold; margin:10px 0;'>⚠️ OVER LIMIT by ${Math.abs(limit-total)}</div>` : `<div style='color:var(--green); font-weight:bold; margin:10px 0;'>✅ Within Limit</div>`;
+        var breakdownHtml = generateDayBreakdown(leave.start, leave.end);
+        
+        var card = document.createElement('div'); card.className = 'card';
+        card.innerHTML = `<h3>${leave.name} (${leave.code})</h3><div style="color:#666;">${leave.start} to ${leave.end}</div>
+           <div class="stats-grid"><div class="stat-box"><span class="stat-label">Used</span><div class="stat-value">${used}</div></div><div class="stat-box"><span class="stat-label">Applying</span><div class="stat-value apply">+${leave.days}</div></div><div class="stat-box"><span class="stat-label">Limit</span><div class="stat-value">${limit}</div></div></div>
+           ${statusHtml}${breakdownHtml}<p><strong>Reason:</strong> ${leave.reason}</p>
+           <div style="display:flex;"><button class="btn-approve" onclick="decide(${leave.rowIndex}, 'Approved')">Approve</button><button class="btn-reject" onclick="decide(${leave.rowIndex}, 'Rejected')">Reject</button></div>`;
+        container.appendChild(card);
+      });
+    }
+
+    // --- RENDER 2: ATTENDANCE (WITH TIMES) ---
+    // --- RENDER ATTENDANCE (WITH LATE BADGE) ---
+    // --- RENDER ATTENDANCE (With Force Out) ---
+    function renderAttendance() {
+        var rawLogs = dashboardData.attendance || [];
+        var morningDiv = document.getElementById('att-morning');
+        var eveningDiv = document.getElementById('att-evening');
+        
+        var grouped = {}; 
+        
+        rawLogs.forEach(log => {
+            var key = log.code + "_" + log.session;
+            if (!grouped[key]) {
+                grouped[key] = { 
+                    code: log.code, name: log.name, location: log.location, session: log.session,
+                    inTime: "--:--", outTime: "--:--", status: "Absent", statusClass: "att-out", late: false
+                };
+            }
+            if (log.action === "Check-In") {
+                grouped[key].inTime = log.timestamp; grouped[key].status = "Checked In"; grouped[key].statusClass = "att-in";
+                if(log.isLate) grouped[key].late = true;
+            } else if (log.action === "Check-Out") {
+                grouped[key].outTime = log.timestamp; grouped[key].status = "Checked Out"; grouped[key].statusClass = "att-out";
+            }
+        });
+
+        var mHtml = ""; var eHtml = "";
+        for (var key in grouped) {
+            var item = grouped[key];
+            var lateBadge = item.late ? `<span style="background:#c72e31; color:white; font-size:10px; padding:2px 6px; border-radius:4px; margin-left:5px;">LATE</span>` : "";
+            
+            // NEW: FORCE OUT BUTTON LOGIC
+            var actionBtn = "";
+            if(item.status === "Checked In") {
+                actionBtn = `<button onclick="forceOut('${item.code}', '${item.name}', '${item.session}')" style="background:#fdecea; border:1px solid #c72e31; color:#c72e31; border-radius:4px; cursor:pointer; font-size:10px; padding:2px 5px; margin-left:8px;">Force Out</button>`;
+            }
+
+            var timeBlock = `<div style="text-align:right; font-size:12px; line-height:1.4;"><div style="color:var(--green);">⬇️ ${item.inTime} ${lateBadge}</div><div style="color:var(--red);">⬆️ ${item.outTime}</div></div>`;
+            
+            var html = `
+            <div class="att-card">
+               <div class="att-info"><span class="att-name">${item.name}</span><span class="att-loc">📍 ${item.location}</span></div>
+               <div style="display:flex; align-items:center; gap:10px;">
+                 <div><span class="att-status ${item.statusClass}">${item.status}</span>${actionBtn}</div>
+                 ${timeBlock}
+               </div>
+            </div>`;
+            
+            if(item.session.includes("Morning")) mHtml += html; else eHtml += html;
+        }
+        morningDiv.innerHTML = mHtml || '<p style="color:#999; text-align:center;">No check-ins yet.</p>';
+        eveningDiv.innerHTML = eHtml || '<p style="color:#999; text-align:center;">No check-ins yet.</p>';
+    }
+
+    // --- NEW: FORCE OUT ACTION ---
+    function forceOut(code, name, session) {
+        if(!confirm("Are you sure you want to FORCE Check-Out for " + name + "?")) return;
+        
+        // Show temp loading state
+        document.getElementById('loading-indicator').style.display = 'block';
+        document.getElementById('loading-indicator').innerText = "Processing Force Out...";
+
+        var formData = new FormData();
+        formData.append('type', 'forceOut');
+        formData.append('code', code);
+        formData.append('name', name);
+        formData.append('session', session);
+
+        fetch(SCRIPT_URL, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === "success") {
+                    fetchData(); // Refresh immediately
+                } else {
+                    alert("Error: " + data.error);
+                }
+            })
+            .catch(e => alert("Network Error"));
+    }
+
+    // --- RENDER 3: HISTORY ---
+    function renderHistory() {
+      var tbody = document.getElementById('history-body'); tbody.innerHTML = "";
+      if(!dashboardData.history) return;
+      dashboardData.history.forEach(row => {
+        var tr = document.createElement('tr');
+        tr.innerHTML = `<td>${row.rowIndex}</td><td><strong>${row.name}</strong><br><span style="font-size:11px; color:#888;">${row.code}</span></td><td>${row.start} - ${row.end}</td><td>${row.days}</td><td>${row.reason}</td><td><span class="status-badge status-${row.status}">${row.status}</span></td>`;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- RENDER 4: TEAM ---
+    function renderTeam() {
+      var grid = document.getElementById('team-grid'); grid.innerHTML = "";
+      if(!dashboardData.employees) return;
+      dashboardData.employees.forEach(emp => {
+        var pct = emp.limit > 0 ? Math.min(100, (emp.used/emp.limit)*100) : 0;
+        var color = pct > 90 ? 'var(--red)' : 'var(--green)';
+        grid.innerHTML += `<div class="member-card"><div class="member-avatar">${emp.name.charAt(0)}</div><h3>${emp.name}</h3><div class="limit-text">${emp.code}</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:${color};"></div></div><div style="display:flex; justify-content:space-between; font-size:14px;"><span>Used: <strong>${emp.used}</strong></span><span>Limit: <strong>${emp.limit}</strong></span></div></div>`;
+      });
+    }
+
+    // --- RENDER 5: CALENDAR ---
+    function renderCalendar() {
+      const year = currentCalDate.getFullYear(); const month = currentCalDate.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('cal-month-year').innerText = monthNames[month] + " " + year;
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const grid = document.getElementById('cal-grid'); grid.innerHTML = "";
+      const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      days.forEach(d => { grid.innerHTML += `<div class="cal-day-name">${d}</div>`; });
+      for(let i=0; i<firstDay; i++) { grid.innerHTML += `<div class="cal-cell" style="background:#fafafa;"></div>`; }
+      
+      for(let d=1; d<=daysInMonth; d++) {
+        let isToday = (d === new Date().getDate() && month === new Date().getMonth() && year === new Date().getFullYear());
+        let dateKey = year + "-" + (month+1) + "-" + d;
+        let content = `<div class="${isToday ? 'cal-date-num today' : 'cal-date-num'}">${d}</div>`;
+        if(globalHolidays[dateKey]) content += `<div class="cal-event cal-holiday">★ ${globalHolidays[dateKey]}</div>`;
+        
+        let thisDateObj = new Date(year, month, d);
+        if(dashboardData.history) {
+            dashboardData.history.forEach(leave => {
+                if(leave.status === "Approved") {
+                    let start = parseDate(leave.start); let end = parseDate(leave.end);
+                    start.setHours(0,0,0,0); end.setHours(0,0,0,0); thisDateObj.setHours(0,0,0,0);
+                    if (thisDateObj >= start && thisDateObj <= end) content += `<div class="cal-event">${leave.name}</div>`;
+                }
+            });
+        }
+        grid.innerHTML += `<div class="cal-cell">${content}</div>`;
+      }
+    }
+
+    // --- UTILITIES ---
+    function generateDayBreakdown(startStr, endStr) {
+        var parts = startStr.split('/'); var current = new Date(parts[2], parts[1] - 1, parts[0]);
+        var eParts = endStr.split('/'); var end = new Date(eParts[2], eParts[1] - 1, eParts[0]);
+        var html = "<div style='background:#fafafa; padding:10px; font-size:13px; border:1px solid #eee;'>";
+        while (current <= end) {
+            var key = current.getFullYear() + "-" + (current.getMonth() + 1) + "-" + current.getDate();
+            var day = current.getDay(); var name = current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+            var style = ""; var note = "";
+            if (globalHolidays[key]) { style="color:var(--red); font-weight:bold;"; note = " (" + globalHolidays[key] + " Holiday)"; }
+            else if (day===0 || day===6) { style="color:#999;"; note = " (Week-Off)"; }
+            html += `<div style="${style}">${name}${note}</div>`;
+            current.setDate(current.getDate() + 1);
+        }
+        return html + "</div>";
+    }
+
+    function decide(rowIndex, decision) {
+      if(!confirm("Confirm " + decision + "?")) return;
+      var leave = dashboardData.pending.find(r => r.rowIndex === rowIndex);
+      
+      var formData = new FormData();
+      formData.append('type', 'decision');
+      formData.append('rowIndex', rowIndex);
+      formData.append('decision', decision);
+      formData.append('name', leave.name);
+      formData.append('email', leave.email);
+      formData.append('dates', leave.start + " to " + leave.end);
+      formData.append('mobile', leave.mobile);
+
+      fetch(SCRIPT_URL, { method: 'POST', body: formData })
+        .then(res => res.json())
+        .then(data => {
+            if(data.result === "success") { alert("Success!"); fetchData(); }
+            else { alert("Error: " + data.error); }
+        })
+        .catch(e => alert("Network Error"));
+    }
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.getElementById('view-' + tabName).classList.add('active');
+    }
+
+    function changeMonth(dir) { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendar(); }
+    
+    function updateTodayStatus() {
+        let today = new Date(); today.setHours(0,0,0,0);
+        let absent = [];
+        if(dashboardData.history) {
+            dashboardData.history.forEach(leave => {
+                if(leave.status === "Approved") {
+                    let s = parseDate(leave.start); let e = parseDate(leave.end); s.setHours(0,0,0,0); e.setHours(0,0,0,0);
+                    if (today >= s && today <= e) absent.push(leave.name);
+                }
+            });
+        }
+        let key = today.getFullYear() + "-" + (today.getMonth()+1) + "-" + today.getDate();
+        if(globalHolidays[key]) document.getElementById('today-status-text').innerHTML = `<span style="color:var(--red);">OFFICE CLOSED (${globalHolidays[key]})</span>`;
+        else if (absent.length > 0) document.getElementById('today-status-text').innerText = "On Leave: " + absent.join(", ");
+        else document.getElementById('today-status-text').innerText = "✅ Everyone available.";
+    }
+
+    function filterHistory() {
+      var input = document.getElementById('searchBox').value.toLowerCase();
+      var rows = document.getElementById('history-body').getElementsByTagName('tr');
+      for (var i = 0; i < rows.length; i++) {
+        var text = rows[i].textContent.toLowerCase();
+        rows[i].style.display = text.includes(input) ? "" : "none";
+      }
+    }
+
+    function parseDate(dateStr) { var parts = dateStr.split('/'); return new Date(parts[2], parts[1]-1, parts[0]); }
+
+	function forceOutAll() {
+        if(!confirm("⚠️ ARE YOU SURE?\n\nThis will instantly Check-Out EVERYONE who is currently active.\nUse this only at the end of the day.")) return;
+
+        // Show Loading
+        var btn = document.querySelector("button[onclick='forceOutAll()']");
+        var originalText = btn.innerHTML;
+        btn.innerHTML = "Processing...";
+        btn.disabled = true;
+        btn.style.opacity = "0.7";
+
+        var formData = new FormData();
+        formData.append('type', 'forceOutAll');
+
+        fetch(SCRIPT_URL, { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                if(data.result === "success") {
+                    alert("✅ Success! " + data.count + " sessions were closed.");
+                    fetchData(); // Refresh list
+                } else {
+                    alert("Error: " + data.error);
+                }
+                // Reset Button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                btn.style.opacity = "1";
+            })
+            .catch(e => {
+                alert("Network Error");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+    }
+
+</script>
+
+</body>
+</html>
