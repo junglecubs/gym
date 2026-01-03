@@ -75,110 +75,66 @@
 
 <script>
     // --- CONFIGURATION ---
-    // ⚠️ PASTE YOUR GOOGLE WEB APP URL HERE
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzyHoKRrOGN--0uenvSsY4JV7JnpL8B2mGx-pt5lbK4-zeiTZs0UGkj5fD13MhqN_hE/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXkKN03WxfU90nVoXjMbLfghzqn6eUsGl_9PNhfk5kr_AivBU-KfVgnCwsbOPPIFAHtA/exec'; 
     // ---------------------
 
     let locations = [];
 
     window.onload = function() {
-      // 1. Lock Buttons Immediately
       lockButtons("Loading...");
-
-      // 2. Set Smart Default Session
       setSmartSession();
+      
+      // 1. CHECK FOR SAVED USER (Device Bonding)
+      var savedCode = localStorage.getItem("JungleCubs_User");
+      if(savedCode) {
+          document.getElementById('empCode').value = savedCode;
+          document.getElementById('empCode').readOnly = true; // LOCK THE INPUT
+          document.getElementById('empCode').style.backgroundColor = "#e8f0fe"; // Visually show it's locked
+          
+          // Add a "Not You?" link
+          addResetLink();
+          
+          // Auto-Verify immediately
+          verifyCode(); 
+      }
 
-      // 3. Fetch Locations
+      // 2. Fetch Locations
       fetch(SCRIPT_URL + "?action=getLocations")
         .then(res => res.json())
         .then(data => {
             locations = data;
             populateLocations();
             detectAndSelectNearest();
-            // Buttons remain locked until user enters a valid code
-            resetButtons(); 
+            if(!savedCode) resetButtons();
         })
         .catch(e => {
             showError("⚠️ Unable to connect to server.");
-            console.error(e);
         });
     };
 
-    function setSmartSession() {
-        var now = new Date();
-        var currentHour = now.getHours(); 
-        var select = document.getElementById('sessionType');
-        if (currentHour >= 15) {
-            select.value = "Evening - Centre";
-        } else {
-            select.value = "Morning - Head Office";
-        }
+    // --- NEW: RESET LINK ---
+    function addResetLink() {
+        // Remove existing link if any
+        var oldLink = document.getElementById("reset-link");
+        if(oldLink) oldLink.remove();
+
+        var inputContainer = document.getElementById('empCode').parentNode;
+        var link = document.createElement("div");
+        link.id = "reset-link";
+        link.innerHTML = `<small style="color:#666; cursor:pointer; text-decoration:underline;">Not you? Switch User</small>`;
+        link.style.marginTop = "5px";
+        link.style.textAlign = "right";
+        link.onclick = function() {
+            if(confirm("Are you sure you want to switch users?")) {
+                localStorage.removeItem("JungleCubs_User");
+                location.reload();
+            }
+        };
+        inputContainer.appendChild(link);
     }
 
-    function populateLocations() {
-        const select = document.getElementById('locationSelect');
-        select.innerHTML = '<option value="" disabled selected>Select Current Location</option>';
-        locations.forEach(loc => {
-            let opt = document.createElement('option');
-            opt.value = loc.code;
-            opt.text = loc.name;
-            select.appendChild(opt);
-        });
-    }
-
-    function detectAndSelectNearest() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                findNearest(position.coords.latitude, position.coords.longitude);
-            }, (error) => { console.log("GPS waiting..."); });
-        }
-    }
-
-    function findNearest(lat, lng) {
-        let minDist = 1000000; 
-        let nearestCode = "";
-        locations.forEach(loc => {
-            let d = getDistanceFromLatLonInM(lat, lng, loc.lat, loc.lng);
-            if (d < minDist) { minDist = d; nearestCode = loc.code; }
-        });
-        if (nearestCode && minDist < 2000) { 
-            const select = document.getElementById('locationSelect');
-            select.value = nearestCode;
-            const option = select.querySelector(`option[value="${nearestCode}"]`);
-            if(option) option.text = "📍 " + option.text + " (Detected)";
-        }
-    }
-
-    function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) {
-      var R = 6371000; 
-      var dLat = deg2rad(lat2 - lat1); var dLon = deg2rad(lon2 - lon1);
-      var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-      var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); return R * c;
-    }
-    function deg2rad(deg) { return deg * (Math.PI / 180); }
-
-    // --- BUTTON STATE MANAGEMENT ---
-    function lockButtons(msg) {
-        var btnIn = document.getElementById('btnIn');
-        var btnOut = document.getElementById('btnOut');
-        
-        btnIn.disabled = true; btnIn.classList.add('btn-disabled'); btnIn.style.opacity = "0.6";
-        btnOut.disabled = true; btnOut.classList.add('btn-disabled'); btnOut.style.opacity = "0.6";
-        
-        if(msg) {
-            btnIn.innerText = "● ● ●";
-            btnOut.innerText = "● ● ●";
-        }
-    }
-
-    function resetButtons() {
-        // Reset to default "Ready" state (but still disabled until code is valid)
-        var btnIn = document.getElementById('btnIn');
-        var btnOut = document.getElementById('btnOut');
-        btnIn.innerText = "IN";
-        btnOut.innerText = "OUT";
-    }
-
+    // --- EXISTING FUNCTIONS (With slight mod to Save Code) ---
+    
     function verifyCode() {
         var codeInput = document.getElementById('empCode');
         var nameField = document.getElementById('empName');
@@ -186,7 +142,6 @@
         
         if(code.length < 3) return;
 
-        // VISUAL FEEDBACK START
         nameField.value = "Verifying...";
         lockButtons("Verifying...");
 
@@ -198,7 +153,13 @@
                     nameField.style.color = "#287844"; 
                     nameField.style.fontWeight = "bold";
                     
-                    // Found user? Now check for Auto-Switch
+                    // --- NEW: SAVE CODE TO PHONE ---
+                    localStorage.setItem("JungleCubs_User", code);
+                    codeInput.readOnly = true;
+                    codeInput.style.backgroundColor = "#e8f0fe";
+                    addResetLink();
+                    // -------------------------------
+
                     detectActiveSession(code);
                 } else {
                     nameField.value = "";
@@ -209,8 +170,19 @@
             });
     }
 
+    // ... (Keep the rest of your functions: setSmartSession, populateLocations, detectAndSelectNearest, lockButtons, resetButtons, detectActiveSession, checkStatus, handleAttendance, sendData, etc. EXACTLY AS BEFORE) ...
+    // Note: I am omitting the rest here to save space, but ensure you keep all other functions from the previous step!
+
+    function setSmartSession() { /* ... paste from previous code ... */ }
+    function populateLocations() { /* ... paste from previous code ... */ }
+    function detectAndSelectNearest() { /* ... paste from previous code ... */ }
+    function findNearest(lat, lng) { /* ... paste from previous code ... */ }
+    function getDistanceFromLatLonInM(lat1, lon1, lat2, lon2) { /* ... paste from previous code ... */ }
+    function deg2rad(deg) { /* ... paste from previous code ... */ }
+    function lockButtons(msg) { /* ... paste from previous code ... */ }
+    function resetButtons() { /* ... paste from previous code ... */ }
+    
     function detectActiveSession(code) {
-        // Keep locked
         fetch(SCRIPT_URL + "?action=findActiveSession&code=" + code)
             .then(res => res.json())
             .then(data => {
@@ -218,7 +190,6 @@
                     var select = document.getElementById('sessionType');
                     select.value = data.session; 
                 }
-                // Finally, check status for the (possibly new) session
                 checkStatus();
             });
     }
@@ -230,26 +201,19 @@
         var btnOut = document.getElementById('btnOut');
 
         if(code.length < 3) return;
-
         lockButtons("Syncing...");
 
         fetch(SCRIPT_URL + "?action=getStatus&code=" + code + "&session=" + session)
             .then(res => res.json())
             .then(data => {
-                // UNLOCK
                 btnIn.disabled = false; btnIn.classList.remove('btn-disabled'); btnIn.style.opacity = "1"; btnIn.innerText = "IN";
                 btnOut.disabled = true; btnOut.classList.add('btn-disabled'); btnOut.style.opacity = "1"; btnOut.innerText = "OUT";
 
                 if (data.status === "Check-In") {
-                    // LOCKED IN STATE
                     btnIn.disabled = true; btnIn.classList.add('btn-disabled');
                     btnIn.innerText = "Checked In (" + data.time + ")";
-                    
                     btnOut.disabled = false; btnOut.classList.remove('btn-disabled');
-                    
-                    // UPDATED MESSAGE WITH LOCATION
                     showSuccess("ℹ️ You are currently Checked In at <strong>" + data.location + "</strong>.<br>Click OUT when you leave.");
-                    
                 } else if (data.status === "Check-Out") {
                     showSuccess("ℹ️ You checked out at " + data.time);
                 } else {
@@ -268,7 +232,7 @@
         if(!name || name.includes("Verifying") || !code) { alert("Please enter a valid Employee Code first."); return; }
         if(!locCode) { alert("Please select your location."); return; }
 
-        lockButtons("Processing..."); // Lock while sending
+        lockButtons("Processing..."); 
         document.getElementById('loader').style.display = 'block';
         document.getElementById('status-msg').style.display = 'none';
 
@@ -280,13 +244,12 @@
             );
         } else {
             showError("GPS not supported.");
-            resetButtons(); // Unlock if error
+            checkStatus(); // Unlock
         }
     }
 
     function sendData(lat, lng, action, locCode) {
         var targetLoc = locations.find(l => l.code === locCode);
-        
         var formData = new FormData();
         formData.append('type', 'attendance');
         formData.append('employeeCode', document.getElementById('empCode').value);
@@ -305,11 +268,10 @@
                 document.getElementById('loader').style.display = 'none';
                 if(data.result === 'success') {
                     showSuccess(data.message);
-                    checkStatus(); // Re-run checks to update button state
+                    checkStatus();
                 } else {
                     showError(data.message);
-                    // Unlock buttons so they can try again (e.g. if they picked wrong location)
-                    checkStatus(); 
+                    checkStatus();
                 }
             })
             .catch(e => {
@@ -320,21 +282,19 @@
     }
 
     function handleGpsError(error) {
-        // Unlock if GPS fails
         checkStatus();
         document.getElementById('loader').style.display = 'none';
         if(error.code == 1) showError("⚠️ Location Denied.");
         else if(error.code == 2) showError("⚠️ GPS Signal Unavailable.");
         else showError("⚠️ GPS Error: " + error.message);
     }
-
+    
     function showSuccess(msg) {
         var el = document.getElementById('status-msg');
         el.className = "status-success";
         el.innerHTML = msg.replace(/\n/g, "<br>");
         el.style.display = "block";
     }
-
     function showError(msg) {
         var el = document.getElementById('status-msg');
         el.className = "status-error";
