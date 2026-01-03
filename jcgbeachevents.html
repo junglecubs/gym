@@ -220,7 +220,7 @@
       <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym Logo" style="height:90px; width:auto; object-fit:contain;">
     </div>
 
-    <h1>Jungle Cubs Beach Events — Registration</h1>
+    <h1>Jungle Cubs Beach Events — Registration 🏖️</h1>
 
     <div style="margin: 0 auto 24px; max-width: 640px; border: 4px solid var(--jc-yellow); border-radius: 14px; overflow: hidden;">
       <div style="position: relative; width: 100%; padding-bottom: 56.25%;">
@@ -230,7 +230,7 @@
       </div>
     </div>
     <p style="font-size: 0.95rem; color: #555; margin-top: -16px; margin-bottom: 20px; text-align: center; font-style: italic;">
-        A quick glimpse of our Jungle Cubs Beach Events 🌊
+        A glimpse of our Jungle Cubs Beach Events 🌊
     </p>
 
     <form id="beachForm" method="post" action="">
@@ -306,25 +306,17 @@
 
               <option value="" selected disabled>-- Select Date & Time --</option>
 
-              <option data-event-date="2025-12-13">
-                13th December, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)
+              <option data-event-date="2026-01-10" data-sold-out="true">
+                10th January, Saturday ; 5pm to 6pm ; Private Beach Event (Juhu) — SOLD OUT
               </option>
 
-              <option data-event-date="2025-12-14">
-                14th December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Juhu)
+              <option data-event-date="2026-01-24">
+                24th January, Saturday ; 5pm to 6pm ; Ages 2.5 - 6 Years (Juhu)
               </option>
 
-              <option data-event-date="2025-12-20" data-sold-out="true">
-                20th December, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — SOLD OUT
-              </option>
-
-              <option data-event-date="2025-12-21">
-                21st December, Sunday ; 7:30am to 8:30am ; Ages 2.5 - 6 Years (Girgaon)
-              </option>
-
-              <option data-event-date="2026-01-03" data-sold-out="true">
-                03rd January, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — To Be Announced
-              </option>
+           //   <option data-event-date="2026-01-03" data-sold-out="true">
+           //     03rd January, Saturday ; 5pm to 6pm ; Ages 1.5 - 2.5 Years (Juhu) — To Be Announced
+           //  </option>
 
             </select>
             <span class="small-note">(Please check Day-Date / Time / Venue &amp; Age Group)</span>
@@ -368,15 +360,16 @@
         </div> </div> <button id="registerSendBtn" class="button-style primary" type="button" disabled>
         Register &amp; Send WhatsApp
       </button>
+<p class="subtitle" style="text-align: center;">WhatsApp will open. Please Send us the pre-filled message.</p>
     </form>
   </div> <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     // ----- CONFIG -----
     const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbz0LAoulgRotpvi7RbRPluwZh2L3FoR1ilI3f2f27t-ZRVgz8mN8fYFujlylIIDMgbr/exec";
-    const BUSINESS_UPI    = "aparna.jcg@oksbi";
-    const BUSINESS_NAME   = "Aparna Jungle Cubs Gym";
-    const WHATSAPP_TARGET = "919082786189";
+    const BUSINESS_UPI    = "junglecubsgym7oksbi";
+    const BUSINESS_NAME   = "Jungle Cubs Gym";
+    const WHATSAPP_TARGET = "919326068804";
 
     // ----- ELEMENTS -----
     const form          = document.getElementById("beachForm");
