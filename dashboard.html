@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Jungle Cubs Admin Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <style>
+<style>
     /* --- THEME COLORS --- */
     :root { 
       --bg: #f4f6f8; --sidebar: #ffffff; --active: #e8f5e9; 
@@ -13,9 +13,13 @@
     }
     body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
     
-    /* --- LAYOUT --- */
-    .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.02); }
+    /* --- LAYOUT (DESKTOP) --- */
+    .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.02); z-index: 100; transition: transform 0.3s ease; }
     .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+    
+    /* --- MOBILE HEADER (Hidden on Desktop) --- */
+    .mobile-header { display: none; background: white; padding: 10px 20px; border-bottom: 1px solid #ddd; align-items: center; justify-content: space-between; z-index: 101; position: fixed; top: 0; left: 0; width: 100%; height: 60px; box-sizing: border-box; }
+    .menu-btn { font-size: 24px; cursor: pointer; color: var(--green); background: none; border: none; }
     
     /* --- BRANDING --- */
     .logo-container { text-align: center; margin-bottom: 30px; }
@@ -33,11 +37,11 @@
 
     h2 { margin-top: 0; color: #2c3e50; border-bottom: 3px solid var(--green); display: inline-block; padding-bottom: 5px; margin-bottom: 25px; }
 
-    /* --- HOME / WELCOME TAB --- */
-    .home-container { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 70vh; text-align: center; color: #444; }
+    /* --- HOME TAB --- */
+    .home-container { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60vh; text-align: center; color: #444; }
     .big-time { font-size: 80px; font-weight: 300; color: var(--green); margin-bottom: 10px; letter-spacing: -2px; }
     .big-date { font-size: 24px; font-weight: 500; color: #666; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 1px; }
-    .quote-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 600px; border-left: 6px solid var(--orange); }
+    .quote-box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); max-width: 600px; border-left: 6px solid var(--orange); margin: 0 20px; }
     .quote-text { font-size: 20px; font-style: italic; color: #555; line-height: 1.5; }
     .quote-author { margin-top: 15px; font-weight: bold; color: var(--green); display: block; font-size: 14px; text-transform: uppercase; }
 
@@ -52,30 +56,24 @@
     .btn-approve, .btn-reject { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1; margin: 5px; color: white; transition: 0.2s; }
     .btn-approve { background: var(--green); }
     .btn-reject { background: var(--red); }
-    .btn-approve:hover { opacity: 0.9; }
 
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    th { background: #eee; text-align: left; padding: 15px; font-size: 12px; text-transform: uppercase; color: #666; }
-    td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: block; overflow-x: auto; }
+    th, td { padding: 15px; border-bottom: 1px solid #eee; font-size: 14px; white-space: nowrap; }
+    th { background: #eee; text-align: left; font-size: 12px; text-transform: uppercase; color: #666; }
     .status-badge { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
     .status-Approved { background: #e8f5e9; color: var(--green); }
     .status-Rejected { background: #fdecea; color: var(--red); }
     .status-Pending { background: #fff3cd; color: var(--orange); }
 
-    /* --- ATTENDANCE VIEW --- */
+    /* --- ATTENDANCE --- */
     .att-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .att-col { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .att-col h3 { margin-top: 0; color: #555; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    
-    .att-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f0f0f0; }
-    .att-card:last-child { border-bottom: none; }
+    .att-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #f0f0f0; flex-wrap: wrap; gap: 10px; }
     .att-info { display: flex; flex-direction: column; }
     .att-name { font-weight: bold; color: #333; }
-    .att-loc { font-size: 12px; color: #777; }
     .att-status { font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; }
     .att-in { background: #e8f5e9; color: var(--green); }
     .att-out { background: #eee; color: #666; }
-    .att-fail { background: #fdecea; color: var(--red); }
 
     /* --- TEAM STATS --- */
     .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
@@ -83,82 +81,93 @@
     .member-avatar { width: 50px; height: 50px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 10px; }
     .progress-bar { background: #eee; height: 8px; border-radius: 4px; margin: 15px 0; overflow: hidden; }
     .progress-fill { height: 100%; background: var(--green); border-radius: 4px; }
-    .limit-text { font-size: 12px; color: #777; }
 
-    /* --- CALENDAR --- */
-    .cal-header { display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px; border-radius: 8px 8px 0 0; border-bottom: 1px solid #eee; }
-    .cal-btn { background: none; border: 1px solid #ddd; padding: 5px 10px; border-radius: 4px; cursor: pointer; }
-    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .cal-day-name { text-align: center; font-weight: bold; color: #888; padding: 10px; background: #f9f9f9; font-size: 12px; text-transform: uppercase; }
-    .cal-cell { min-height: 100px; border: 1px solid #f0f0f0; padding: 5px; position: relative; }
-    .cal-date-num { font-size: 12px; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; width: 25px; height: 25px; line-height: 25px; text-align: center; border-radius: 50%; }
-    .cal-date-num.today { background: var(--green); color: white; }
-    .cal-event { font-size: 10px; background: #e8f5e9; color: var(--green); padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--green); }
-    .cal-holiday { background: #fdecea; color: var(--red); border-left: 2px solid var(--red); }
-    .today-status-box { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; border-left: 5px solid var(--orange); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-
-    /* --- LOGIN --- */
-    #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--green); display: flex; justify-content: center; align-items: center; z-index: 999; }
-    .login-box { background: white; padding: 40px; border-radius: 15px; text-align: center; width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
-
-    /* --- ALLOCATION MODULE --- */
+    /* --- ALLOCATIONS --- */
     .alloc-layout { display: flex; gap: 15px; height: calc(100vh - 220px); }
     .alloc-sidebar { width: 220px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
     .alloc-main { flex: 1; overflow-y: auto; padding-right: 5px; }
     .alloc-summary-panel { width: 280px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; flex-shrink: 0; border-left: 4px solid #333; }
-    .city-section { margin-bottom: 30px; }
-    .city-header { font-size: 16px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 5px; margin-bottom: 15px; font-weight: bold; }
-    .staff-pill { padding: 5px 8px; border-radius: 4px; font-size: 11px; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
-    .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; cursor: grab; }
-    .pill-busy { background: #eee; color: #666; border: 1px solid #ddd; opacity: 0.7; }
     .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
-    .card-error { border: 2px solid #c72e31 !important; background-color: #fff5f5 !important; }
-    .min-req-msg { color: #c72e31; font-size: 10px; font-weight: bold; margin-top: 5px; display: none; }
-    .card-error .min-req-msg { display: block; }
+    .city-section { margin-bottom: 30px; }
+    
+    /* --- CALENDAR --- */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .cal-cell { min-height: 80px; border: 1px solid #f0f0f0; padding: 5px; }
+    .cal-day-name { font-size: 10px; padding: 5px; }
 
-    /* DYNAMIC CALENDAR ICON */
-    .live-cal-icon { width: 40px; height: 42px; background: white; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 10px; flex-shrink: 0; }
-    .live-cal-month { background: #c72e31; color: white; font-size: 9px; padding: 3px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-    .live-cal-day { font-size: 20px; font-weight: bold; color: #333; flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; }
+    /* --- LOGIN --- */
+    #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--green); display: flex; justify-content: center; align-items: center; z-index: 999; }
+    .login-box { background: white; padding: 40px; border-radius: 15px; text-align: center; width: 90%; max-width: 350px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; }
 
+    /* --- MOBILE RESPONSIVE TWEAKS --- */
+    @media (max-width: 768px) {
+        body { flex-direction: column; padding-top: 60px; /* Space for header */ }
+        
+        .mobile-header { display: flex; } /* Show header */
+        
+        /* Sidebar: Hidden by default, slide in */
+        .sidebar { position: fixed; left: -100%; top: 60px; width: 100%; height: calc(100vh - 60px); z-index: 200; border-right: none; }
+        .sidebar.active { left: 0; }
+        
+        .main-content { padding: 15px; width: 100%; box-sizing: border-box; }
+
+        /* Font Resizing */
+        .big-time { font-size: 50px; }
+        .big-date { font-size: 18px; }
+        .quote-text { font-size: 16px; }
+
+        /* Grids to Single Column */
+        .att-split, .stats-grid, .team-grid { grid-template-columns: 1fr; }
+        
+        /* Allocations Mobile */
+        .alloc-layout { flex-direction: column; height: auto; }
+        .alloc-sidebar, .alloc-summary-panel { width: 100%; max-height: 200px; }
+        .alloc-grid { grid-template-columns: 1fr; }
+        
+        /* Calendar Mobile */
+        .cal-cell { min-height: 50px; font-size: 10px; }
+        .cal-event { font-size: 9px; }
+    }
   </style>
+
 </head>
 <body>
+
+  <div class="mobile-header">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
+      <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Logo" style="height:30px;">
+      <div style="width:24px;"></div> </div>
 
   <div id="login-screen">
     <div class="login-box">
       <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Logo" class="logo-img" style="margin-bottom:20px;">
-      
       <h2 style="border:none; color:var(--green); margin-bottom:10px;">Welcome, Aparna!</h2>
-      <p style="color:#666; margin-bottom:20px; font-size:14px;">Please enter your admin PIN to access the dashboard.</p>
-      
-      <input type="password" id="pinInput" placeholder="Enter PIN">
+      <p style="color:#666; margin-bottom:20px; font-size:14px;">Enter Admin PIN</p>
+      <input type="password" id="pinInput" placeholder="PIN">
       <button onclick="checkPin()" class="btn-approve" style="width:100%; font-size:16px;">Access Dashboard</button>
     </div>
   </div>
 
-  <div class="sidebar">
+  <div class="sidebar" id="mySidebar">
     <div class="logo-container">
         <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Logo" class="logo-img">
     </div>
     
-    <div class="nav-item active" onclick="switchTab('home')">🏠 Dashboard</div>
-    <div class="nav-item" onclick="switchTab('pending')">🔔 Pending Approvals</div>
-    <div class="nav-item" onclick="switchTab('attendance')">📍 Live Attendance</div>
-    <div class="nav-item" onclick="switchTab('allocation')">🏢 Centre Allocations</div>
-    <div class="nav-item" onclick="switchTab('calendar')">📅 Calendar</div>
-    <div class="nav-item" onclick="switchTab('history')">📜 Leave History</div>
-    <div class="nav-item" onclick="switchTab('team')">👥 Team Stats</div>
+    <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
+    <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
+    <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
+    <div class="nav-item" onclick="switchTab('allocation'); toggleMenu()">🏢 Centre Allocations</div>
+    <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Calendar</div>
+    <div class="nav-item" onclick="switchTab('history'); toggleMenu()">📜 Leave History</div>
+    <div class="nav-item" onclick="switchTab('team'); toggleMenu()">👥 Team Stats</div>
     
     <button onclick="fetchData()" style="width:100%; margin-top:auto; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
     <div id="loading-indicator" style="margin-top:10px; text-align:center; font-size:11px; color:#aaa; display:none;">Syncing...</div>
   </div>
 
   <div class="main-content">
-    
-    <div id="view-home" class="view-section active">
+     <div id="view-home" class="view-section active">
         <div class="home-container">
             <div id="live-time" class="big-time">--:--</div>
             <div id="live-date" class="big-date">-- -- ----</div>
@@ -173,7 +182,7 @@
             </p>
         </div>
     </div>
-
+    
     <div id="view-pending" class="view-section">
       <h2>Pending Actions</h2>
       <div id="pending-container">Loading...</div>
@@ -198,7 +207,7 @@
 
     <div id="view-allocation" class="view-section">
         <div style="display:flex; flex-direction:column; gap:15px; margin-bottom:15px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
                 <div style="display:flex; align-items:center;">
                     <div class="live-cal-icon">
                         <div class="live-cal-month" id="icon-month">JAN</div>
@@ -213,22 +222,21 @@
                     <button onclick="changeDate(1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">▶</button>
                 </div>
             </div>
-            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:10px; border-radius:8px; border:1px solid #ddd;">
-                <div style="display:flex; gap:10px;">
+            
+            <div style="display:flex; justify-content:space-between; align-items:center; background:white; padding:10px; border-radius:8px; border:1px solid #ddd; flex-wrap: wrap; gap:10px;">
+                <div style="display:flex; gap:10px; overflow-x:auto;">
                     <button onclick="undo()" id="btn-undo" disabled style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:#f9f9f9; color:#aaa;">↩ Undo</button>
                     <button onclick="redo()" id="btn-redo" disabled style="padding:6px 12px; border:1px solid #ddd; border-radius:4px; cursor:pointer; background:#f9f9f9; color:#aaa;">↪ Redo</button>
                     <div style="width:1px; background:#ddd; margin:0 5px;"></div>
                     <button onclick="copyPlan(-1)" style="padding:6px 12px; border:1px solid #287844; border-radius:4px; cursor:pointer; background:white; color:#287844; font-size:12px;">📄 Copy Yesterday</button>
-                    <button onclick="copyPlan(-7)" style="padding:6px 12px; border:1px solid #287844; border-radius:4px; cursor:pointer; background:white; color:#287844; font-size:12px;">📄 Copy Last Week</button>
                 </div>
                 <div style="display:flex; gap:10px;">
-                    <button onclick="resetPlan()" style="padding:8px 15px; border:1px solid #f39c12; border-radius:4px; cursor:pointer; background:white; color:#f39c12; font-weight:500;">✨ Reset to Default</button>
-                    <div style="width:1px; background:#ddd; margin:0 5px;"></div>
-                    <button onclick="loadAllocations()" style="padding:8px 15px; border:1px solid #c72e31; border-radius:4px; cursor:pointer; background:white; color:#c72e31; font-weight:500;">✖ Discard Changes</button>
-                    <button onclick="savePlan()" style="padding:8px 20px; border:none; border-radius:4px; cursor:pointer; background:#287844; color:white; font-weight:bold; box-shadow:0 2px 5px rgba(40,120,68,0.3);">💾 Save Changes</button>
+                    <button onclick="resetPlan()" style="padding:8px 15px; border:1px solid #f39c12; border-radius:4px; cursor:pointer; background:white; color:#f39c12; font-weight:500;">✨ Reset</button>
+                    <button onclick="savePlan()" style="padding:8px 20px; border:none; border-radius:4px; cursor:pointer; background:#287844; color:white; font-weight:bold; box-shadow:0 2px 5px rgba(40,120,68,0.3);">💾 Save</button>
                 </div>
             </div>
         </div>
+
         <div class="alloc-layout">
             <div class="alloc-sidebar">
                 <h4 style="margin:0 0 10px 0; font-size:12px; color:#999;">STAFF POOL</h4>
@@ -271,7 +279,9 @@
       <h2>Employee Statistics</h2>
       <div class="team-grid" id="team-grid"></div>
     </div>
-  </div>
+
+  </div> 
+
 
 <script>
     // --- CONFIGURATION ---
@@ -643,6 +653,12 @@
     function updateTodayStatus() { let t=new Date(); t.setHours(0,0,0,0); let a=[]; if(dashboardData.history) dashboardData.history.forEach(l=>{ if(l.status==="Approved"){ let s=parseDate(l.start); let e=parseDate(l.end); s.setHours(0,0,0,0); e.setHours(0,0,0,0); if(t>=s && t<=e) a.push(l.name); } }); let k=t.getFullYear()+"-"+(t.getMonth()+1)+"-"+t.getDate(); document.getElementById('today-status-text').innerHTML = globalHolidays[k] ? `<span style="color:var(--red);">OFFICE CLOSED (${globalHolidays[k]})</span>` : (a.length>0 ? "On Leave: "+a.join(", ") : "✅ Everyone available."); }
     function filterHistory() { var v=document.getElementById('searchBox').value.toLowerCase(); Array.from(document.getElementById('history-body').rows).forEach(r => r.style.display = r.textContent.toLowerCase().includes(v) ? "" : "none"); }
     function parseDate(d) { var p=d.split('/'); return new Date(p[2],p[1]-1,p[0]); }
+
+function toggleMenu() {
+        var sb = document.getElementById("mySidebar");
+        // Toggle the class 'active' which sets left:0
+        sb.classList.toggle("active");
+    }
 
 </script>
 </body>
