@@ -11,7 +11,7 @@
       --jc-green:  #287844;
       --jc-red:    #c72e31;
       --jc-brown:  #763230;
-      --bg-color:  #f4f8f5; /* Very light green tint for page background */
+      --bg-color:  #f4f8f5; 
     }
 
     /* --- RESET & BASIC --- */
@@ -34,11 +34,10 @@
       background: #fff; 
       padding: 2rem; 
       border-radius: 16px;
-      /* Soft modern shadow */
       box-shadow: 0 10px 30px -5px rgba(40, 120, 68, 0.15); 
       max-width: 800px; 
       width: 100%;
-      border-top: 6px solid var(--jc-yellow); /* Brand pop at the top */
+      border-top: 6px solid var(--jc-yellow); 
     }
     
     /* --- TYPOGRAPHY --- */
@@ -53,7 +52,7 @@
 
     label { 
       font-weight: 700; 
-      color: var(--jc-brown); /* Brand Brown */
+      color: var(--jc-brown); 
       display: block; 
       margin-top: 1rem; 
       font-size: 0.95rem;
@@ -104,7 +103,7 @@
       font-weight: 800; 
       font-size: 1.1rem; 
       border: none; 
-      border-radius: 50px; /* Pill shape for modern look */
+      border-radius: 50px; 
       cursor: pointer; 
       text-decoration: none; 
       transition: transform 0.1s ease, background-color 0.2s ease;
@@ -119,10 +118,9 @@
       color: var(--jc-yellow); 
     }
     .primary:hover:not([disabled]) { 
-      background: #1e6336; /* Slightly darker green */
-      color: #fff; /* White text on hover */
+      background: #1e6336; 
+      color: #fff; 
     }
-    /* Disabled state for button (important for duplicate prevention) */
     .primary[disabled] { 
       background: #a8c4b1; 
       color: #f1f1f1; 
@@ -137,14 +135,14 @@
       color: #fff; 
       font-size: 1rem;
       padding: 0.8rem;
-      border-radius: 8px; /* Less rounded for secondary */
+      border-radius: 8px; 
     }
     .secondary:hover { background: #5d2624; }
 
     /* --- PAYMENT SECTION --- */
     .summary {
       margin-top: 20px; 
-      background: #fffdf0; /* Very light yellow tint */
+      background: #fffdf0; 
       border: 1px solid #f0e6c5; 
       border-radius: 12px; 
       padding: 16px;
@@ -180,7 +178,7 @@
     .payment-confirm {
       margin-top: 16px;
       padding: 12px;
-      background: #eaf3ed; /* Light green tint */
+      background: #eaf3ed; 
       border-radius: 8px;
       border: 1px solid #cce0d3;
     }
@@ -190,7 +188,7 @@
       gap: 12px;
       font-size: 14px;
       line-height: 1.4;
-      color: var(--jc-green); /* Green text for confirmation */
+      color: var(--jc-green); 
       font-weight: 600;
       cursor: pointer;
       margin-top: 0;
@@ -199,7 +197,7 @@
       margin-top: 3px;
       width: 20px; height: 20px;
       flex-shrink: 0;
-      accent-color: var(--jc-green); /* Green checkbox */
+      accent-color: var(--jc-green); 
     }
     .payment-confirm-label span {
       flex: 1;
@@ -218,7 +216,8 @@
 </head>
 <body>
 
-  <div class="box"> <div style="text-align:center; margin-bottom: 20px;">
+  <div class="box"> 
+    <div style="text-align:center; margin-bottom: 20px;">
       <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym Logo" style="height:90px; width:auto; object-fit:contain;">
     </div>
 
@@ -356,24 +355,34 @@
               <img id="qrImg" src="" alt="UPI QR" style="width:200px; height:200px; object-fit:contain;" />
               <div class="hint">Scan to pay ₹400</div>
             </div>
-          </div> <div id="paymentConfirmBlock" class="payment-confirm">
+          </div> 
+          <div id="paymentConfirmBlock" class="payment-confirm">
             <label class="payment-confirm-label">
               <input type="checkbox" id="paymentConfirmed" name="paymentConfirmed">
               <span>I have made the payment and I will send a screenshot of the payment on WhatsApp.</span>
             </label>
           </div>
-
-        </div> </div> <button id="registerSendBtn" class="button-style primary" type="button" disabled>
+        </div> 
+      </div> 
+      
+      <button id="registerSendBtn" class="button-style primary" type="button" disabled>
         Register &amp; Send WhatsApp
       </button>
-<p class="subtitle" style="text-align: center;">WhatsApp will open. Please Send us the pre-filled message.</p>
+      <p class="subtitle" style="text-align: center; margin-top:8px; font-size:0.85rem; color:#666;">
+        WhatsApp will open. Please Send us the pre-filled message.
+      </p>
     </form>
-  </div> <script>
+  </div> 
+
+<script>
 document.addEventListener("DOMContentLoaded", function () {
 
     // ----- CONFIG -----
     const ENDPOINT_URL    = "https://script.google.com/macros/s/AKfycbz0LAoulgRotpvi7RbRPluwZh2L3FoR1ilI3f2f27t-ZRVgz8mN8fYFujlylIIDMgbr/exec";
-    const BUSINESS_UPI    = "junglecubsgym7oksbi";
+    
+    // --- FIX: Added '@' symbol to the UPI ID ---
+    const BUSINESS_UPI    = "junglecubsgym7@oksbi"; 
+    
     const BUSINESS_NAME   = "Jungle Cubs Gym";
     const WHATSAPP_TARGET = "919326068804";
 
