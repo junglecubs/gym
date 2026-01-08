@@ -196,17 +196,48 @@
         const endInput = document.getElementById('endDate');
         const resumeInput = document.getElementById('resumeDate');
 
+        // Helper: Clear & Alert if invalid
+        function validateOrder() {
+            const s = startInput.value;
+            const e = endInput.value;
+            const r = resumeInput.value;
+
+            if (s && e && e < s) {
+                alert("End Date cannot be before Start Date.");
+                endInput.value = "";
+                resumeInput.value = ""; // Reset chain
+                document.getElementById('totalDays').value = "";
+                return;
+            }
+
+            if (e && r) {
+                // Resume must be > End Date
+                if (r <= e) {
+                    alert("Work Resume Date must be after End Date.");
+                    resumeInput.value = "";
+                    document.getElementById('totalDays').value = "";
+                    return;
+                }
+            }
+            calculateDays();
+        }
+
         startInput.addEventListener('change', function() {
             if (this.value) {
                 endInput.min = this.value;
+                // Force check immediately
                 if (endInput.value && endInput.value < this.value) {
-                    endInput.value = ''; resumeInput.value = ''; document.getElementById('totalDays').value = '';
+                    endInput.value = ''; 
+                    resumeInput.value = ''; 
+                    document.getElementById('totalDays').value = '';
                 }
-                calculateDays();
             }
+            validateOrder();
         });
+
         endInput.addEventListener('change', function() {
             if (this.value) {
+                // Resume min = End Date + 1 Day
                 const endDate = parseLocalDates(this.value);
                 endDate.setDate(endDate.getDate() + 1);
                 
@@ -216,12 +247,19 @@
                 resumeInput.min = `${yyyy}-${mm}-${dd}`;
                 
                 if (resumeInput.value && resumeInput.value < resumeInput.min) {
-                    resumeInput.value = ''; document.getElementById('totalDays').value = '';
+                    resumeInput.value = ''; 
+                    document.getElementById('totalDays').value = '';
                 }
-                calculateDays();
             }
+            validateOrder();
         });
-        resumeInput.addEventListener('change', calculateDays);
+
+        resumeInput.addEventListener('change', validateOrder);
+        
+        // Extra Safety for iOS: Check on Blur
+        startInput.addEventListener('blur', validateOrder);
+        endInput.addEventListener('blur', validateOrder);
+        resumeInput.addEventListener('blur', validateOrder);
     }
 
     const form = document.forms['leaveForm'];
