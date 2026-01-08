@@ -169,21 +169,21 @@
         .big-time { font-size: 50px; }
         .home-container { min-height: 50vh; justify-content: flex-start; padding-top: 40px; }
 
-        /* Allocations Layout: Vertical Stack */
+        /* Allocations Layout */
         .alloc-layout { flex-direction: column; height: auto; gap: 0; }
         
-        /* 1. Mobile Toolbar */
+        /* Mobile Toolbar */
         .alloc-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .btn-group { grid-column: span 2; display: flex; justify-content: space-between; gap: 5px; }
         .btn-tool { flex: 1; justify-content: center; font-size: 11px; padding: 8px 4px; text-align: center; }
         .btn-action-group { grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; }
         .btn-action { flex: 1; padding: 12px; }
 
-        /* 2. SPLIT VIEW POOL (Sticky Top, 40% Height) */
+        /* SPLIT VIEW POOL (Sticky Top, 40% Height) */
         .alloc-sidebar { 
             position: sticky; top: 60px; z-index: 900; 
             width: 100%; 
-            height: 40vh; /* Takes 40% of screen */
+            height: 40vh; /* Reduced to 40% */
             overflow-y: auto; 
             border-bottom: 4px solid var(--green);
             border-radius: 0 0 12px 12px;
@@ -195,7 +195,7 @@
             display: block; 
         }
         
-        /* 3. Cards */
+        /* Cards */
         .alloc-grid { grid-template-columns: 1fr; gap: 20px; }
         .staff-select { height: 45px; font-size: 16px; margin-bottom: 12px; }
         
@@ -203,7 +203,7 @@
         .att-split, .team-grid { grid-template-columns: 1fr; }
         .att-col { margin-bottom: 15px; }
         
-        /* 4. Mobile Calendar Fix */
+        /* Mobile Calendar Fix */
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
         .cal-event { display: block; font-size: 9px; padding: 2px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -298,9 +298,8 @@
                 <div id="plan-status" style="margin-left:15px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; background:#eee; color:#666;">⚪ Checking</div>
             </div>
             
-          <div style="display:flex; align-items:center; gap:5px;">
+            <div style="display:flex; align-items:center; gap:5px;">
                 <button onclick="goToToday()" style="border:1px solid #ddd; background:white; cursor:pointer; font-weight:bold; padding:6px 10px; border-radius:6px; color:#287844; font-size:12px;">Today</button>
-                
                 <div style="display:flex; align-items:center; gap:5px; background:white; padding:5px; border-radius:6px; border:1px solid #ddd;">
                     <button onclick="changeDate(-1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">◀</button>
                     <input type="date" id="allocDate" onchange="loadAllocations()" style="border:none; outline:none; font-family:inherit; font-weight:500;">
@@ -392,7 +391,7 @@
     function checkPin() { 
         if(document.getElementById('pinInput').value===CORRECT_PIN){ 
             document.getElementById('login-screen').style.display='none'; 
-            window.scrollTo(0,0); // FIX SCROLL
+            window.scrollTo(0,0); 
             initDashboard(); 
         } else alert("Wrong PIN"); 
     }
@@ -403,10 +402,9 @@
     function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeam(); renderCalendar(); }
 
     function switchTab(t) {
-        // UNSAVED CHANGES CHECK
         if(currentTab === 'allocation' && hasUnsavedChanges && t !== 'allocation') {
             if(!confirm("⚠️ You have unsaved changes in Allocations.\n\nDiscard changes and switch tabs?")) return;
-            hasUnsavedChanges = false; // Discarded
+            hasUnsavedChanges = false; 
         }
         
         currentTab = t;
@@ -421,7 +419,6 @@
     }
     function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
 
-    // --- CONFLICT CHECK LOGIC ---
     function getConflicts(pStart, pEnd, pName) {
         let s1 = parseDate(pStart), e1 = parseDate(pEnd);
         let conflicts = [];
@@ -557,14 +554,24 @@
         var d = document.createElement("div"); d.className="card"; d.id="card-"+c.code;
         d.innerHTML = `<h3 style="margin:0 0 10px 0; font-size:15px;">${c.name}</h3>`;
         var vals = ["","","",""];
-        if(plan && plan[c.code]) vals=plan[c.code];
         
+        // --- FIXED LOGIC FOR AUTO-FILL ---
+        // If there is a saved plan for this centre, use it.
+        // If not (either fresh day or new centre), allow AUTO-FILL.
+        if(plan && plan[c.code]) {
+            vals = plan[c.code];
+        } else {
+            // Auto-Fill
+            var defaults = globalStaff.filter(s => s.defaultLoc === c.code);
+            defaults.sort((a,b) => (a.role === 'Admin') ? -1 : 1);
+            for(let k=0; k<defaults.length && k<4; k++) vals[k] = defaults[k].code;
+        }
+
         for(let i=0; i<4; i++) {
             let sel = document.createElement("select"); sel.className="staff-select"; 
             sel.setAttribute("data-c", c.code); sel.setAttribute("data-n", c.name); sel.setAttribute("data-city", c.city);
             let opt0 = document.createElement("option"); opt0.value=""; opt0.text= (i===0?"Lead":"Educator "+(i+1)) + " (Select)"; sel.appendChild(opt0);
             
-            // Initial Populate (Alphabetical)
             globalStaff.sort((a,b)=>a.name.localeCompare(b.name)).forEach(s=>{
                 let opt = document.createElement("option"); opt.value=s.code; opt.text=s.name;
                 if(s.code===vals[i]) opt.selected=true; sel.appendChild(opt);
@@ -586,16 +593,14 @@
         var sels = document.querySelectorAll('.staff-select');
         var assigned=[], counts={}, filled=0, err=false;
         
-        // 1. Gather Assigned
         sels.forEach(s=>{ if(s.value){ assigned.push(s.value); if(!counts[s.getAttribute("data-c")]) counts[s.getAttribute("data-c")]=0; counts[s.getAttribute("data-c")]++; filled++; } });
         
-        // 2. Disable Busy + SMART SORT (Move Available to Top)
         sels.forEach(s=>{
             var curr = s.value;
             var opts = Array.from(s.options);
-            var def = opts[0]; // Keep default top
+            var def = opts[0];
             
-            // Re-sort: Available first, Busy last
+            // SORT: Available -> Busy -> Alphabetical
             var rest = opts.slice(1).sort((a, b) => {
                 var aBusy = (a.value && assigned.includes(a.value) && a.value !== curr);
                 var bBusy = (b.value && assigned.includes(b.value) && b.value !== curr);
@@ -612,7 +617,6 @@
             s.value = curr; 
         });
 
-        // 3. Update Pool
         document.getElementById('pool-leave').innerHTML = globalLeaves.map(l=>`<div class="staff-pill pill-leave">${l.name}</div>`).join("") || "<small style='color:#ccc'>None</small>";
         var freeHtml="", busyHtml="";
         globalStaff.forEach(s=>{
@@ -621,7 +625,6 @@
         });
         document.getElementById('pool-free').innerHTML = freeHtml;
 
-        // 4. Validation
         for(var c in counts) {
             var cd = document.getElementById("card-"+c);
             if(cd) { if(counts[c]<2) { cd.classList.add("card-error"); err=true; } else cd.classList.remove("card-error"); }
@@ -652,11 +655,9 @@
     function copySummary() { 
         if(hasUnsavedChanges) {
             if(!confirm("⚠️ You have unsaved changes!\n\nIt is recommended to SAVE first so the database matches this summary.\n\nClick OK to Save & Copy, or Cancel to just Copy.")) {
-                // Just Copy
                 navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied (Unsaved Changes)"));
                 return;
             } else {
-                // Save then Copy
                 savePlan();
                 setTimeout(() => { navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Saved & Copied!")); }, 1500);
                 return;
@@ -666,20 +667,8 @@
     }
 
     function changeDate(d) { var i=document.getElementById('allocDate'), x=new Date(i.value); x.setDate(x.getDate()+d); i.value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); loadAllocations(); }
-    
-    function goToToday() {
-        var today = new Date();
-        var dStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-        
-        var input = document.getElementById('allocDate');
-        // Only reload if date actually changed
-        if(input.value !== dStr) {
-            input.value = dStr;
-            loadAllocations();
-        }
-    }
-    
-    // Alloc Actions
+    function goToToday() { var t=new Date(), s=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); if(document.getElementById('allocDate').value!==s){ document.getElementById('allocDate').value=s; loadAllocations(); } }
+
     function savePlan() {
         var d=document.getElementById('allocDate').value;
         var all={}, n={};
@@ -709,7 +698,6 @@
     function getBoardState() { var s={}; document.querySelectorAll('.staff-select').forEach(sel=>{ var c=sel.getAttribute("data-c"); if(!s[c]) s[c]=[]; s[c].push(sel.value); }); return s; }
     function updateHistoryButtons() { document.getElementById('btn-undo').disabled=!historyStack.length; document.getElementById('btn-redo').disabled=!redoStack.length; }
 
-    // Utils
     function forceOut(c,n,s) { if(confirm("Force Out "+n+"?")) { var f=new FormData(); f.append('type','forceOut'); f.append('code',c); f.append('name',n); f.append('session',s); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); } }
     function forceOutAll() { if(confirm("Force Close ALL?")) { var f=new FormData(); f.append('type','forceOutAll'); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>{ alert("Closed "+d.count); fetchData(); }); } }
     function decide(ix,dec) { if(confirm(dec+"?")) { var l=dashboardData.pending.find(r=>r.rowIndex===ix); var f=new FormData(); f.append('type','decision'); f.append('rowIndex',ix); f.append('decision',dec); f.append('name',l.name); f.append('email',l.email); f.append('dates',l.start+" to "+l.end); f.append('mobile',l.mobile); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); } }
