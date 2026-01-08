@@ -102,7 +102,7 @@
 
         // 2. Setup Code Listener (Auto-Fetch Name)
         const codeInput = document.getElementById('employeeCode');
-        codeInput.addEventListener('change', verifyCode); // Runs when user leaves the box
+        codeInput.addEventListener('change', verifyCode); 
         
         setupDateConstraints();
     };
@@ -112,10 +112,9 @@
         var nameField = document.getElementById('educatorName');
         var code = input.value.trim().toUpperCase();
 
-        if (code.length < 3) return; // Don't check empty or short codes
+        if (code.length < 3) return; 
 
-        // UI Feedback: Checking...
-        input.style.backgroundColor = "#fff3cd"; // Yellow
+        input.style.backgroundColor = "#fff3cd"; 
         nameField.value = "Searching...";
         nameField.disabled = true;
 
@@ -124,15 +123,13 @@
             .then(data => {
                 input.style.backgroundColor = "white";
                 if (data.found) {
-                    // Success!
                     nameField.value = data.name;
-                    nameField.style.backgroundColor = "#e8f5e9"; // Light Green
+                    nameField.style.backgroundColor = "#e8f5e9"; 
                     nameField.style.borderColor = "#287844";
-                    nameField.readOnly = true; // Lock it so they can't change it
+                    nameField.readOnly = true; 
                     nameField.disabled = false;
                 } else {
-                    // Not Found
-                    alert("❌ Employee Code '" + code + "' not found.\nPlease check and try again.");
+                    alert("❌ Employee Code '" + code + "' not found.");
                     input.value = "";
                     nameField.value = "";
                     nameField.style.backgroundColor = "white";
@@ -140,7 +137,6 @@
                 }
             })
             .catch(e => {
-                console.log("Lookup Error", e);
                 nameField.value = "";
                 nameField.disabled = false;
             });
@@ -157,7 +153,6 @@
         });
     }
 
-    // --- KEY GENERATOR (No-Zero) ---
     function getDateKey(d) {
         return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate();
     }
@@ -175,11 +170,17 @@
         if (startVal && resumeVal) {
             let current = parseLocalDates(startVal);
             const resume = parseLocalDates(resumeVal);
+            
+            // Safety check
+            if (current >= resume) {
+                document.getElementById('totalDays').value = "";
+                return;
+            }
+
             let businessDays = 0;
             while (current < resume) {
                 const dateKey = getDateKey(current); 
-                const dayOfWeek = current.getDay(); // 0=Sun, 6=Sat
-                
+                const dayOfWeek = current.getDay(); 
                 var isHoliday = globalHolidays[dateKey];
 
                 if (dayOfWeek !== 0 && dayOfWeek !== 6 && !isHoliday) {
@@ -191,53 +192,32 @@
         }
     }
 
+    // --- FIXED DATE LOGIC FOR MOBILE ---
     function setupDateConstraints() {
         const startInput = document.getElementById('startDate');
         const endInput = document.getElementById('endDate');
         const resumeInput = document.getElementById('resumeDate');
 
-        // Helper: Clear & Alert if invalid
-        function validateOrder() {
-            const s = startInput.value;
-            const e = endInput.value;
-            const r = resumeInput.value;
-
-            if (s && e && e < s) {
-                alert("End Date cannot be before Start Date.");
-                endInput.value = "";
-                resumeInput.value = ""; // Reset chain
-                document.getElementById('totalDays').value = "";
-                return;
-            }
-
-            if (e && r) {
-                // Resume must be > End Date
-                if (r <= e) {
-                    alert("Work Resume Date must be after End Date.");
-                    resumeInput.value = "";
-                    document.getElementById('totalDays').value = "";
-                    return;
-                }
-            }
-            calculateDays();
-        }
-
+        // 1. When Start Date Changes
         startInput.addEventListener('change', function() {
             if (this.value) {
+                // Set End Date Minimum
                 endInput.min = this.value;
-                // Force check immediately
+                
+                // If End Date is now invalid (before start), clear it silently
                 if (endInput.value && endInput.value < this.value) {
                     endInput.value = ''; 
                     resumeInput.value = ''; 
                     document.getElementById('totalDays').value = '';
                 }
             }
-            validateOrder();
+            calculateDays();
         });
 
+        // 2. When End Date Changes
         endInput.addEventListener('change', function() {
             if (this.value) {
-                // Resume min = End Date + 1 Day
+                // Calculate Resume Min (End + 1 Day)
                 const endDate = parseLocalDates(this.value);
                 endDate.setDate(endDate.getDate() + 1);
                 
@@ -246,35 +226,45 @@
                 const dd = String(endDate.getDate()).padStart(2, '0');
                 resumeInput.min = `${yyyy}-${mm}-${dd}`;
                 
+                // If Resume Date is now invalid, clear it silently
                 if (resumeInput.value && resumeInput.value < resumeInput.min) {
                     resumeInput.value = ''; 
                     document.getElementById('totalDays').value = '';
                 }
             }
-            validateOrder();
+            calculateDays();
         });
 
-        resumeInput.addEventListener('change', validateOrder);
-        
-        // Extra Safety for iOS: Check on Blur
-        startInput.addEventListener('blur', validateOrder);
-        endInput.addEventListener('blur', validateOrder);
-        resumeInput.addEventListener('blur', validateOrder);
+        // 3. When Resume Date Changes
+        resumeInput.addEventListener('change', calculateDays);
     }
 
     const form = document.forms['leaveForm'];
     
     form.addEventListener('submit', e => {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const loader = document.getElementById('loader');
         
-        // Final Check: Did they modify the name?
+        // --- FINAL VALIDATION ON SUBMIT ---
+        const s = document.getElementById('startDate').value;
+        const eDate = document.getElementById('endDate').value;
+        const r = document.getElementById('resumeDate').value;
+
+        if(s && eDate && eDate < s) {
+            alert("❌ Invalid Dates: End Date cannot be before Start Date.");
+            return;
+        }
+        if(eDate && r && r <= eDate) {
+            alert("❌ Invalid Dates: Work Resume Date must be AFTER End Date.");
+            return;
+        }
         if (document.getElementById('educatorName').value === "") {
              alert("Please enter a valid Employee Code first.");
              return;
         }
+        // ----------------------------------
 
+        const btn = document.getElementById('submitBtn');
+        const loader = document.getElementById('loader');
         btn.disabled = true; btn.style.opacity = "0.5"; loader.style.display = "block";
 
         const formData = new FormData(form);
@@ -348,7 +338,6 @@
         alert("Application Verified & Saved! Redirecting to WhatsApp...");
         form.reset();
         
-        // Reset the read-only name field for the next user
         var nameField = document.getElementById('educatorName');
         nameField.value = "";
         nameField.readOnly = false;
