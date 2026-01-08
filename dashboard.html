@@ -21,19 +21,23 @@
     ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
     /* --- LAYOUT (DESKTOP) --- */
-    .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 1000; transition: transform 0.3s ease; }
+    .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 1000; transition: transform 0.3s ease; position: relative; }
     .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
     
     /* --- MOBILE HEADER --- */
     .mobile-header { display: none; background: white; padding: 0 15px; border-bottom: 1px solid #ddd; align-items: center; justify-content: space-between; z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .menu-btn { font-size: 28px; cursor: pointer; color: var(--green); background: none; border: none; padding: 0; }
     
-    /* --- NAVIGATION --- */
-    .logo-container { text-align: center; margin-bottom: 30px; }
+    /* --- NAVIGATION & SIDEBAR ITEMS --- */
+    .logo-container { text-align: center; margin-bottom: 10px; }
     .logo-img { max-width: 140px; height: auto; display: block; margin: 0 auto; }
+    .welcome-text { text-align: center; color: var(--green); font-weight: bold; font-size: 14px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+    
     .nav-item { padding: 12px 15px; margin-bottom: 8px; cursor: pointer; border-radius: 8px; font-weight: 500; color: #555; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 14px; }
     .nav-item:hover { background-color: #f5f5f5; color: var(--green); }
     .nav-item.active { background-color: var(--active); color: var(--green); font-weight: bold; }
+    
+    .sidebar-close-btn { display: none; position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; color: #888; cursor: pointer; }
     
     /* --- VIEWS --- */
     .view-section { display: none; animation: fadeIn 0.3s ease-out; padding-bottom: 100px; } 
@@ -123,21 +127,19 @@
     .alloc-summary-panel { width: 260px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; border-left: 4px solid #333; }
     .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
     
-    /* Alloc Toolbar (Desktop) */
+    /* Alloc Toolbar */
     .alloc-toolbar { background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
     .btn-group { display: flex; gap: 5px; }
     .btn-tool { padding: 8px 12px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 6px; cursor: pointer; color: #555; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
     .btn-tool:hover { background: #eee; }
     .btn-action { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
     
-    /* Alloc Cards */
     .city-header { font-size: 16px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 5px; margin: 20px 0 10px 0; font-weight: bold; }
     .staff-pill { padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; cursor: grab; }
     .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
     .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
     .pill-busy { background: #f5f5f5; color: #999; border: 1px solid #ddd; opacity: 0.8; }
     
-    /* Live Calendar Icon */
     .live-cal-icon { width: 45px; height: 48px; background: white; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 12px; flex-shrink: 0; }
     .live-cal-month { background: #c72e31; color: white; font-size: 10px; padding: 4px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
     .live-cal-day { font-size: 22px; font-weight: bold; color: #333; flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; background: #fff; }
@@ -160,6 +162,7 @@
         .mobile-header { display: flex; }
         .sidebar { position: fixed; left: -100%; top: 60px; width: 85%; height: calc(100vh - 60px); z-index: 2500; border-right: none; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .sidebar.active { left: 0; }
+        .sidebar-close-btn { display: block; }
         .main-content { padding: 15px; width: 100%; height: auto; overflow: visible; }
 
         /* Home - Fix Viewport Cutoff */
@@ -180,7 +183,7 @@
         .alloc-sidebar { 
             position: sticky; top: 60px; z-index: 900; 
             width: 100%; 
-            height: 40vh; /* Reduced to 40% as requested */
+            height: 40vh; /* Takes 40% of screen */
             overflow-y: auto; 
             border-bottom: 4px solid var(--green);
             border-radius: 0 0 12px 12px;
@@ -189,7 +192,7 @@
             padding: 15px;
             background: #fff;
             order: -1; 
-            display: block; /* Vertical list inside small box */
+            display: block; 
         }
         
         /* 3. Cards */
@@ -200,18 +203,10 @@
         .att-split, .team-grid { grid-template-columns: 1fr; }
         .att-col { margin-bottom: 15px; }
         
-        /* 4. Mobile Calendar Fix (Show Events) */
+        /* 4. Mobile Calendar Fix */
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
-        .cal-event { 
-            display: block; 
-            font-size: 9px; 
-            padding: 2px; 
-            margin-bottom: 1px;
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis;
-        }
+        .cal-event { display: block; font-size: 9px; padding: 2px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     }
   </style>
 </head>
@@ -234,9 +229,12 @@
   </div>
 
   <div class="sidebar" id="mySidebar">
+    <button class="sidebar-close-btn" onclick="toggleMenu()">×</button>
     <div class="logo-container">
         <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Logo" class="logo-img">
     </div>
+    <div class="welcome-text">Welcome, Aparna</div>
+    
     <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
     <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
     <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
@@ -246,6 +244,7 @@
     <div class="nav-item" onclick="switchTab('team'); toggleMenu()">👥 Team Stats</div>
     
     <button onclick="fetchData()" style="width:100%; margin-top:auto; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
+    <button onclick="logout()" style="width:100%; margin-top:10px; padding:10px; background:#fdecea; border:1px solid #c72e31; border-radius:6px; cursor:pointer; color:#c72e31; font-weight:bold; font-size:12px;">🚪 Logout</button>
     <div id="loading-indicator" style="margin-top:10px; text-align:center; font-size:11px; color:#aaa; display:none;">Syncing...</div>
   </div>
 
@@ -361,6 +360,8 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUTLI-Oc604ZA-jOfA785fp4PVHwqJXzWNyOLzB8lkDQa4z1csNO1dRRK6IoLs5OnSBw/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
+    let currentTab = 'home';
+    let hasUnsavedChanges = false;
 
     const quotes = [
         { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
@@ -384,12 +385,27 @@
     const rq = quotes[Math.floor(Math.random() * quotes.length)];
     document.getElementById('daily-quote').innerText = '"' + rq.text + '"'; document.getElementById('quote-author').innerText = "- " + rq.author;
 
-    function checkPin() { if(document.getElementById('pinInput').value===CORRECT_PIN){ document.getElementById('login-screen').style.display='none'; initDashboard(); } else alert("Wrong PIN"); }
+    function checkPin() { 
+        if(document.getElementById('pinInput').value===CORRECT_PIN){ 
+            document.getElementById('login-screen').style.display='none'; 
+            window.scrollTo(0,0); // FIX SCROLL
+            initDashboard(); 
+        } else alert("Wrong PIN"); 
+    }
+    function logout() { location.reload(); }
+
     function initDashboard() { switchTab('home'); document.getElementById('sys-status').innerText = "Connecting..."; document.getElementById('loading-indicator').style.display='block'; fetch(SCRIPT_URL + "?action=getHolidays").then(r=>r.json()).then(d=>{ globalHolidays=d; fetchData(); }).catch(e=>fetchData()); }
     function fetchData() { document.getElementById('sys-status').innerText = "Fetching Records..."; fetch(SCRIPT_URL + "?action=getDashboardData").then(r=>r.json()).then(d=>{ dashboardData=d; renderAll(); document.getElementById('sys-status').innerText="✅ System Ready."; document.getElementById('sys-status').style.color="var(--green)"; document.getElementById('loading-indicator').style.display='none'; }).catch(e=>console.error(e)); }
     function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeam(); renderCalendar(); }
 
     function switchTab(t) {
+        // UNSAVED CHANGES CHECK
+        if(currentTab === 'allocation' && hasUnsavedChanges && t !== 'allocation') {
+            if(!confirm("⚠️ You have unsaved changes in Allocations.\n\nDiscard changes and switch tabs?")) return;
+            hasUnsavedChanges = false; // Discarded
+        }
+        
+        currentTab = t;
         document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(el=>{ if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(t)) el.classList.add('active'); });
         document.querySelectorAll('.view-section').forEach(el=>el.classList.remove('active'));
@@ -407,9 +423,8 @@
         let conflicts = [];
         if(dashboardData.history) {
             dashboardData.history.forEach(h => {
-                if(h.status === "Approved" && h.name !== pName) { // Don't check against self
+                if(h.status === "Approved" && h.name !== pName) { 
                     let s2 = parseDate(h.start), e2 = parseDate(h.end);
-                    // Check overlap: StartA <= EndB AND EndA >= StartB
                     if (s1 <= e2 && e1 >= s2) { conflicts.push(h.name); }
                 }
             });
@@ -426,7 +441,6 @@
             var badgeClass = isOver ? "limit-bad" : "limit-ok";
             var badgeText = isOver ? `⚠️ Over Limit (${total}/${limit})` : `✅ Within Limit (${total}/${limit})`;
             
-            // Check Conflicts
             var confs = getConflicts(l.start, l.end, l.name);
             var confHtml = confs.length > 0 
                 ? `<div class="pc-conflict">⚠️ Others on Leave: <strong>${confs.join(", ")}</strong></div>`
@@ -517,7 +531,7 @@
         document.getElementById('icon-month').innerText = dojb.toLocaleString('default', { month: 'short' });
         document.getElementById('icon-day').innerText = String(dojb.getDate()).padStart(2, '0');
         document.getElementById('alloc-board').innerHTML = '<p style="padding:20px; text-align:center;">Loading...</p>';
-        historyStack=[]; redoStack=[]; updateHistoryButtons();
+        historyStack=[]; redoStack=[]; updateHistoryButtons(); hasUnsavedChanges=false;
         fetch(SCRIPT_URL + "?action=getAllocationData&date=" + d).then(r=>r.json()).then(data=>{
             globalStaff=data.staff; globalCentres=data.centres; globalLeaves=data.leaves; renderBoard(data.savedPlan);
         });
@@ -554,6 +568,7 @@
             
             sel.addEventListener('focus', ()=>tempSnapshot=getBoardState());
             sel.addEventListener('change', ()=>{ 
+                hasUnsavedChanges = true;
                 if(tempSnapshot){ historyStack.push(tempSnapshot); redoStack=[]; updateHistoryButtons(); } 
                 updateAvailability(); 
             });
@@ -576,7 +591,7 @@
             var opts = Array.from(s.options);
             var def = opts[0]; // Keep default top
             
-            // Re-sort options: Available first, Busy last, then Alphabetical
+            // Re-sort: Available first, Busy last
             var rest = opts.slice(1).sort((a, b) => {
                 var aBusy = (a.value && assigned.includes(a.value) && a.value !== curr);
                 var bBusy = (b.value && assigned.includes(b.value) && b.value !== curr);
@@ -584,16 +599,13 @@
                 return aBusy ? 1 : -1; 
             });
             
-            // Re-append sorted options (Only if not currently focused to avoid jumpiness? No, user asked for it)
-            // But we can't change DOM while user is selecting.
-            // Actually, we only trigger this ON CHANGE. So other dropdowns are closed. It is safe.
             s.innerHTML = ""; s.appendChild(def);
             rest.forEach(o => {
                 o.disabled = (o.value && assigned.includes(o.value) && o.value !== curr);
                 o.innerText = o.text.replace(" (Busy)","") + (o.disabled ? " (Busy)" : "");
                 s.appendChild(o);
             });
-            s.value = curr; // Restore value
+            s.value = curr; 
         });
 
         // 3. Update Pool
@@ -633,35 +645,51 @@
         document.getElementById('summary-text').innerText = txt;
     }
 
-    function copySummary() { navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied!")); }
+    function copySummary() { 
+        if(hasUnsavedChanges) {
+            if(!confirm("⚠️ You have unsaved changes!\n\nIt is recommended to SAVE first so the database matches this summary.\n\nClick OK to Save & Copy, or Cancel to just Copy.")) {
+                // Just Copy
+                navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied (Unsaved Changes)"));
+                return;
+            } else {
+                // Save then Copy
+                savePlan();
+                setTimeout(() => { navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Saved & Copied!")); }, 1500);
+                return;
+            }
+        }
+        navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied!")); 
+    }
+
     function changeDate(d) { var i=document.getElementById('allocDate'), x=new Date(i.value); x.setDate(x.getDate()+d); i.value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); loadAllocations(); }
     
     // Alloc Actions
     function savePlan() {
         var d=document.getElementById('allocDate').value;
-        if(!confirm("Save Plan for "+d+"?")) return;
         var all={}, n={};
         document.querySelectorAll('.staff-select').forEach(s=>{
             var c=s.getAttribute("data-c"); if(!all[c]) all[c]=[];
             if(s.value) all[c].push(s.value); n[c]=s.getAttribute("data-n");
         });
-        var btn=event.target, old=btn.innerText; btn.innerText="Saving..."; btn.disabled=true;
+        var btn=document.querySelector(".btn-action[onclick='savePlan()']"), old=btn.innerText; btn.innerText="Saving..."; btn.disabled=true;
         var fd=new FormData(); fd.append('type','saveAllocations'); fd.append('json',JSON.stringify({date:d,allocations:all,names:n}));
-        fetch(SCRIPT_URL,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ alert("Saved!"); btn.innerText=old; btn.disabled=false; });
+        fetch(SCRIPT_URL,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ 
+            alert("Saved!"); btn.innerText=old; btn.disabled=false; hasUnsavedChanges=false; 
+        });
     }
     
     function copyPlan(days) {
         var i=document.getElementById('allocDate'), t=new Date(i.value); t.setDate(t.getDate()+days);
         var ds=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
         if(!confirm("Copy from "+ds+"?")) return; captureHistory();
-        fetch(SCRIPT_URL+"?action=getAllocationData&date="+ds).then(r=>r.json()).then(d=>{ if(d.savedPlan) renderBoard(d.savedPlan); else alert("No plan found."); });
+        fetch(SCRIPT_URL+"?action=getAllocationData&date="+ds).then(r=>r.json()).then(d=>{ if(d.savedPlan) { renderBoard(d.savedPlan); hasUnsavedChanges=true; } else alert("No plan found."); });
     }
     
-    function resetPlan() { if(confirm("Reset Board?")) { captureHistory(); renderBoard(null); } }
+    function resetPlan() { if(confirm("Reset Board?")) { captureHistory(); renderBoard(null); hasUnsavedChanges=true; } }
     
     function captureHistory() { if(!isInternalUpdate) { historyStack.push(getBoardState()); redoStack=[]; updateHistoryButtons(); } }
-    function undo() { if(historyStack.length) { redoStack.push(getBoardState()); isInternalUpdate=true; renderBoard(historyStack.pop()); isInternalUpdate=false; updateHistoryButtons(); } }
-    function redo() { if(redoStack.length) { historyStack.push(getBoardState()); isInternalUpdate=true; renderBoard(redoStack.pop()); isInternalUpdate=false; updateHistoryButtons(); } }
+    function undo() { if(historyStack.length) { redoStack.push(getBoardState()); isInternalUpdate=true; renderBoard(historyStack.pop()); isInternalUpdate=false; updateHistoryButtons(); hasUnsavedChanges=true; } }
+    function redo() { if(redoStack.length) { historyStack.push(getBoardState()); isInternalUpdate=true; renderBoard(redoStack.pop()); isInternalUpdate=false; updateHistoryButtons(); hasUnsavedChanges=true; } }
     function getBoardState() { var s={}; document.querySelectorAll('.staff-select').forEach(sel=>{ var c=sel.getAttribute("data-c"); if(!s[c]) s[c]=[]; s[c].push(sel.value); }); return s; }
     function updateHistoryButtons() { document.getElementById('btn-undo').disabled=!historyStack.length; document.getElementById('btn-redo').disabled=!redoStack.length; }
 
