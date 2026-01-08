@@ -58,9 +58,13 @@
     .pc-body { padding: 15px; }
     .pc-dates { font-size: 14px; color: #555; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
     .pc-reason { font-style: italic; color: #777; background: #fafafa; padding: 8px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; border-left: 3px solid #ddd; }
-    .pc-limit-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-bottom: 12px; }
+    .pc-limit-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-bottom: 5px; }
     .limit-ok { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
     .limit-bad { background: #fdecea; color: var(--red); border: 1px solid #ffcdd2; }
+    
+    .pc-conflict { font-size: 12px; padding: 8px; background: #fff8e1; border: 1px solid #ffe0b2; color: #f57f17; border-radius: 4px; margin-bottom: 12px; }
+    .pc-conflict-none { font-size: 12px; padding: 8px; background: #f1f8e9; border: 1px solid #dcedc8; color: var(--green); border-radius: 4px; margin-bottom: 12px; }
+
     .pc-actions { display: flex; gap: 10px; margin-top: 10px; }
     .btn-approve, .btn-reject { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 14px; transition: opacity 0.2s; }
     .btn-approve { background: var(--green); }
@@ -131,7 +135,7 @@
     .staff-pill { padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; cursor: grab; }
     .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
     .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
-    .pill-busy { background: #f5f5f5; color: #888; border: 1px solid #ddd; opacity: 0.8; }
+    .pill-busy { background: #f5f5f5; color: #999; border: 1px solid #ddd; opacity: 0.8; }
     
     /* Live Calendar Icon */
     .live-cal-icon { width: 45px; height: 48px; background: white; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 12px; flex-shrink: 0; }
@@ -149,7 +153,7 @@
     #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; }
 
     /* =========================================
-       📱 MOBILE RESPONSIVE OVERRIDES (SPLIT VIEW)
+       📱 MOBILE RESPONSIVE OVERRIDES
        ========================================= */
     @media (max-width: 768px) {
         body { flex-direction: column; padding-top: 60px; height: auto; overflow: auto; }
@@ -158,9 +162,9 @@
         .sidebar.active { left: 0; }
         .main-content { padding: 15px; width: 100%; height: auto; overflow: visible; }
 
-        /* Home */
+        /* Home - Fix Viewport Cutoff */
         .big-time { font-size: 50px; }
-        .home-container { min-height: 50vh; }
+        .home-container { min-height: 50vh; justify-content: flex-start; padding-top: 40px; }
 
         /* Allocations Layout: Vertical Stack */
         .alloc-layout { flex-direction: column; height: auto; gap: 0; }
@@ -172,12 +176,12 @@
         .btn-action-group { grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; }
         .btn-action { flex: 1; padding: 12px; }
 
-        /* 2. SPLIT VIEW POOL (Sticky Top, 45% Height) */
+        /* 2. SPLIT VIEW POOL (Sticky Top, 40% Height) */
         .alloc-sidebar { 
             position: sticky; top: 60px; z-index: 900; 
             width: 100%; 
-            height: 45vh; /* Takes 45% of screen */
-            overflow-y: auto; /* Internal scrolling */
+            height: 40vh; /* Reduced to 40% as requested */
+            overflow-y: auto; 
             border-bottom: 4px solid var(--green);
             border-radius: 0 0 12px 12px;
             box-shadow: 0 5px 10px rgba(0,0,0,0.15);
@@ -185,7 +189,7 @@
             padding: 15px;
             background: #fff;
             order: -1; 
-            display: block; /* Vertical list */
+            display: block; /* Vertical list inside small box */
         }
         
         /* 3. Cards */
@@ -200,7 +204,7 @@
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
         .cal-event { 
-            display: block; /* Force show */
+            display: block; 
             font-size: 9px; 
             padding: 2px; 
             margin-bottom: 1px;
@@ -373,11 +377,8 @@
         document.getElementById('live-time').innerText = hours + ":" + mins;
         document.getElementById('live-date').innerText = dNames[now.getDay()] + ", " + now.getDate() + " " + mNames[now.getMonth()] + " " + now.getFullYear();
         
-        // Update Live Attendance Header Date
         const attHeader = document.getElementById('att-header-date');
-        if(attHeader) {
-            attHeader.innerHTML = `Live Attendance <span style='font-size:14px; color:#666; font-weight:normal; display:block;'>${dNames[now.getDay()]}, ${now.getDate()} ${mNames[now.getMonth()]}</span>`;
-        }
+        if(attHeader) attHeader.innerHTML = `Live Attendance <span style='font-size:14px; color:#666; font-weight:normal; display:block;'>${dNames[now.getDay()]}, ${now.getDate()} ${mNames[now.getMonth()]}</span>`;
     }
     setInterval(updateTime, 1000); updateTime();
     const rq = quotes[Math.floor(Math.random() * quotes.length)];
@@ -400,7 +401,22 @@
     }
     function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
 
-    // --- NEW RENDER PENDING (COLORED CARDS) ---
+    // --- CONFLICT CHECK LOGIC ---
+    function getConflicts(pStart, pEnd, pName) {
+        let s1 = parseDate(pStart), e1 = parseDate(pEnd);
+        let conflicts = [];
+        if(dashboardData.history) {
+            dashboardData.history.forEach(h => {
+                if(h.status === "Approved" && h.name !== pName) { // Don't check against self
+                    let s2 = parseDate(h.start), e2 = parseDate(h.end);
+                    // Check overlap: StartA <= EndB AND EndA >= StartB
+                    if (s1 <= e2 && e1 >= s2) { conflicts.push(h.name); }
+                }
+            });
+        }
+        return [...new Set(conflicts)];
+    }
+
     function renderPending() {
         var c = document.getElementById('pending-container'); c.innerHTML="";
         if(!dashboardData.pending || !dashboardData.pending.length) { c.innerHTML="<p>All caught up!</p>"; return; }
@@ -410,14 +426,18 @@
             var badgeClass = isOver ? "limit-bad" : "limit-ok";
             var badgeText = isOver ? `⚠️ Over Limit (${total}/${limit})` : `✅ Within Limit (${total}/${limit})`;
             
+            // Check Conflicts
+            var confs = getConflicts(l.start, l.end, l.name);
+            var confHtml = confs.length > 0 
+                ? `<div class="pc-conflict">⚠️ Others on Leave: <strong>${confs.join(", ")}</strong></div>`
+                : `<div class="pc-conflict-none">✅ No other leaves during this period</div>`;
+
             var card = document.createElement('div'); card.className = 'pending-card';
             card.innerHTML = `
-                <div class="pc-header">
-                    <div class="pc-name">${l.name}</div>
-                    <div class="pc-days">${l.days} Days</div>
-                </div>
+                <div class="pc-header"><div class="pc-name">${l.name}</div><div class="pc-days">${l.days} Days</div></div>
                 <div class="pc-body">
                     <div class="pc-limit-badge ${badgeClass}">${badgeText}</div>
+                    ${confHtml}
                     <div class="pc-dates">📅 ${l.start} ➝ ${l.end}</div>
                     <div class="pc-reason">"${l.reason}"</div>
                     <div class="pc-actions">
@@ -520,18 +540,23 @@
         d.innerHTML = `<h3 style="margin:0 0 10px 0; font-size:15px;">${c.name}</h3>`;
         var vals = ["","","",""];
         if(plan && plan[c.code]) vals=plan[c.code];
-        else if(!plan) { /* Auto-fill logic here if needed */ }
-
+        
         for(let i=0; i<4; i++) {
             let sel = document.createElement("select"); sel.className="staff-select"; 
             sel.setAttribute("data-c", c.code); sel.setAttribute("data-n", c.name); sel.setAttribute("data-city", c.city);
             let opt0 = document.createElement("option"); opt0.value=""; opt0.text= (i===0?"Lead":"Educator "+(i+1)) + " (Select)"; sel.appendChild(opt0);
+            
+            // Initial Populate (Alphabetical)
             globalStaff.sort((a,b)=>a.name.localeCompare(b.name)).forEach(s=>{
                 let opt = document.createElement("option"); opt.value=s.code; opt.text=s.name;
                 if(s.code===vals[i]) opt.selected=true; sel.appendChild(opt);
             });
+            
             sel.addEventListener('focus', ()=>tempSnapshot=getBoardState());
-            sel.addEventListener('change', ()=>{ if(tempSnapshot){ historyStack.push(tempSnapshot); redoStack=[]; updateHistoryButtons(); } updateAvailability(); });
+            sel.addEventListener('change', ()=>{ 
+                if(tempSnapshot){ historyStack.push(tempSnapshot); redoStack=[]; updateHistoryButtons(); } 
+                updateAvailability(); 
+            });
             d.appendChild(sel);
         }
         var msg = document.createElement("div"); msg.className="min-req-msg"; msg.innerText="⚠️ Min 2 req."; d.appendChild(msg);
@@ -541,17 +566,37 @@
     function updateAvailability() {
         var sels = document.querySelectorAll('.staff-select');
         var assigned=[], counts={}, filled=0, err=false;
+        
+        // 1. Gather Assigned
         sels.forEach(s=>{ if(s.value){ assigned.push(s.value); if(!counts[s.getAttribute("data-c")]) counts[s.getAttribute("data-c")]=0; counts[s.getAttribute("data-c")]++; filled++; } });
         
+        // 2. Disable Busy + SMART SORT (Move Available to Top)
         sels.forEach(s=>{
             var curr = s.value;
-            s.querySelectorAll('option').forEach(o=>{
-                if(o.value && assigned.includes(o.value) && o.value!==curr) { o.disabled=true; o.innerText=o.text.replace(" (Busy)","")+" (Busy)"; }
-                else { o.disabled=false; o.innerText=o.text.replace(" (Busy)",""); }
+            var opts = Array.from(s.options);
+            var def = opts[0]; // Keep default top
+            
+            // Re-sort options: Available first, Busy last, then Alphabetical
+            var rest = opts.slice(1).sort((a, b) => {
+                var aBusy = (a.value && assigned.includes(a.value) && a.value !== curr);
+                var bBusy = (b.value && assigned.includes(b.value) && b.value !== curr);
+                if (aBusy === bBusy) return a.text.localeCompare(b.text);
+                return aBusy ? 1 : -1; 
             });
+            
+            // Re-append sorted options (Only if not currently focused to avoid jumpiness? No, user asked for it)
+            // But we can't change DOM while user is selecting.
+            // Actually, we only trigger this ON CHANGE. So other dropdowns are closed. It is safe.
+            s.innerHTML = ""; s.appendChild(def);
+            rest.forEach(o => {
+                o.disabled = (o.value && assigned.includes(o.value) && o.value !== curr);
+                o.innerText = o.text.replace(" (Busy)","") + (o.disabled ? " (Busy)" : "");
+                s.appendChild(o);
+            });
+            s.value = curr; // Restore value
         });
 
-        // Update Pool
+        // 3. Update Pool
         document.getElementById('pool-leave').innerHTML = globalLeaves.map(l=>`<div class="staff-pill pill-leave">${l.name}</div>`).join("") || "<small style='color:#ccc'>None</small>";
         var freeHtml="", busyHtml="";
         globalStaff.forEach(s=>{
@@ -560,7 +605,7 @@
         });
         document.getElementById('pool-free').innerHTML = freeHtml;
 
-        // Validation
+        // 4. Validation
         for(var c in counts) {
             var cd = document.getElementById("card-"+c);
             if(cd) { if(counts[c]<2) { cd.classList.add("card-error"); err=true; } else cd.classList.remove("card-error"); }
