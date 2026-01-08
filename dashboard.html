@@ -298,10 +298,14 @@
                 <div id="plan-status" style="margin-left:15px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; background:#eee; color:#666;">⚪ Checking</div>
             </div>
             
-            <div style="display:flex; align-items:center; gap:5px; background:white; padding:5px; border-radius:6px; border:1px solid #ddd;">
-                <button onclick="changeDate(-1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">◀</button>
-                <input type="date" id="allocDate" onchange="loadAllocations()" style="border:none; outline:none; font-family:inherit; font-weight:500;">
-                <button onclick="changeDate(1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">▶</button>
+          <div style="display:flex; align-items:center; gap:5px;">
+                <button onclick="goToToday()" style="border:1px solid #ddd; background:white; cursor:pointer; font-weight:bold; padding:6px 10px; border-radius:6px; color:#287844; font-size:12px;">Today</button>
+                
+                <div style="display:flex; align-items:center; gap:5px; background:white; padding:5px; border-radius:6px; border:1px solid #ddd;">
+                    <button onclick="changeDate(-1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">◀</button>
+                    <input type="date" id="allocDate" onchange="loadAllocations()" style="border:none; outline:none; font-family:inherit; font-weight:500;">
+                    <button onclick="changeDate(1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">▶</button>
+                </div>
             </div>
         </div>
 
@@ -357,7 +361,7 @@
     </div>
 
   </div> <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzUTLI-Oc604ZA-jOfA785fp4PVHwqJXzWNyOLzB8lkDQa4z1csNO1dRRK6IoLs5OnSBw/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOc6GOtqGBZ2Did2geWF_ZnZiPbxcdMmmvLwqXC6qQjTWtoS7yVJGMnDy2d1UWDLTZcw/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
     let currentTab = 'home';
@@ -662,6 +666,18 @@
     }
 
     function changeDate(d) { var i=document.getElementById('allocDate'), x=new Date(i.value); x.setDate(x.getDate()+d); i.value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); loadAllocations(); }
+    
+    function goToToday() {
+        var today = new Date();
+        var dStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
+        
+        var input = document.getElementById('allocDate');
+        // Only reload if date actually changed
+        if(input.value !== dStr) {
+            input.value = dStr;
+            loadAllocations();
+        }
+    }
     
     // Alloc Actions
     function savePlan() {
