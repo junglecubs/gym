@@ -50,7 +50,7 @@
     .quote-text { font-size: 18px; font-style: italic; color: #555; line-height: 1.4; }
     .quote-author { margin-top: 15px; font-weight: bold; color: var(--green); display: block; font-size: 13px; text-transform: uppercase; }
 
-    /* --- PENDING APPROVAL CARDS (Redesigned) --- */
+    /* --- PENDING APPROVAL CARDS --- */
     .pending-card { background: white; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; border: 1px solid #eee; }
     .pc-header { padding: 12px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
     .pc-name { font-weight: bold; font-size: 16px; color: #333; }
@@ -112,7 +112,7 @@
     .cal-date-num.today { background: var(--green); color: white; }
     .cal-event { font-size: 10px; background: #e8f5e9; color: var(--green); padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--green); }
 
-    /* --- ALLOCATIONS (Redesigned) --- */
+    /* --- ALLOCATIONS (Desktop) --- */
     .alloc-layout { display: flex; gap: 20px; height: calc(100vh - 280px); }
     .alloc-sidebar { width: 220px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
     .alloc-main { flex: 1; overflow-y: auto; padding-right: 5px; }
@@ -149,7 +149,7 @@
     #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; }
 
     /* =========================================
-       📱 MOBILE RESPONSIVE OVERRIDES (FIXED)
+       📱 MOBILE RESPONSIVE OVERRIDES (SPLIT VIEW)
        ========================================= */
     @media (max-width: 768px) {
         body { flex-direction: column; padding-top: 60px; height: auto; overflow: auto; }
@@ -162,7 +162,7 @@
         .big-time { font-size: 50px; }
         .home-container { min-height: 50vh; }
 
-        /* Allocations Layout */
+        /* Allocations Layout: Vertical Stack */
         .alloc-layout { flex-direction: column; height: auto; gap: 0; }
         
         /* 1. Mobile Toolbar */
@@ -172,25 +172,22 @@
         .btn-action-group { grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; }
         .btn-action { flex: 1; padding: 12px; }
 
-        /* 2. STICKY STAFF POOL (Horizontal) */
+        /* 2. SPLIT VIEW POOL (Sticky Top, 45% Height) */
         .alloc-sidebar { 
             position: sticky; top: 60px; z-index: 900; 
-            width: 100%; height: auto; max-height: 110px;
+            width: 100%; 
+            height: 45vh; /* Takes 45% of screen */
+            overflow-y: auto; /* Internal scrolling */
             border-bottom: 4px solid var(--green);
             border-radius: 0 0 12px 12px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px; padding: 10px; background: #fff;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
             order: -1; 
-            
-            /* Horizontal Scroll Logic */
-            display: flex; flex-direction: row; gap: 15px; overflow-x: auto;
-            white-space: nowrap; align-items: flex-start;
+            display: block; /* Vertical list */
         }
         
-        /* Inner containers for pools to flow horizontally */
-        .pool-section { min-width: 120px; display: inline-block; vertical-align: top; }
-        .pool-title { font-size: 10px; font-weight: bold; color: #888; margin-bottom: 4px; }
-
         /* 3. Cards */
         .alloc-grid { grid-template-columns: 1fr; gap: 20px; }
         .staff-select { height: 45px; font-size: 16px; margin-bottom: 12px; }
@@ -199,17 +196,17 @@
         .att-split, .team-grid { grid-template-columns: 1fr; }
         .att-col { margin-bottom: 15px; }
         
-        /* 4. Mobile Calendar Fix */
+        /* 4. Mobile Calendar Fix (Show Events) */
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
         .cal-event { 
-            display: block !important; 
+            display: block; /* Force show */
             font-size: 9px; 
-            padding: 1px 3px; 
-            height: 14px; 
+            padding: 2px; 
+            margin-bottom: 1px;
+            white-space: nowrap; 
             overflow: hidden; 
-            margin-bottom: 1px; 
-            line-height: 1.2;
+            text-overflow: ellipsis;
         }
     }
   </style>
@@ -271,7 +268,7 @@
 
     <div id="view-attendance" class="view-section">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-        <h2>Live Attendance (Today)</h2>
+        <h2 id="att-header-date">Live Attendance</h2>
         <button onclick="forceOutAll()" style="background:#c72e31; color:white; border:none; padding:8px 15px; border-radius:4px; font-size:12px; cursor:pointer;">⚠️ Force Close All</button>
       </div>
       <div class="att-split">
@@ -320,20 +317,16 @@
 
         <div class="alloc-layout">
             <div class="alloc-sidebar">
-                <div class="pool-section">
-                    <div class="pool-title">🔴 ON LEAVE</div>
-                    <div id="pool-leave" style="margin-bottom:10px;"></div>
-                </div>
-                <div class="pool-section">
-                    <div class="pool-title">🟢 AVAILABLE</div>
-                    <div id="pool-free"></div>
-                </div>
+                <div style="font-size:11px; font-weight:bold; color:#999; margin-bottom:5px;">STAFF POOL</div>
+                <div><strong style="color:#c72e31; font-size:11px;">🔴 On Leave</strong><div id="pool-leave" style="margin-top:5px;"></div></div>
+                <hr style="border:0; border-top:1px solid #eee; width:100%;">
+                <div><strong style="color:var(--green); font-size:11px;">🟢 Available</strong><div id="pool-free" style="margin-top:5px;"></div></div>
             </div>
 
             <div class="alloc-main" id="alloc-board"></div>
 
             <div class="alloc-summary-panel">
-                <div class="pool-title">SUMMARY PREVIEW</div>
+                <div style="font-size:11px; font-weight:bold; color:#999; margin-bottom:5px;">SUMMARY PREVIEW</div>
                 <div id="summary-text" style="flex:1; font-size:11px; white-space:pre-wrap; font-family:monospace; background:#f9f9f9; padding:10px; border:1px solid #eee; border-radius:4px; overflow-y:auto; color:#333; max-height:300px;">Loading...</div>
                 <button onclick="copySummary()" style="margin-top:10px; width:100%; background:#25D366; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold;">📱 Copy for WhatsApp</button>
             </div>
@@ -379,6 +372,12 @@
         const mNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         document.getElementById('live-time').innerText = hours + ":" + mins;
         document.getElementById('live-date').innerText = dNames[now.getDay()] + ", " + now.getDate() + " " + mNames[now.getMonth()] + " " + now.getFullYear();
+        
+        // Update Live Attendance Header Date
+        const attHeader = document.getElementById('att-header-date');
+        if(attHeader) {
+            attHeader.innerHTML = `Live Attendance <span style='font-size:14px; color:#666; font-weight:normal; display:block;'>${dNames[now.getDay()]}, ${now.getDate()} ${mNames[now.getMonth()]}</span>`;
+        }
     }
     setInterval(updateTime, 1000); updateTime();
     const rq = quotes[Math.floor(Math.random() * quotes.length)];
