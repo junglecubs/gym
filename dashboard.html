@@ -11,29 +11,26 @@
       --bg: #f4f6f8; --sidebar: #ffffff; --active: #e8f5e9; 
       --green: #287844; --text: #333; --border: #e0e0e0; --red: #c72e31; --orange: #f39c12;
     }
-    /* Base Reset */
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; }
     
-    /* --- LAYOUT (DESKTOP DEFAULT) --- */
+    /* --- LAYOUT (DESKTOP) --- */
     .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.02); z-index: 1000; transition: transform 0.3s ease; }
-    .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+    .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
     
-    /* --- MOBILE HEADER (Hidden on Desktop) --- */
+    /* --- MOBILE HEADER --- */
     .mobile-header { display: none; background: white; padding: 0 15px; border-bottom: 1px solid #ddd; align-items: center; justify-content: space-between; z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 60px; }
     .menu-btn { font-size: 28px; cursor: pointer; color: var(--green); background: none; border: none; padding: 0; }
     
-    /* --- BRANDING --- */
+    /* --- BRANDING & NAV --- */
     .logo-container { text-align: center; margin-bottom: 30px; }
     .logo-img { max-width: 140px; height: auto; display: block; margin: 0 auto; }
-    
-    /* --- NAVIGATION --- */
     .nav-item { padding: 12px 15px; margin-bottom: 8px; cursor: pointer; border-radius: 8px; font-weight: 500; color: #555; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 14px; }
     .nav-item:hover { background-color: #f5f5f5; color: var(--green); }
     .nav-item.active { background-color: var(--active); color: var(--green); font-weight: bold; }
     
     /* --- VIEWS --- */
-    .view-section { display: none; animation: fadeIn 0.3s ease-out; padding-bottom: 40px; } 
+    .view-section { display: none; animation: fadeIn 0.3s ease-out; padding-bottom: 80px; } 
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
 
@@ -42,62 +39,48 @@
     /* --- HOME TAB --- */
     .home-container { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60vh; text-align: center; color: #444; }
     .big-time { font-size: 80px; font-weight: 300; color: var(--green); margin-bottom: 5px; letter-spacing: -2px; line-height: 1; }
-    .big-date { font-size: 20px; font-weight: 500; color: #666; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
+    .big-date { font-size: 24px; font-weight: 500; color: #666; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
     .quote-box { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); max-width: 600px; border-left: 5px solid var(--orange); margin: 0 15px; }
     .quote-text { font-size: 18px; font-style: italic; color: #555; line-height: 1.4; }
     .quote-author { margin-top: 15px; font-weight: bold; color: var(--green); display: block; font-size: 13px; text-transform: uppercase; }
 
-    /* --- CARDS & TABLES --- */
+    /* --- CARDS & BUTTONS --- */
     .card { background: white; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 4px solid var(--green); }
-    .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 15px 0; }
-    .stat-box { background: #f8f9fa; padding: 8px; border-radius: 6px; text-align: center; }
-    .stat-label { display: block; font-size: 10px; color: #666; text-transform: uppercase; }
-    .stat-value { font-weight: bold; font-size: 14px; color: #333; }
-    .stat-value.apply { color: var(--orange); }
-    
-    .btn-approve, .btn-reject { padding: 10px 15px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; flex: 1; margin: 5px 2px; color: white; font-size: 13px; }
+    .btn-approve, .btn-reject { padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; font-size: 14px; flex: 1; margin: 5px; }
     .btn-approve { background: var(--green); }
     .btn-reject { background: var(--red); }
 
-    /* Tables scroll horizontally on mobile */
-    table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: block; overflow-x: auto; white-space: nowrap; }
-    th, td { padding: 12px; border-bottom: 1px solid #eee; font-size: 13px; }
-    th { background: #eee; text-align: left; text-transform: uppercase; color: #666; font-size: 11px; }
-    
-    /* --- ATTENDANCE --- */
-    .att-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    .att-col { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    .att-card { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #f0f0f0; }
-    .att-info { display: flex; flex-direction: column; }
-    .att-name { font-weight: bold; color: #333; font-size: 14px; }
-    .att-loc { font-size: 11px; color: #888; }
-    .att-status { font-size: 10px; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: inline-block; }
-    .att-in { background: #e8f5e9; color: var(--green); }
-    .att-out { background: #eee; color: #666; }
+    /* --- TEAM STATS (FIXED) --- */
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
+    .member-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; border: 1px solid #eee; }
+    .member-avatar { width: 50px; height: 50px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 10px; }
+    .progress-bar { background: #eee; height: 8px; border-radius: 4px; margin: 15px 0; overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--green); border-radius: 4px; }
+    .limit-text { font-size: 12px; color: #777; }
 
-    /* --- ALLOCATIONS MODULE --- */
-    /* Container adjusts height based on view */
-    .alloc-layout { display: flex; gap: 15px; height: calc(100vh - 220px); }
-    
-    /* Left Sidebar (Staff Pool) */
-    .alloc-sidebar { width: 220px; background: white; border-radius: 8px; padding: 10px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
-    
-    /* Main Board */
-    .alloc-main { flex: 1; overflow-y: auto; padding-right: 2px; }
-    .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-    
-    /* Right Sidebar (Summary) */
-    .alloc-summary-panel { width: 260px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; border-left: 4px solid #333; }
+    /* --- CALENDAR (FIXED) --- */
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 0 0 8px 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+    .cal-cell { min-height: 100px; border: 1px solid #f0f0f0; padding: 5px; position: relative; }
+    .cal-day-name { text-align: center; font-weight: bold; color: #888; padding: 10px; background: #f9f9f9; font-size: 12px; text-transform: uppercase; }
+    .cal-date-num { font-size: 12px; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; width: 25px; height: 25px; line-height: 25px; text-align: center; border-radius: 50%; }
+    .cal-date-num.today { background: var(--green); color: white; }
+    .cal-event { font-size: 10px; background: #e8f5e9; color: var(--green); padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--green); }
 
-    .city-header { font-size: 14px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 3px; margin-bottom: 10px; font-weight: bold; margin-top: 15px; }
+    /* --- ALLOCATIONS (DESKTOP) --- */
+    .alloc-layout { display: flex; gap: 20px; height: calc(100vh - 220px); }
+    .alloc-sidebar { width: 240px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+    .alloc-main { flex: 1; overflow-y: auto; padding-right: 5px; }
+    .alloc-summary-panel { width: 280px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; border-left: 4px solid #333; }
+    .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
     
-    .staff-pill { padding: 4px 8px; border-radius: 4px; font-size: 11px; margin-bottom: 3px; display: flex; justify-content: space-between; }
+    .city-header { font-size: 16px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 5px; margin: 20px 0 10px 0; font-weight: bold; }
+    .staff-pill { padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; }
     .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
-    .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
-    .pill-busy { background: #f5f5f5; color: #888; border: 1px solid #ddd; opacity: 0.7; }
+    .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; cursor: pointer; }
+    .pill-busy { background: #f5f5f5; color: #999; border: 1px solid #ddd; opacity: 0.8; }
     
     .card-error { border: 2px solid #c72e31 !important; background-color: #fff5f5 !important; }
-    .min-req-msg { color: #c72e31; font-size: 9px; font-weight: bold; margin-top: 4px; display: none; }
+    .min-req-msg { color: #c72e31; font-size: 11px; font-weight: bold; margin-top: 5px; display: none; }
     .card-error .min-req-msg { display: block; }
 
     /* --- LOGIN --- */
@@ -113,50 +96,72 @@
         
         /* Sidebar Menu (Slide-in) */
         .mobile-header { display: flex; }
-        .sidebar { position: fixed; left: -100%; top: 60px; width: 80%; height: calc(100vh - 60px); z-index: 2500; border-right: none; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
+        .sidebar { position: fixed; left: -100%; top: 60px; width: 85%; height: calc(100vh - 60px); z-index: 2500; border-right: none; box-shadow: 5px 0 15px rgba(0,0,0,0.1); }
         .sidebar.active { left: 0; }
-        
         .main-content { padding: 15px; width: 100%; height: auto; overflow: visible; }
 
         /* Home Tab Scaling */
-        .big-time { font-size: 15vw; margin-top: 20px; } /* Scales with screen width */
-        .big-date { font-size: 16px; }
+        .big-time { font-size: 15vw; margin-top: 20px; } 
         .home-container { min-height: 50vh; }
 
         /* Grids to Single Column */
         .att-split, .stats-grid, .team-grid { grid-template-columns: 1fr; }
-        .att-col { margin-bottom: 15px; }
-
-        /* --- ALLOCATION MOBILE OPTIMIZATION --- */
-        .alloc-layout { flex-direction: column; height: auto; display: block; }
         
-        /* 1. Toolbar wrapping */
-        #view-allocation .live-cal-icon { margin-right: 8px; width: 35px; height: 38px; } 
-        #view-allocation h2 { font-size: 18px; margin-bottom: 0; border: none; }
-        #view-allocation .top-row { flex-wrap: wrap; gap: 10px; }
+        /* Calendar Fix for Mobile */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
+        .cal-date-num { width: 20px; height: 20px; line-height: 20px; font-size: 10px; }
+        .cal-event { display: none; } /* Hide text events on tiny screens, show dots if needed */
         
-        /* Toolbar Buttons Grid */
-        .toolbar-container { flex-direction: column; align-items: stretch; gap: 10px; }
-        .toolbar-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
-        .toolbar-group button { width: 100%; font-size: 11px; padding: 8px 4px !important; white-space: nowrap; }
-
-        /* 2. Staff Pool (Compact Scrollable Top Bar) */
+        /* --- MOBILE ALLOCATIONS (THE BIG FIX) --- */
+        .alloc-layout { display: flex; flex-direction: column; height: auto; overflow: visible; gap: 0; }
+        
+        /* 1. STICKY STAFF POOL */
         .alloc-sidebar { 
+            position: sticky; 
+            top: 60px; /* Sticks below the header */
+            z-index: 900;
             width: 100%; 
-            height: auto; 
-            max-height: 120px; /* Limit height */
-            border-bottom: 2px solid #eee;
-            margin-bottom: 15px;
-            padding: 8px;
-            order: -1; /* Ensure it's at the top */
+            max-height: 30vh; /* Takes up top 30% of screen max */
+            overflow-y: auto;
+            border-bottom: 4px solid var(--green);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 10px;
+            background: #fff;
+            order: -1; /* Ensure it is visually first */
         }
         
-        /* 3. Cards */
-        .alloc-main { overflow: visible; padding-right: 0; }
-        .alloc-grid { grid-template-columns: 1fr; } /* 1 Card per row */
+        /* 2. BIG CENTRE CARDS */
+        .alloc-main { overflow: visible; padding: 0; }
+        .alloc-grid { display: flex; flex-direction: column; gap: 25px; } /* Vertical Stack */
+        .alloc-grid > div { 
+            /* Target the Card */
+            padding: 20px !important;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+        }
         
-        /* 4. Summary Panel (Move to bottom) */
-        .alloc-summary-panel { width: 100%; height: auto; margin-top: 20px; border-left: none; border-top: 4px solid #333; }
+        /* 3. BIG DROPDOWNS & TEXT */
+        .staff-select { 
+            height: 40px !important; 
+            font-size: 16px !important; /* Prevents iOS zoom */
+            margin-bottom: 10px !important;
+            border: 1px solid #ccc !important;
+        }
+        h3 { font-size: 18px !important; margin-bottom: 15px !important; }
+
+        /* 4. CHUNKY BUTTONS */
+        .toolbar-group button { 
+            padding: 12px 10px !important; 
+            font-size: 13px !important; 
+            flex: 1;
+        }
+        
+        /* 5. SUMMARY AT BOTTOM */
+        .alloc-summary-panel { width: 100%; height: auto; margin-top: 30px; border-left: none; border-top: 4px solid #333; }
     }
   </style>
 
