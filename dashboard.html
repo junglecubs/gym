@@ -16,7 +16,7 @@
     body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; display: flex; height: 100vh; overflow: hidden; color: #333; }
     
     /* --- SCROLLBARS --- */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
 
@@ -50,10 +50,24 @@
     .quote-text { font-size: 18px; font-style: italic; color: #555; line-height: 1.4; }
     .quote-author { margin-top: 15px; font-weight: bold; color: var(--green); display: block; font-size: 13px; text-transform: uppercase; }
 
-    /* --- CARDS (Universal) --- */
-    .card { background: white; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #eee; }
-    
-    /* --- HISTORY LIST (Cards instead of Table) --- */
+    /* --- PENDING APPROVAL CARDS (Redesigned) --- */
+    .pending-card { background: white; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; border: 1px solid #eee; }
+    .pc-header { padding: 12px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .pc-name { font-weight: bold; font-size: 16px; color: #333; }
+    .pc-days { font-size: 12px; font-weight: bold; color: #666; background: #eee; padding: 3px 8px; border-radius: 4px; }
+    .pc-body { padding: 15px; }
+    .pc-dates { font-size: 14px; color: #555; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
+    .pc-reason { font-style: italic; color: #777; background: #fafafa; padding: 8px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; border-left: 3px solid #ddd; }
+    .pc-limit-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-bottom: 12px; }
+    .limit-ok { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+    .limit-bad { background: #fdecea; color: var(--red); border: 1px solid #ffcdd2; }
+    .pc-actions { display: flex; gap: 10px; margin-top: 10px; }
+    .btn-approve, .btn-reject { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 14px; transition: opacity 0.2s; }
+    .btn-approve { background: var(--green); }
+    .btn-reject { background: var(--red); }
+    .btn-approve:active, .btn-reject:active { opacity: 0.7; }
+
+    /* --- HISTORY LIST --- */
     .history-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; display: flex; flex-direction: column; gap: 5px; }
     .h-Approved { border-left-color: var(--green); }
     .h-Rejected { border-left-color: var(--red); }
@@ -67,7 +81,7 @@
     .h-date { font-size: 13px; color: #555; display: flex; align-items: center; gap: 5px; margin-top: 5px; }
     .h-reason { font-size: 13px; color: #777; font-style: italic; margin-top: 5px; background: #f9f9f9; padding: 8px; border-radius: 6px; }
 
-    /* --- ATTENDANCE LIST (Cards) --- */
+    /* --- ATTENDANCE LIST --- */
     .att-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .att-col { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .att-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
@@ -135,7 +149,7 @@
     #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; }
 
     /* =========================================
-       📱 MOBILE RESPONSIVE OVERRIDES (THE FIX)
+       📱 MOBILE RESPONSIVE OVERRIDES (FIXED)
        ========================================= */
     @media (max-width: 768px) {
         body { flex-direction: column; padding-top: 60px; height: auto; overflow: auto; }
@@ -148,40 +162,55 @@
         .big-time { font-size: 50px; }
         .home-container { min-height: 50vh; }
 
-        /* Allocations: Stack Everything */
+        /* Allocations Layout */
         .alloc-layout { flex-direction: column; height: auto; gap: 0; }
         
-        /* Alloc Toolbar Grid for Mobile */
-        .alloc-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .btn-group { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 5px; } /* Undo/Redo/Copy/Copy */
-        .btn-tool { justify-content: center; padding: 10px 2px; font-size: 10px; flex-direction: column; text-align: center; height: 50px; }
-        .btn-action-group { grid-column: span 2; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
-        .btn-action { width: 100%; padding: 12px; font-size: 14px; }
+        /* 1. Mobile Toolbar */
+        .alloc-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .btn-group { grid-column: span 2; display: flex; justify-content: space-between; gap: 5px; }
+        .btn-tool { flex: 1; justify-content: center; font-size: 11px; padding: 8px 4px; text-align: center; }
+        .btn-action-group { grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; }
+        .btn-action { flex: 1; padding: 12px; }
 
-        /* Sticky Staff Pool */
+        /* 2. STICKY STAFF POOL (Horizontal) */
         .alloc-sidebar { 
             position: sticky; top: 60px; z-index: 900; 
-            width: 100%; max-height: 140px; 
+            width: 100%; height: auto; max-height: 110px;
             border-bottom: 4px solid var(--green);
             border-radius: 0 0 12px 12px;
             box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            padding: 10px;
+            margin-bottom: 20px; padding: 10px; background: #fff;
             order: -1; 
+            
+            /* Horizontal Scroll Logic */
+            display: flex; flex-direction: row; gap: 15px; overflow-x: auto;
+            white-space: nowrap; align-items: flex-start;
         }
         
-        /* Big Cards */
+        /* Inner containers for pools to flow horizontally */
+        .pool-section { min-width: 120px; display: inline-block; vertical-align: top; }
+        .pool-title { font-size: 10px; font-weight: bold; color: #888; margin-bottom: 4px; }
+
+        /* 3. Cards */
         .alloc-grid { grid-template-columns: 1fr; gap: 20px; }
-        .staff-select { height: 45px; font-size: 16px; margin-bottom: 12px; } /* Touch friendly */
+        .staff-select { height: 45px; font-size: 16px; margin-bottom: 12px; }
         
         /* Attendance & Stats */
         .att-split, .team-grid { grid-template-columns: 1fr; }
         .att-col { margin-bottom: 15px; }
         
-        /* Calendar */
+        /* 4. Mobile Calendar Fix */
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
-        .cal-event { display: none; } /* Dots only logic could go here */
+        .cal-event { 
+            display: block !important; 
+            font-size: 9px; 
+            padding: 1px 3px; 
+            height: 14px; 
+            overflow: hidden; 
+            margin-bottom: 1px; 
+            line-height: 1.2;
+        }
     }
   </style>
 </head>
@@ -265,7 +294,7 @@
                     <div class="live-cal-month" id="icon-month">JAN</div>
                     <div class="live-cal-day" id="icon-day">01</div>
                 </div>
-                <h2 style="margin:0; border:none; padding:0;">Allocations</h2>
+                <h2 style="margin:0; border:none; padding:0;">Centre Allocations</h2>
                 <div id="plan-status" style="margin-left:15px; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:bold; background:#eee; color:#666;">⚪ Checking</div>
             </div>
             
@@ -291,16 +320,20 @@
 
         <div class="alloc-layout">
             <div class="alloc-sidebar">
-                <div style="font-size:11px; font-weight:bold; color:#999; margin-bottom:5px;">STAFF POOL</div>
-                <div><strong style="color:#c72e31; font-size:11px;">🔴 On Leave</strong><div id="pool-leave" style="margin-top:5px;"></div></div>
-                <hr style="border:0; border-top:1px solid #eee; width:100%;">
-                <div><strong style="color:var(--green); font-size:11px;">🟢 Available</strong><div id="pool-free" style="margin-top:5px;"></div></div>
+                <div class="pool-section">
+                    <div class="pool-title">🔴 ON LEAVE</div>
+                    <div id="pool-leave" style="margin-bottom:10px;"></div>
+                </div>
+                <div class="pool-section">
+                    <div class="pool-title">🟢 AVAILABLE</div>
+                    <div id="pool-free"></div>
+                </div>
             </div>
 
             <div class="alloc-main" id="alloc-board"></div>
 
             <div class="alloc-summary-panel">
-                <div style="font-size:11px; font-weight:bold; color:#999; margin-bottom:5px;">SUMMARY PREVIEW</div>
+                <div class="pool-title">SUMMARY PREVIEW</div>
                 <div id="summary-text" style="flex:1; font-size:11px; white-space:pre-wrap; font-family:monospace; background:#f9f9f9; padding:10px; border:1px solid #eee; border-radius:4px; overflow-y:auto; color:#333; max-height:300px;">Loading...</div>
                 <button onclick="copySummary()" style="margin-top:10px; width:100%; background:#25D366; color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold;">📱 Copy for WhatsApp</button>
             </div>
@@ -332,7 +365,6 @@
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
 
-    // Quotes
     const quotes = [
         { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
         { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
@@ -352,7 +384,6 @@
     const rq = quotes[Math.floor(Math.random() * quotes.length)];
     document.getElementById('daily-quote').innerText = '"' + rq.text + '"'; document.getElementById('quote-author').innerText = "- " + rq.author;
 
-    // --- INIT ---
     function checkPin() { if(document.getElementById('pinInput').value===CORRECT_PIN){ document.getElementById('login-screen').style.display='none'; initDashboard(); } else alert("Wrong PIN"); }
     function initDashboard() { switchTab('home'); document.getElementById('sys-status').innerText = "Connecting..."; document.getElementById('loading-indicator').style.display='block'; fetch(SCRIPT_URL + "?action=getHolidays").then(r=>r.json()).then(d=>{ globalHolidays=d; fetchData(); }).catch(e=>fetchData()); }
     function fetchData() { document.getElementById('sys-status').innerText = "Fetching Records..."; fetch(SCRIPT_URL + "?action=getDashboardData").then(r=>r.json()).then(d=>{ dashboardData=d; renderAll(); document.getElementById('sys-status').innerText="✅ System Ready."; document.getElementById('sys-status').style.color="var(--green)"; document.getElementById('loading-indicator').style.display='none'; }).catch(e=>console.error(e)); }
@@ -370,13 +401,32 @@
     }
     function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
 
-    // --- RENDERERS ---
+    // --- NEW RENDER PENDING (COLORED CARDS) ---
     function renderPending() {
         var c = document.getElementById('pending-container'); c.innerHTML="";
         if(!dashboardData.pending || !dashboardData.pending.length) { c.innerHTML="<p>All caught up!</p>"; return; }
         dashboardData.pending.forEach(l => {
-            var card = document.createElement('div'); card.className = 'card';
-            card.innerHTML = `<h3>${l.name}</h3><div style="color:#666; font-size:13px;">${l.start} to ${l.end} (${l.days} days)</div><p style="font-size:14px;">"${l.reason}"</p><div style="display:flex;"><button class="btn-approve" onclick="decide(${l.rowIndex},'Approved')">Approve</button><button class="btn-reject" onclick="decide(${l.rowIndex},'Rejected')">Reject</button></div>`;
+            var used = l.usedLeaves || 0; var limit = l.totalLimit || 0; var total = used + l.days;
+            var isOver = (limit > 0 && total > limit);
+            var badgeClass = isOver ? "limit-bad" : "limit-ok";
+            var badgeText = isOver ? `⚠️ Over Limit (${total}/${limit})` : `✅ Within Limit (${total}/${limit})`;
+            
+            var card = document.createElement('div'); card.className = 'pending-card';
+            card.innerHTML = `
+                <div class="pc-header">
+                    <div class="pc-name">${l.name}</div>
+                    <div class="pc-days">${l.days} Days</div>
+                </div>
+                <div class="pc-body">
+                    <div class="pc-limit-badge ${badgeClass}">${badgeText}</div>
+                    <div class="pc-dates">📅 ${l.start} ➝ ${l.end}</div>
+                    <div class="pc-reason">"${l.reason}"</div>
+                    <div class="pc-actions">
+                        <button class="btn-approve" onclick="decide(${l.rowIndex},'Approved')">Approve</button>
+                        <button class="btn-reject" onclick="decide(${l.rowIndex},'Rejected')">Reject</button>
+                    </div>
+                </div>
+            `;
             c.appendChild(card);
         });
     }
