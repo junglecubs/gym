@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Jungle Cubs Team App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --green: #287844; --red: #c72e31; --bg: #f4f7f6; --card: #ffffff; --weekend-bg: #e8f5e9; --holiday-bg: #f39c12; --leave-bg: #c72e31; }
+        body { font-family: 'Roboto', sans-serif; background: var(--bg); margin: 0; padding: 0; color: #333; -webkit-tap-highlight-color: transparent; padding-bottom: 80px; }
+        
+        /* LOGIN & GENERAL STYLES - KEPT SAME */
+        #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--green); z-index: 3000; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        .login-card { background: white; padding: 30px; border-radius: 15px; width: 100%; max-width: 320px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .login-input { width: 100%; padding: 15px; margin-bottom: 15px; border: 2px solid #eee; border-radius: 10px; font-size: 16px; box-sizing: border-box; text-align: center; }
+        .btn-login { background: var(--green); color: white; width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; }
+
+        .app-header { background: white; padding: 15px 20px; display: flex; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.05); gap: 15px; }
+        .menu-btn { font-size: 26px; cursor: pointer; background: none; border: none; color: var(--green); padding: 0; }
+        .user-greeting { font-weight: bold; font-size: 16px; color: var(--green); }
+        
+        .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; z-index: 2500; transition: 0.3s; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding-top: 20px; }
+        .sidebar.active { left: 0; }
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2400; display: none; }
+        .overlay.active { display: block; }
+        .nav-item { padding: 15px 25px; border-bottom: 1px solid #f0f0f0; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 500; color: #555; }
+        .nav-item:active { background: #e8f5e9; color: var(--green); }
+
+        .container { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .module { display: none; animation: fadeIn 0.3s ease; }
+        .module.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card { background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        
+        /* NEW: LEAVE CARD STYLES */
+        .leave-card { padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #ccc; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .leave-card.Approved { border-left-color: var(--green); background: #e8f5e9; }
+        .leave-card.Rejected { border-left-color: var(--red); background: #ffebee; }
+        .leave-card.Pending { border-left-color: var(--yellow); background: #fffde7; }
+        
+        .leave-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
+        .leave-meta { font-size: 12px; color: #666; }
+
+        /* CALENDAR */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 8px; border: 1px solid #eee; }
+        .cal-cell { min-height: 50px; padding: 2px; position: relative; font-size: 10px; text-align: center; border: 1px solid #f9f9f9; }
+        .weekend-cell { background-color: var(--weekend-bg); }
+        .ev-holiday { background: var(--holiday-bg); }
+        .ev-leave { background: var(--leave-bg); }
+        .cal-event { display: block; font-size: 9px; padding: 2px; margin-bottom: 1px; border-radius: 2px; color: white; overflow: hidden; }
+
+        /* OTHER STYLES PRESERVED */
+        .status-card { text-align: center; padding: 20px; background: #fff; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; }
+        .status-text { font-size: 15px; color: #555; line-height: 1.5; }
+        .highlight { color: var(--green); font-weight: bold; }
+        .stat-box { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
+        .stat-val { font-size: 20px; font-weight: bold; display: block; }
+        .stat-label { font-size: 10px; color: #999; letter-spacing: 0.5px; margin-top: 3px; display: block; }
+        .btn-hero { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: bold; margin-bottom: 20px; cursor: pointer; box-shadow: 0 10px 20px rgba(40, 120, 68, 0.2); background: linear-gradient(135deg, #287844, #3b9e5c); color: white; transition: transform 0.1s; }
+        .btn-hero:active { transform: scale(0.96); }
+        .hero-icon { font-size: 36px; margin-bottom: 10px; }
+        .att-status-box { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; }
+        .gps-stat { font-size: 12px; color: #666; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn-action { padding: 15px; border-radius: 10px; font-weight: bold; font-size: 16px; border: none; color: white; cursor: pointer; transition: 0.2s; }
+        .btn-in { background: var(--green); }
+        .btn-out { background: var(--red); }
+        .btn-disabled { background: #ccc; cursor: not-allowed; opacity: 0.6; pointer-events: none; }
+        .btn-locked { pointer-events: none; opacity: 0.7; }
+        .module-header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .module-header h3 { margin: 0; color: var(--green); font-size: 18px; }
+        .form-label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; margin-bottom: 15px; background: #fafafa; }
+        .calc-field { background: #e8f5e9; color: var(--green); font-weight: bold; text-align: center; }
+        .cal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cal-day-head { font-weight: bold; color: #999; padding: 5px; background: #f5f5f5; text-transform: uppercase; font-size: 10px; }
+        .cal-num { font-weight: bold; display: block; margin-bottom: 2px; }
+        .today-cell { border: 2px solid var(--green); }
+        .stat-item { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f0f0f0; }
+        .stat-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        .sb-in { background: #e8f5e9; color: var(--green); }
+        .sb-out { background: #ffebee; color: var(--red); }
+        .loader { display: none; margin: 20px auto; border: 3px solid #f3f3f3; border-top: 3px solid var(--green); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .status-msg { margin-top:15px; padding:10px; border-radius:8px; font-size:13px; text-align:center; display:none; }
+        .msg-success { background:#e8f5e9; color:var(--green); border:1px solid #c8e6c9; }
+        .msg-error { background:#ffebee; color:var(--red); border:1px solid #ffcdd2; }
+
+        /* --- ENHANCED HISTORY TAB --- */
+.history-sep { font-size: 12px; font-weight: bold; color: #999; margin: 15px 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Attendance Row (Clean & Simple) */
+.att-row { 
+    display: flex; justify-content: space-between; align-items: center; 
+    padding: 12px; border-bottom: 1px solid #eee; background: white; 
+}
+.att-row:last-child { border-bottom: none; }
+.att-icon { font-size: 14px; margin-right: 10px; width: 20px; text-align: center; }
+
+/* Leave Card (Rich & Colorful) */
+.leave-card-user { 
+    background: white; border-radius: 8px; padding: 15px; margin-bottom: 12px; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc;
+    position: relative; overflow: hidden;
+}
+.leave-card-user.Approved { border-left-color: var(--green); background: #f1f8e9; }
+.leave-card-user.Rejected { border-left-color: var(--red); background: #fff5f5; }
+.leave-card-user.Pending { border-left-color: var(--yellow); background: #fffde7; }
+
+.lc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.lc-title { font-weight: bold; font-size: 14px; color: #333; }
+.lc-status { 
+    font-size: 10px; font-weight: bold; text-transform: uppercase; 
+    padding: 3px 8px; border-radius: 10px; background: rgba(255,255,255,0.8); 
+    border: 1px solid rgba(0,0,0,0.05);
+}
+.lc-date { font-size: 12px; color: #555; display: flex; align-items: center; gap: 5px; }
+.lc-reason { 
+    margin-top: 8px; font-size: 12px; color: #666; font-style: italic; 
+    padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.05); 
+}
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-card">
+            <img src="https://junglecubsgyms.com/imgw/logo_light.png" style="height:50px; margin-bottom:20px;">
+            <h3 style="margin:0 0 20px 0; color:#333;">Team Login</h3>
+            <input type="text" id="login-code" class="login-input" placeholder="Employee Code (e.g. JC001)">
+            <input type="tel" id="login-mobile" class="login-input" placeholder="Mobile Number" maxlength="10">
+            <button class="btn-login" onclick="attemptLogin()">Login</button>
+            <div id="login-msg" style="color:red; font-size:12px; margin-top:10px;"></div>
+        </div>
+    </div>
+
+    <div id="app-interface" style="display:none;">
+        <div class="app-header">
+            <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+            <div style="flex:1;">
+                <div class="user-greeting" id="display-name">Welcome</div>
+                <div class="date-display" id="display-date">--</div>
+            </div>
+            <img src="https://junglecubsgyms.com/imgw/logo_light.png" style="height:30px;">
+        </div>
+
+        <div class="sidebar" id="sidebar">
+            <div style="padding:20px; border-bottom:1px solid #eee; background:#fafafa;">
+                <h3 style="margin:0; color:var(--green);" id="sb-name">User</h3>
+                <div style="font-size:12px; color:#666;" id="sb-code">JC---</div>
+            </div>
+            <div class="nav-item active" onclick="sidebarClick('dashboard')">🏠 Dashboard</div>
+            <div class="nav-item" onclick="sidebarClick('attendance')">📍 Live Attendance</div>
+            <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
+            <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
+            <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
+            <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
+            <div class="nav-item" onclick="logout()" style="color:var(--red);">🚪 Logout</div>
+        </div>
+        <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+        <div class="container">
+            
+            <div id="view-dashboard" class="module active">
+                <div class="status-card">
+                    <div id="dash-greeting" class="status-text">Loading status...</div>
+                </div>
+                <div class="card" id="assign-card" style="display:none; border-left:5px solid var(--green); background:#e8f5e9; align-items:center; justify-content:space-between; padding:15px;">
+                    <div>
+                        <div style="font-size:10px; color:#666; text-transform:uppercase; font-weight:bold;">Today's Assignment</div>
+                        <div style="font-size:15px; font-weight:bold; color:var(--green); margin-top:2px;" id="assign-loc">...</div>
+                    </div>
+                    <div style="font-size:20px;">📍</div>
+                </div>
+                <button class="btn-hero" onclick="switchTab('attendance')">
+                    <div class="hero-icon">📍</div>
+                    Mark Attendance
+                </button>
+                <div class="card">
+                    <h4 style="margin:0 0 15px 0; border-bottom:1px solid #eee; padding-bottom:10px; font-size:14px; color:#555;">My Leave Balance</h4>
+                    <div class="stat-box">
+                        <div><span class="stat-val" style="color:#333;" id="leave-limit">--</span><span class="stat-label">ALLOWED</span></div>
+                        <div><span class="stat-val" style="color:var(--red);" id="leave-used">--</span><span class="stat-label">USED</span></div>
+                        <div><span class="stat-val" style="color:var(--green);" id="leave-bal">--</span><span class="stat-label">BALANCE</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-attendance" class="module">
+                <div class="card">
+                    <div class="module-header"><h3>📍 Live Check-In</h3></div>
+                    <div class="att-status-box">
+                        <div class="gps-stat" id="gps-status">📡 Finding Location...</div>
+                        <select id="att-location" style="width:100%; padding:10px; margin-top:5px; font-size:14px; border:1px solid #ddd; border-radius:6px;">
+                            <option>Detecting...</option>
+                        </select>
+                    </div>
+                    <label class="form-label">Session</label>
+                    <select id="att-session" class="form-input" onchange="updateButtonsState()">
+                        <option value="Morning - Head Office">☀️ Morning - Head Office</option>
+                        <option value="Evening - Centre">🌙 Evening - Centre</option>
+                    </select>
+                    <div class="btn-grid">
+                        <button class="btn-action btn-in" id="btnIn" onclick="submitAttendance('Check-In')">IN</button>
+                        <button class="btn-action btn-out" id="btnOut" onclick="submitAttendance('Check-Out')">OUT</button>
+                    </div>
+                    <div id="att-msg" class="status-msg"></div>
+                    <div class="loader" id="att-loader"></div>
+                </div>
+            </div>
+
+            <div id="view-leave" class="module">
+                <div class="card">
+                    <div class="module-header"><h3>📝 Apply for Leave</h3></div>
+                    <form id="leave-form" onsubmit="submitLeave(event)">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" id="l-start" class="form-input" required>
+                        <label class="form-label">End Date</label>
+                        <input type="date" id="l-end" class="form-input" required>
+                        <label class="form-label">Resume Date</label>
+                        <input type="date" id="l-resume" class="form-input" required>
+                        <label class="form-label">Total Days</label>
+                        <input type="text" id="l-days" class="form-input calc-field" readonly placeholder="Auto-calculated">
+                        <label class="form-label">Reason</label>
+                        <textarea id="l-reason" class="form-input" rows="3" required placeholder="Reason for leave..."></textarea>
+                        <button type="submit" class="btn-login" id="l-btn">Submit via WhatsApp</button>
+                    </form>
+                </div>
+            </div>
+
+            <div id="view-calendar" class="module">
+                <div class="module-header"><h3>📅 Team Schedule</h3></div>
+                <div class="cal-header">
+                    <button onclick="changeMonth(-1)" style="border:none; background:none; font-size:18px;">◀</button>
+                    <strong id="cal-month-year">--</strong>
+                    <button onclick="changeMonth(1)" style="border:none; background:none; font-size:18px;">▶</button>
+                </div>
+                <div class="cal-grid" id="cal-grid"></div>
+                <div style="margin-top:15px; font-size:11px; display:flex; gap:10px; justify-content:center;">
+                    <div style="display:flex; align-items:center; gap:5px;"><div style="width:10px; height:10px; background:#f39c12;"></div> Holiday</div>
+                    <div style="display:flex; align-items:center; gap:5px;"><div style="width:10px; height:10px; background:#c72e31;"></div> Leave</div>
+                </div>
+            </div>
+
+            <div id="view-stats" class="module">
+    <div class="module-header"><h3>📊 My History</h3></div>
+    <div id="stats-list" style="padding-bottom:20px;">
+        <div style="text-align:center; padding:20px; color:#999;">Loading history...</div>
+    </div> 
+</div>
+
+        </div>
+    </div>
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFkVIxRQGxYtV8e-Xs381TBRhR4vh5_5aSZWJMNU1IkoJg9B2XdPAjzuSZawLQYgH6kA/exec'; 
+    let userData = {}; let locations = []; let calendarEvents = []; let globalHolidays = {};
+    let currentCalDate = new Date(); let todaySessions = {}; let currentActiveSession = null; let activeTime = "";
+
+    window.onload = function() {
+        fetchLocations(); 
+        startGPS();
+        checkSession();
+        setupDateListeners();
+    };
+
+    function checkSession() {
+        const savedUser = localStorage.getItem("JCG_App_User_V5");
+        if(savedUser) { userData = JSON.parse(savedUser); showApp(); } else { document.getElementById('login-screen').style.display = 'flex'; }
+    }
+
+    function attemptLogin() {
+        const code = document.getElementById('login-code').value.trim().toUpperCase();
+        const mobile = document.getElementById('login-mobile').value.trim();
+        const btn = document.querySelector('.btn-login');
+        if(!code || !mobile) { alert("Please fill all fields"); return; }
+        btn.innerText = "Verifying...";
+        fetch(SCRIPT_URL + "?action=authenticateUser&code=" + code + "&mobile=" + mobile + "&t=" + new Date().getTime())
+            .then(res => res.json()).then(data => {
+                if(data.success) {
+                    data.mobile = mobile; 
+                    localStorage.setItem("JCG_App_User_V5", JSON.stringify(data));
+                    userData = data; showApp();
+                } else { document.getElementById('login-msg').innerText = data.message; btn.innerText = "Login"; }
+            });
+    }
+
+    function showApp() {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('app-interface').style.display = 'block';
+        document.getElementById('display-name').innerText = "Hi, " + userData.name.split(" ")[0];
+        document.getElementById('display-date').innerText = new Date().toDateString();
+        document.getElementById('sb-name').innerText = userData.name;
+        document.getElementById('sb-code').innerText = userData.code;
+        const hour = new Date().getHours();
+        document.getElementById('att-session').value = (hour >= 15) ? "Evening - Centre" : "Morning - Head Office";
+        refreshData();
+    }
+
+    function refreshData() {
+        fetch(SCRIPT_URL + "?action=getUserContext&code=" + userData.code + "&t=" + new Date().getTime())
+            .then(res => res.json()).then(data => {
+                // 1. Dashboard Updates
+                // ... inside refreshData() function ...
+
+            // 1. Dashboard Updates
+            if(data.today.assignment) {
+                const card = document.getElementById('assign-card');
+                const cName = data.today.assignment.centre;
+                
+                card.style.display = 'flex';
+                document.getElementById('assign-loc').innerText = "📍 " + cName;
+                
+                // --- NEW: Make Assignment Clickable ---
+                // Find the location details from the global 'locations' array
+                const loc = locations.find(l => l.name === cName);
+                
+                if (loc) {
+                    // Priority 1: Use specific Map Link from Column G (assuming mapped to 'mapLink')
+                    // Priority 2: Generate Google Maps link using Lat/Lng as backup
+                    const mapUrl = loc.mapLink || `https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.lng}`;
+                    
+                    card.style.cursor = "pointer";
+                    card.onclick = function() { 
+                        window.open(mapUrl, '_blank'); 
+                    };
+                    
+                    // Optional: Add a visual cue (small icon)
+                    if(!card.querySelector('.link-icon')) {
+                        const icon = document.createElement('div');
+                        icon.className = 'link-icon';
+                        icon.innerHTML = '↗️';
+                        icon.style.fontSize = '12px';
+                        card.appendChild(icon);
+                    }
+                }
+            }
+                document.getElementById('leave-limit').innerText = data.leaves.limit;
+                document.getElementById('leave-used').innerText = data.leaves.used;
+                document.getElementById('leave-bal').innerText = data.leaves.limit - data.leaves.used;
+
+                // 2. ENHANCED HISTORY LOGIC
+                const st = document.getElementById('stats-list'); st.innerHTML = "";
+                let mixedHistory = [];
+                
+                // Add Attendance
+                data.attendance.forEach(a => {
+                    mixedHistory.push({ 
+                        date: a.date, 
+                        time: a.timestamp || a.time, // Handle both formats
+                        action: a.action, 
+                        type: 'attendance' 
+                    });
+                    if(a.date === data.today.date && a.action === "Check-In") activeTime = a.time;
+                });
+                
+                // Add Leaves (Now capturing 'end' and 'reason')
+                if(data.leaves.history) {
+                    data.leaves.history.forEach(l => {
+                        mixedHistory.push({ 
+                            start: l.start, 
+                            end: l.end, 
+                            days: l.days, 
+                            reason: l.reason, 
+                            status: l.status, 
+                            type: 'leave' 
+                        });
+                    });
+                }
+
+                // Sort by Date (Newest First)
+                mixedHistory.sort((a,b) => {
+                    let dateA = new Date(a.type==='leave' ? a.start : a.date);
+                    let dateB = new Date(b.type==='leave' ? b.start : b.date);
+                    return dateB - dateA;
+                });
+
+                if(mixedHistory.length === 0) st.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>No recent history.</p>";
+                
+                // Render List
+                mixedHistory.forEach(item => {
+                    if(item.type === 'attendance') {
+                        // Simple Row for Attendance
+                        let icon = item.action === 'Check-In' ? '🟢' : '🔴';
+                        let color = item.action === 'Check-In' ? 'var(--green)' : 'var(--red)';
+                        st.innerHTML += `
+                        <div class="att-row">
+                            <div style="display:flex; align-items:center;">
+                                <div class="att-icon">${icon}</div>
+                                <div>
+                                    <div style="font-weight:bold; font-size:14px; color:#333;">${item.action}</div>
+                                    <div style="font-size:11px; color:#888;">${item.date}</div>
+                                </div>
+                            </div>
+                            <div style="font-weight:bold; font-size:13px; color:${color};">${item.time}</div>
+                        </div>`;
+                    } 
+                    else {
+                        // Rich Card for Leaves
+                        // Normalize Status for CSS class (Approved, Rejected, Pending)
+                        let rawStatus = item.status || "Pending";
+                        let statusClass = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+                        
+                        st.innerHTML += `
+                        <div class="leave-card-user ${statusClass}">
+                            <div class="lc-header">
+                                <div class="lc-title">Leave Request (${item.days} days)</div>
+                                <div class="lc-status">${item.status}</div>
+                            </div>
+                            <div class="lc-date">📅 ${item.start} ➝ ${item.end}</div>
+                            <div class="lc-reason">"${item.reason}"</div>
+                        </div>`;
+                    }
+                });
+
+                // 3. Session Logic
+                todaySessions = data.today.sessions || {}; 
+                currentActiveSession = null;
+                for(let key in todaySessions) {
+                    if(todaySessions[key].in && !todaySessions[key].out) {
+                        currentActiveSession = { session: key, location: todaySessions[key].loc };
+                        break;
+                    }
+                }
+                updateDashboardText(userData.name.split(" ")[0]);
+                updateButtonsState();
+                
+                // 4. Calendar
+                calendarEvents = data.calendar; 
+                renderCalendar();
+                globalHolidays = {};
+                calendarEvents.filter(e => e.type === 'holiday').forEach(h => { globalHolidays[h.start] = h.title; });
+            });
+    }
+
+    function updateDashboardText(name) {
+        const dashText = document.getElementById('dash-greeting');
+        if(currentActiveSession) {
+            let timeStr = activeTime ? " at " + activeTime : "";
+            dashText.innerHTML = `Hey ${name}, you <span class="highlight">Checked In: ${currentActiveSession.session}</span>${timeStr}`;
+        } else {
+            dashText.innerHTML = `Hey ${name}, you aren't checked in yet, let's go and mark attendance.`;
+        }
+    }
+
+    function updateButtonsState() {
+        const btnIn = document.getElementById('btnIn');
+        const btnOut = document.getElementById('btnOut');
+        const dropdown = document.getElementById('att-session');
+        const msgBox = document.getElementById('att-msg');
+        msgBox.style.display = 'none';
+        if (!todaySessions) return; 
+
+        if(currentActiveSession) {
+            dropdown.value = currentActiveSession.session; dropdown.disabled = true; 
+            btnIn.className = "btn-action btn-in btn-disabled"; btnIn.innerText = "Checked In";
+            btnOut.className = "btn-action btn-out"; btnOut.disabled = false; btnOut.innerText = "Check Out";
+        } else {
+            dropdown.disabled = false; 
+            const sel = dropdown.value;
+            const status = (todaySessions && todaySessions[sel]) ? todaySessions[sel] : {out:false};
+            if(status.out) {
+                btnIn.className = "btn-action btn-in"; btnIn.innerText = "IN"; btnIn.disabled = false;
+                btnOut.className = "btn-action btn-out btn-disabled"; btnOut.innerText = "Checked Out"; btnOut.disabled = true;
+            } else {
+                btnIn.className = "btn-action btn-in"; btnIn.innerText = "IN"; btnIn.disabled = false;
+                btnOut.className = "btn-action btn-out btn-disabled"; btnOut.innerText = "OUT"; btnOut.disabled = true;
+            }
+        }
+    }
+
+    function fetchLocations() { fetch(SCRIPT_URL + "?action=getLocations").then(r=>r.json()).then(d => { locations = d; updateLocationDropdown(); }); }
+    function startGPS() { if(navigator.geolocation) { navigator.geolocation.watchPosition((pos) => { window.currentPos = pos.coords; document.getElementById('gps-status').innerText = "✅ GPS Locked"; document.getElementById('gps-status').style.color = "var(--green)"; updateLocationDropdown(); }, (err) => { document.getElementById('gps-status').innerText = "⚠️ GPS Signal Lost"; }); } }
+    function updateLocationDropdown() {
+        if(!window.currentPos || locations.length === 0) return;
+        let nearest = null; let minD = 999999;
+        locations.forEach(loc => { let d = getDist(window.currentPos.latitude, window.currentPos.longitude, loc.lat, loc.lng); if(d < minD) { minD = d; nearest = loc; } });
+        const sel = document.getElementById('att-location'); sel.innerHTML = "";
+        let opt = document.createElement('option'); opt.value = nearest.code; opt.text = "📍 " + nearest.name + (minD > 2000 ? " (Too Far)" : " (Detected)"); sel.appendChild(opt);
+    }
+
+    function submitAttendance(action) {
+        const sess = document.getElementById('att-session').value;
+        const now = new Date(); const mins = (now.getHours() * 60) + now.getMinutes();
+        if(sess.includes("Evening") && action === "Check-In" && mins < 950) { document.getElementById('att-msg').style.display='block'; document.getElementById('att-msg').className='status-msg msg-error'; document.getElementById('att-msg').innerHTML = "⏳ Too early! Evening Check-in starts at 3:50 PM."; return; }
+        const locCode = document.getElementById('att-location').value;
+        if(!locCode) { alert("GPS not ready."); return; }
+        const locName = document.getElementById('att-location').options[0].text;
+        if(locName.includes("Too Far")) { alert("❌ You are too far from the centre."); return; }
+        const targetLoc = locations.find(l => l.code === locCode);
+        document.getElementById('att-loader').style.display = 'block'; document.getElementById('att-msg').style.display = 'none';
+        document.getElementById('btnIn').classList.add('btn-locked'); document.getElementById('btnOut').classList.add('btn-locked');
+        var fd = new FormData(); fd.append('type','attendance'); fd.append('employeeCode', userData.code); fd.append('session', sess); fd.append('action', action); fd.append('userLat', window.currentPos.latitude); fd.append('userLng', window.currentPos.longitude); fd.append('targetLat', targetLoc.lat); fd.append('targetLng', targetLoc.lng); fd.append('radius', targetLoc.radius); fd.append('locationName', targetLoc.name);
+        fetch(SCRIPT_URL, {method:'POST', body:fd}).then(res => res.json()).then(d => {
+            document.getElementById('att-loader').style.display = 'none';
+            const msgBox = document.getElementById('att-msg'); msgBox.style.display = 'block';
+            document.getElementById('btnIn').classList.remove('btn-locked'); document.getElementById('btnOut').classList.remove('btn-locked');
+            if(d.result==='success') { msgBox.className = 'status-msg msg-success'; msgBox.innerHTML = d.message; setTimeout(() => { refreshData(); switchTab('dashboard'); }, 1500); } else { msgBox.className = 'status-msg msg-error'; msgBox.innerHTML = d.message; }
+        });
+    }
+
+    function setupDateListeners() { document.getElementById('l-start').addEventListener('change', calcDays); document.getElementById('l-end').addEventListener('change', calcDays); }
+    function calcDays() {
+        const s = document.getElementById('l-start').value; const e = document.getElementById('l-end').value;
+        if(s && e) {
+            let start = new Date(s); let end = new Date(e); let count = 0;
+            while(start <= end) { let day = start.getDay(); let k = start.toISOString().split('T')[0]; if(day !== 0 && day !== 6 && !globalHolidays[k]) count++; start.setDate(start.getDate()+1); }
+            document.getElementById('l-days').value = count;
+        }
+    }
+    function submitLeave(e) {
+        e.preventDefault(); const s = document.getElementById('l-start').value; const en = document.getElementById('l-end').value; const resumeRaw = document.getElementById('l-resume').value; const r = document.getElementById('l-reason').value; const days = document.getElementById('l-days').value;
+        function getOrdinal(n) { var s = ["th", "st", "nd", "rd"]; var v = n % 100; return n + (s[(v - 20) % 10] || s[v] || s[0]); }
+        function getDayName(d) { return d.toLocaleDateString('en-US', { weekday: 'long' }); }
+        function getMonthName(d) { return d.toLocaleDateString('en-US', { month: 'long' }); }
+        function parseLoc(str) { var p=str.split('-'); return new Date(p[0], p[1]-1, p[2]); }
+        var dateListString = ""; var current = parseLoc(s); var endObj = parseLoc(en);
+        while (current <= endObj) { var k = current.toISOString().split('T')[0]; var dayOfWeek = current.getDay(); var niceDate = getOrdinal(current.getDate()) + ": " + getDayName(current); var extraInfo = ""; if (globalHolidays[k]) extraInfo = " (" + globalHolidays[k] + " Holiday)"; else if (dayOfWeek === 0 || dayOfWeek === 6) extraInfo = " (Week-Off)"; dateListString += niceDate + extraInfo + "\n"; current.setDate(current.getDate() + 1); }
+        var sObj = parseLoc(s); var eObj = parseLoc(en); var startNice = getOrdinal(sObj.getDate()) + " " + getMonthName(sObj); var endNice = getOrdinal(eObj.getDate()) + " " + getMonthName(eObj) + " " + eObj.getFullYear(); var resumeNice = parseLoc(resumeRaw).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+        var headerLine = (s === en) ? `I will be taking a leave on ${startNice} ${sObj.getFullYear()}.` : `I will be taking a leave from ${startNice} to ${endNice} ${eObj.getFullYear()}.`;
+        var msg = `Hello Aparna teacher,\n\n${headerLine}\n\n${dateListString}\nResuming: ${resumeNice}\n\nRequest you to kindly approve the same.\n\nReason: ${r}.\n\nRegards\n${userData.name}`;
+        var waUrl = "https://wa.me/919664890087?text=" + encodeURIComponent(msg);
+        document.getElementById('l-btn').innerText = "Saving...";
+        var fd = new FormData(); fd.append('employeeCode', userData.code); fd.append('startDate', s); fd.append('endDate', en); fd.append('resumeDate', resumeRaw); fd.append('totalDays', days); fd.append('reason', r); fd.append('mobile', userData.mobile);
+        fetch(SCRIPT_URL, {method:'POST', body:fd}).then(()=>{ alert("Leave Request Saved! Redirecting to WhatsApp..."); window.location.href = waUrl; document.getElementById('l-btn').innerText = "Submit via WhatsApp"; document.getElementById('leave-form').reset(); });
+    }
+
+    function renderCalendar() {
+        const y = currentCalDate.getFullYear(); const m = currentCalDate.getMonth(); document.getElementById('cal-month-year').innerText = new Date(y, m).toLocaleString('default', { month: 'long', year: 'numeric' });
+        const fDay = new Date(y, m, 1).getDay(); const nDays = new Date(y, m + 1, 0).getDate(); const g = document.getElementById('cal-grid'); g.innerHTML = "";
+        ["S","M","T","W","T","F","S"].forEach(d => g.innerHTML += `<div class="cal-day-head">${d}</div>`);
+        for(let i=0; i<fDay; i++) g.innerHTML += `<div class="cal-cell"></div>`;
+        for(let d=1; d<=nDays; d++) {
+            let eventsHtml = "";
+            calendarEvents.forEach(ev => { let evDate = new Date(ev.start); if(evDate.getDate() === d && evDate.getMonth() === m && evDate.getFullYear() === y) { let cls = ev.type === 'holiday' ? 'ev-holiday' : 'ev-leave'; eventsHtml += `<span class="cal-event ${cls}">${ev.title}</span>`; } });
+            let dateObj = new Date(y, m, d); let dayOfWeek = dateObj.getDay();
+            let isToday = (d === new Date().getDate() && m === new Date().getMonth()) ? "today-cell" : "";
+            let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6) ? "weekend-cell" : "";
+            g.innerHTML += `<div class="cal-cell ${isToday} ${isWeekend}"><span class="cal-num">${d}</span>${eventsHtml}</div>`;
+        }
+    }
+    function changeMonth(dir) { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendar(); }
+    function switchTab(id) { document.querySelectorAll('.module').forEach(el => el.classList.remove('active')); document.getElementById('view-'+id).classList.add('active'); }
+    function sidebarClick(id) { switchTab(id); toggleSidebar(); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
+    function logout() { if(confirm("Logout?")) { localStorage.removeItem("JCG_App_User_V5"); location.reload(); } }
+    function getDist(lat1, lon1, lat2, lon2) { var R = 6371000; var dLat = (lat2-lat1)*(Math.PI/180); var dLon = (lon2-lon1)*(Math.PI/180); var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*(Math.PI/180))*Math.cos(lat2*(Math.PI/180))*Math.sin(dLon/2)*Math.sin(dLon/2); var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R*c; }
+</script>
+
+</body>
+</html>

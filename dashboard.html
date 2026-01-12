@@ -28,25 +28,51 @@
     .mobile-header { display: none; background: white; padding: 0 15px; border-bottom: 1px solid #ddd; align-items: center; justify-content: space-between; z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .menu-btn { font-size: 28px; cursor: pointer; color: var(--green); background: none; border: none; padding: 0; }
     
-    /* --- NAVIGATION & SIDEBAR ITEMS --- */
+    /* --- NAVIGATION --- */
     .logo-container { text-align: center; margin-bottom: 10px; }
     .logo-img { max-width: 140px; height: auto; display: block; margin: 0 auto; }
-    .welcome-text { text-align: center; color: var(--green); font-weight: bold; font-size: 14px; margin-bottom: 25px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-    
+    .welcome-text { text-align: center; color: var(--green); font-weight: bold; font-size: 14px; margin-bottom: 5px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    .date-today-text { text-align: center; color: #888; font-size: 12px; margin-bottom: 25px; font-weight: 500; }
+
     .nav-item { padding: 12px 15px; margin-bottom: 8px; cursor: pointer; border-radius: 8px; font-weight: 500; color: #555; transition: 0.2s; display: flex; align-items: center; gap: 10px; font-size: 14px; }
     .nav-item:hover { background-color: #f5f5f5; color: var(--green); }
     .nav-item.active { background-color: var(--active); color: var(--green); font-weight: bold; }
-    
     .sidebar-close-btn { display: none; position: absolute; top: 15px; right: 15px; background: none; border: none; font-size: 24px; color: #888; cursor: pointer; }
     
+    /* --- DATA TABLES (NEW) --- */
+    .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 14px; }
+    .data-table th { background: #f8f9fa; text-align: left; padding: 12px 15px; color: #666; font-weight: bold; border-bottom: 2px solid #eee; }
+    .data-table td { padding: 12px 15px; border-bottom: 1px solid #eee; color: #333; }
+    .data-table tr:last-child td { border-bottom: none; }
+    .status-pill { padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+    .st-active { background: #e8f5e9; color: var(--green); }
+    .st-inactive { background: #ffebee; color: var(--red); }
+
+    /* --- FORMS (NEW) --- */
+    .form-card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .form-group label { display: block; font-size: 12px; font-weight: bold; color: #666; margin-bottom: 5px; }
+    .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+    .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; cursor: pointer; }
+
+    /* --- INTERACTIVE FEEDBACK --- */
+    button { transition: transform 0.1s, opacity 0.2s; }
+    button:active { transform: scale(0.95); opacity: 0.8; }
+    .btn-processing { opacity: 0.6; cursor: wait !important; pointer-events: none; position: relative; }
+    .locked-ui { opacity: 0.6; pointer-events: none; user-select: none; filter: grayscale(50%); transition: all 0.3s; }
+
+    /* --- LOADER --- */
+    .loader-spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--green); border-radius: 50%; width: 40px; height: 40px; animation: spin 0.8s linear infinite; margin: 50px auto; }
+    .loader-text { text-align: center; color: #999; font-size: 14px; font-weight: bold; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
     /* --- VIEWS --- */
     .view-section { display: none; animation: fadeIn 0.3s ease-out; padding-bottom: 100px; } 
     .view-section.active { display: block; }
     @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:translateY(0); } }
-
     h2 { margin-top: 0; color: #2c3e50; border-bottom: 3px solid var(--green); display: inline-block; padding-bottom: 5px; margin-bottom: 20px; font-size: 22px; }
 
-    /* --- HOME TAB --- */
+    /* --- HOME --- */
     .home-container { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 60vh; text-align: center; color: #444; }
     .big-time { font-size: 70px; font-weight: 300; color: var(--green); margin-bottom: 5px; letter-spacing: -2px; line-height: 1; }
     .big-date { font-size: 18px; font-weight: 500; color: #666; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
@@ -54,42 +80,124 @@
     .quote-text { font-size: 18px; font-style: italic; color: #555; line-height: 1.4; }
     .quote-author { margin-top: 15px; font-weight: bold; color: var(--green); display: block; font-size: 13px; text-transform: uppercase; }
 
-    /* --- PENDING APPROVAL CARDS --- */
-    .pending-card { background: white; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 20px; overflow: hidden; border: 1px solid #eee; }
-    .pc-header { padding: 12px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-    .pc-name { font-weight: bold; font-size: 16px; color: #333; }
+    /* --- ALLOCATIONS --- */
+    .alloc-layout { display: flex; gap: 20px; height: calc(100vh - 280px); transition: opacity 0.3s; }
+    .alloc-sidebar { width: 220px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+    .alloc-main { flex: 1; overflow-y: auto; padding-right: 5px; }
+    .alloc-summary-panel { width: 260px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; border-left: 4px solid #333; }
+    .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+    
+    .alloc-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .alloc-title-group { display: flex; align-items: center; }
+    .live-cal-icon { width: 45px; height: 48px; background: white; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 12px; flex-shrink: 0; }
+    .live-cal-month { background: #c72e31; color: white; font-size: 10px; padding: 4px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    .live-cal-day { font-size: 22px; font-weight: bold; color: #333; flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; background: #fff; }
+    
+    .alloc-date-controls { display: flex; align-items: center; gap: 5px; }
+    .date-picker-wrapper { display: flex; align-items: center; gap: 5px; background: white; padding: 5px; border-radius: 6px; border: 1px solid #ddd; }
+    .day-name-display { font-size: 14px; font-weight: bold; color: var(--green); padding-right: 8px; border-right: 1px solid #eee; margin-right: 5px; }
+    .btn-today { border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; padding: 6px 10px; border-radius: 6px; color: var(--green); font-size: 12px; }
+    
+    .alloc-toolbar { display: flex; justify-content: space-between; align-items: center; background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd; margin-bottom: 15px; gap: 10px; }
+    .btn-group { display: flex; gap: 5px; flex-direction: row; }
+    .btn-action-group { display: flex; gap: 10px; }
+    .btn-tool { padding: 8px 12px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 6px; cursor: pointer; color: #555; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; transition: 0.2s; white-space: nowrap; }
+    .btn-tool:hover { background: #eee; }
+    .btn-action { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); white-space: nowrap; }
+    
+    .city-header { font-size: 16px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 5px; margin: 20px 0 10px 0; font-weight: bold; }
+    .staff-pill { padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; cursor: grab; }
+    .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
+    .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+    .pill-busy { background: #f5f5f5; color: #999; border: 1px solid #ddd; opacity: 0.8; }
+    .staff-select { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; margin-bottom: 6px; background: #fff; height: 32px; }
+    .min-req-msg { color: #c72e31; font-size: 11px; font-weight: bold; margin-top: 5px; display: none; }
+    .card-error { border: 2px solid #c72e31 !important; background-color: #fff5f5 !important; }
+    .card-error .min-req-msg { display: block; }
+
+    /* --- CARDS & LISTS --- */
+    .pending-card, .history-card { background: white; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.08); margin-bottom: 20px; border: 1px solid #eee; overflow: hidden; }
+    .pc-header, .h-header { padding: 12px 15px; background: #f9f9f9; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+    .pc-name, .h-name { font-weight: bold; font-size: 16px; color: #333; }
     .pc-days { font-size: 12px; font-weight: bold; color: #666; background: #eee; padding: 3px 8px; border-radius: 4px; }
-    .pc-body { padding: 15px; }
+    .pc-body, .history-card { padding: 15px; }
     .pc-dates { font-size: 14px; color: #555; margin-bottom: 8px; display: flex; align-items: center; gap: 5px; }
     .pc-reason { font-style: italic; color: #777; background: #fafafa; padding: 8px; border-radius: 6px; font-size: 13px; margin-bottom: 12px; border-left: 3px solid #ddd; }
     .pc-limit-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 4px 8px; border-radius: 4px; margin-bottom: 5px; }
     .limit-ok { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
     .limit-bad { background: #fdecea; color: var(--red); border: 1px solid #ffcdd2; }
-    
     .pc-conflict { font-size: 12px; padding: 8px; background: #fff8e1; border: 1px solid #ffe0b2; color: #f57f17; border-radius: 4px; margin-bottom: 12px; }
     .pc-conflict-none { font-size: 12px; padding: 8px; background: #f1f8e9; border: 1px solid #dcedc8; color: var(--green); border-radius: 4px; margin-bottom: 12px; }
-
     .pc-actions { display: flex; gap: 10px; margin-top: 10px; }
     .btn-approve, .btn-reject { flex: 1; padding: 10px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: white; font-size: 14px; transition: opacity 0.2s; }
-    .btn-approve { background: var(--green); }
-    .btn-reject { background: var(--red); }
-    .btn-approve:active, .btn-reject:active { opacity: 0.7; }
+    .btn-approve { background: var(--green); } .btn-reject { background: var(--red); }
+    
+   
+/* --- ENHANCED HISTORY CARDS --- */
+.history-card { 
+    background: white; 
+    border-radius: 10px; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08); 
+    margin-bottom: 15px; 
+    border: 1px solid #eee; 
+    overflow: hidden; 
+    transition: transform 0.2s ease;
+    border-left: 5px solid #ccc; /* Default Border */
+}
+.history-card:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
 
-    /* --- HISTORY LIST --- */
-    .history-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-left: 5px solid #ccc; display: flex; flex-direction: column; gap: 5px; }
-    .h-Approved { border-left-color: var(--green); }
-    .h-Rejected { border-left-color: var(--red); }
-    .h-Pending { border-left-color: var(--orange); }
-    .h-header { display: flex; justify-content: space-between; align-items: flex-start; }
-    .h-name { font-weight: bold; font-size: 16px; color: #333; }
-    .h-status { font-size: 11px; padding: 4px 8px; border-radius: 12px; font-weight: bold; text-transform: uppercase; }
-    .st-Approved { background: #e8f5e9; color: var(--green); }
-    .st-Rejected { background: #fdecea; color: var(--red); }
-    .st-Pending { background: #fff3cd; color: var(--orange); }
-    .h-date { font-size: 13px; color: #555; display: flex; align-items: center; gap: 5px; margin-top: 5px; }
-    .h-reason { font-size: 13px; color: #777; font-style: italic; margin-top: 5px; background: #f9f9f9; padding: 8px; border-radius: 6px; }
+/* Color Themes */
+.history-card.Approved { border-left-color: var(--green); }
+.history-card.Rejected { border-left-color: var(--red); }
+.history-card.Pending { border-left-color: var(--orange); }
 
-    /* --- ATTENDANCE LIST --- */
+/* Header Area */
+.h-header { 
+    padding: 12px 15px; 
+    background: #fcfcfc; 
+    border-bottom: 1px solid #f0f0f0; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
+.h-name { font-weight: bold; font-size: 15px; color: #333; }
+
+/* Status Badge */
+.h-status { 
+    font-size: 11px; 
+    padding: 4px 10px; 
+    border-radius: 12px; 
+    font-weight: bold; 
+    text-transform: uppercase; 
+    letter-spacing: 0.5px;
+}
+.h-status.Approved { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+.h-status.Rejected { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
+.h-status.Pending { background: #fff3e0; color: var(--orange); border: 1px solid #ffe0b2; }
+
+/* Content Area */
+.h-body { padding: 15px; }
+.h-date { 
+    font-size: 13px; 
+    color: #555; 
+    font-weight: 500; 
+    display: flex; 
+    align-items: center; 
+    gap: 6px; 
+    margin-bottom: 8px; 
+}
+.h-reason { 
+    font-size: 13px; 
+    color: #666; 
+    font-style: italic; 
+    background: #f9f9f9; 
+    padding: 10px; 
+    border-radius: 6px; 
+    border-left: 3px solid #eee; 
+    line-height: 1.4;
+}
+
+    /* --- ATTENDANCE --- */
     .att-split { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
     .att-col { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .att-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #f0f0f0; }
@@ -99,13 +207,11 @@
     .att-place { font-size: 12px; color: #888; display: flex; align-items: center; gap: 4px; }
     .att-right { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
     .att-badge { font-size: 10px; font-weight: bold; padding: 3px 6px; border-radius: 4px; display: inline-block; }
-    .ab-in { background: #e8f5e9; color: var(--green); }
-    .ab-out { background: #eee; color: #666; }
+    .ab-in { background: #e8f5e9; color: var(--green); } .ab-out { background: #eee; color: #666; }
     .att-time { font-size: 13px; font-weight: 500; color: #444; }
-    .att-late { background: #c72e31; color: white; font-size: 9px; padding: 1px 4px; border-radius: 3px; margin-left: 5px; }
     .btn-force { background: #fff0f0; border: 1px solid #ffcccc; color: var(--red); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-top: 4px; }
 
-    /* --- TEAM STATS --- */
+    /* --- TEAM STATS (Base Grid) --- */
     .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
     .member-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); text-align: center; border: 1px solid #eee; }
     .member-avatar { width: 50px; height: 50px; background: var(--green); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; margin: 0 auto 10px; }
@@ -119,120 +225,73 @@
     .cal-date-num { font-size: 12px; font-weight: bold; color: #333; margin-bottom: 5px; display: inline-block; width: 25px; height: 25px; line-height: 25px; text-align: center; border-radius: 50%; }
     .cal-date-num.today { background: var(--green); color: white; }
     .cal-event { font-size: 10px; background: #e8f5e9; color: var(--green); padding: 2px 5px; border-radius: 4px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; border-left: 2px solid var(--green); }
-
-    /* --- ALLOCATIONS (Desktop) --- */
-    .alloc-layout { display: flex; gap: 20px; height: calc(100vh - 280px); }
-    .alloc-sidebar { width: 220px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
-    .alloc-main { flex: 1; overflow-y: auto; padding-right: 5px; }
-    .alloc-summary-panel { width: 260px; background: white; border-radius: 8px; padding: 15px; overflow-y: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.05); flex-shrink: 0; border-left: 4px solid #333; }
-    .alloc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-    
-    /* Alloc Header & Date Controls */
-    .alloc-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .alloc-title-group { display: flex; align-items: center; }
-    .alloc-date-controls { display: flex; align-items: center; gap: 5px; }
-    
-    /* Date Wrapper */
-    .date-picker-wrapper { display: flex; align-items: center; gap: 5px; background: white; padding: 5px; border-radius: 6px; border: 1px solid #ddd; }
-    .btn-today { border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; padding: 6px 10px; border-radius: 6px; color: var(--green); font-size: 12px; }
-
-    /* Alloc Toolbar */
-    .alloc-toolbar { background: white; padding: 10px; border-radius: 12px; border: 1px solid #ddd; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; gap: 10px; flex-wrap: wrap; }
-    .btn-group { display: flex; gap: 5px; }
-    .btn-tool { padding: 8px 12px; border: 1px solid #ddd; background: #f9f9f9; border-radius: 6px; cursor: pointer; color: #555; font-size: 13px; font-weight: 500; display: flex; align-items: center; gap: 5px; transition: 0.2s; }
-    .btn-tool:hover { background: #eee; }
-    .btn-action { padding: 10px 20px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; color: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-    
-    .city-header { font-size: 16px; color: var(--green); border-bottom: 2px solid #ddd; padding-bottom: 5px; margin: 20px 0 10px 0; font-weight: bold; }
-    .staff-pill { padding: 5px 10px; border-radius: 6px; font-size: 12px; margin-bottom: 5px; display: flex; justify-content: space-between; cursor: grab; }
-    .pill-leave { background: #fdecea; color: #c72e31; border: 1px solid #fababb; }
-    .pill-free { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
-    .pill-busy { background: #f5f5f5; color: #999; border: 1px solid #ddd; opacity: 0.8; }
-    
-    .live-cal-icon { width: 45px; height: 48px; background: white; border: 1px solid #ccc; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-right: 12px; flex-shrink: 0; }
-    .live-cal-month { background: #c72e31; color: white; font-size: 10px; padding: 4px 0; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
-    .live-cal-day { font-size: 22px; font-weight: bold; color: #333; flex: 1; display: flex; align-items: center; justify-content: center; line-height: 1; background: #fff; }
-
-    .staff-select { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; margin-bottom: 6px; background: #fff; height: 32px; }
-    .min-req-msg { color: #c72e31; font-size: 11px; font-weight: bold; margin-top: 5px; display: none; }
-    .card-error { border: 2px solid #c72e31 !important; background-color: #fff5f5 !important; }
-    .card-error .min-req-msg { display: block; }
+    /* Paste inside <style> tag */
+    .weekend-cell { background-color: #e8f5e9; } /* Light Green */
+    .today-cell { border: 2px solid #287844; }
+    .ev-holiday { background: #f39c12; color: white; } /* Orange */
+    .ev-leave { background: #c72e31; color: white; } /* Red */
 
     /* --- LOGIN --- */
     #login-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--green); display: flex; justify-content: center; align-items: center; z-index: 3000; }
     .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 90%; max-width: 320px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
     #pinInput { width: 100%; padding: 12px; font-size: 18px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; }
 
-    /* =========================================
-       📱 MOBILE RESPONSIVE OVERRIDES
-       ========================================= */
+    /* --- MOBILE RESPONSIVE --- */
     @media (max-width: 768px) {
         body { flex-direction: column; padding-top: 60px; height: auto; overflow: auto; }
-        
         .mobile-header { display: flex; }
-        
-        /* Sidebar: increased padding-bottom to lift Logout button */
         .sidebar { position: fixed; left: -100%; top: 60px; width: 85%; height: calc(100vh - 60px); z-index: 2500; border-right: none; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding-bottom: 100px; }
         .sidebar.active { left: 0; }
         .sidebar-close-btn { display: block; }
-        
         .main-content { padding: 15px; width: 100%; height: auto; overflow: visible; }
-
-        /* Home - Fix Viewport Cutoff */
         .big-time { font-size: 50px; }
         .home-container { min-height: 50vh; justify-content: flex-start; padding-top: 40px; }
-
-        /* --- Allocations Mobile Updates --- */
         .alloc-layout { flex-direction: column; height: auto; gap: 0; }
-        
-        /* Mobile Alloc Header Stack */
         .alloc-header-top { flex-direction: column; align-items: flex-start; gap: 15px; }
-        .alloc-date-controls { 
-            width: 100%; 
-            flex-direction: column-reverse; /* Today below Picker */
-            gap: 10px; 
-            align-items: stretch;
-        }
+        .alloc-date-controls { width: 100%; flex-direction: column-reverse; gap: 10px; align-items: stretch; }
         .date-picker-wrapper { justify-content: space-between; width: 100%; }
         #allocDate { flex: 1; text-align: center; font-size: 16px; }
         .btn-today { padding: 10px; font-size: 14px; text-align: center; }
-
-        /* Mobile Toolbar */
         .alloc-toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
         .btn-group { grid-column: span 2; display: flex; justify-content: space-between; gap: 5px; }
         .btn-tool { flex: 1; justify-content: center; font-size: 11px; padding: 8px 4px; text-align: center; }
         .btn-action-group { grid-column: span 2; display: flex; gap: 10px; margin-top: 5px; }
         .btn-action { flex: 1; padding: 12px; }
-
-        /* SPLIT VIEW POOL (Sticky Top, 40% Height) */
-        .alloc-sidebar { 
-            position: sticky; top: 60px; z-index: 900; 
-            width: 100%; 
-            height: 40vh; /* Reduced to 40% */
-            overflow-y: auto; 
-            border-bottom: 4px solid var(--green);
-            border-radius: 0 0 12px 12px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #fff;
-            order: -1; 
-            display: block; 
-        }
-        
-        /* Cards */
+        .alloc-sidebar { position: sticky; top: 60px; z-index: 900; width: 100%; height: 40vh; overflow-y: auto; border-bottom: 4px solid var(--green); border-radius: 0 0 12px 12px; box-shadow: 0 5px 10px rgba(0,0,0,0.15); margin-bottom: 20px; padding: 15px; background: #fff; order: -1; display: block; }
         .alloc-grid { grid-template-columns: 1fr; gap: 20px; }
         .staff-select { height: 45px; font-size: 16px; margin-bottom: 12px; }
-        
-        /* Attendance & Stats */
-        .att-split, .team-grid { grid-template-columns: 1fr; }
+        .att-split, .team-grid, .form-grid { grid-template-columns: 1fr; }
         .att-col { margin-bottom: 15px; }
-        
-        /* Mobile Calendar Fix */
         .cal-grid { grid-template-columns: repeat(7, 1fr); }
         .cal-cell { min-height: 60px; font-size: 10px; padding: 2px; }
         .cal-event { display: block; font-size: 9px; padding: 2px; margin-bottom: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        #payroll-table { display: block; overflow-x: auto; white-space: nowrap; }
     }
+
+    /* --- V2 MODULES STYLES --- */
+    .stats-nav { display: flex; gap: 10px; margin-bottom: 20px; background: white; padding: 5px; border-radius: 8px; border: 1px solid #ddd; width: fit-content; }
+    .stats-tab { padding: 8px 20px; cursor: pointer; font-weight: bold; border-radius: 6px; font-size: 13px; color: #666; border: none; background: none; }
+    .stats-tab.active { background: var(--green); color: white; }
+    .chart-container { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #eee; }
+    .chart-title { font-weight: bold; color: #333; margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px; }
+    .bar-row { display: flex; align-items: center; margin-bottom: 8px; font-size: 13px; }
+    .bar-label { width: 100px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { flex: 1; background: #f0f0f0; height: 12px; border-radius: 6px; margin: 0 10px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 6px; }
+    .bar-val { width: 30px; text-align: right; font-weight: bold; color: #333; }
+    .trend-chart { display: flex; justify-content: space-between; align-items: flex-end; height: 150px; padding-top: 20px; }
+    .trend-col { display: flex; flex-direction: column; align-items: center; width: 100%; }
+    .trend-bar { width: 12px; background: var(--orange); border-radius: 4px 4px 0 0; transition: height 0.5s ease; min-height: 2px; }
+    .trend-label { font-size: 10px; color: #888; margin-top: 5px; }
+    .trend-val { font-size: 10px; font-weight: bold; margin-bottom: 3px; }
+    #payroll-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #eee; }
+    #payroll-table th { background: #f8f9fa; color: #555; font-weight: 700; padding: 18px 12px; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid #e9ecef; }
+    #payroll-table td { padding: 14px 12px; border-bottom: 1px solid #f1f3f5; font-size: 14px; color: #333; vertical-align: middle; text-align: center; }
+    #payroll-table td:first-child, #payroll-table th:first-child { text-align: left; padding-left: 20px; }
+    .pay-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 13px; width: 60px; text-align: center; }
+    .pay-full { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+    .pay-loss { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
+
   </style>
 </head>
 <body>
@@ -259,17 +318,22 @@
         <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Logo" class="logo-img">
     </div>
     <div class="welcome-text">Welcome, Aparna</div>
+    <div class="date-today-text" id="sidebar-date-display">Loading date...</div>
     
     <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
+    <div class="nav-item" onclick="switchTab('students'); toggleMenu()">🎓 Students</div>
+    <div class="nav-item" onclick="switchTab('team-mgmt'); toggleMenu()">👥 Team Mgmt</div>
+    
     <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
     <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
     <div class="nav-item" onclick="switchTab('allocation'); toggleMenu()">🏢 Centre Allocations</div>
-    <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Calendar</div>
+    <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Team Calendar</div>
     <div class="nav-item" onclick="switchTab('history'); toggleMenu()">📜 Leave History</div>
-    <div class="nav-item" onclick="switchTab('team'); toggleMenu()">👥 Team Stats</div>
+    <div class="nav-item" onclick="switchTab('team'); toggleMenu()">📊 Team Stats</div>
+    <div class="nav-item" onclick="switchTab('payroll'); toggleMenu()">💰 Payroll Prep</div>
     
-    <button onclick="fetchData()" style="width:100%; margin-top:auto; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
-    <button onclick="logout()" style="width:100%; margin-top:10px; padding:10px; background:#fdecea; border:1px solid #c72e31; border-radius:6px; cursor:pointer; color:#c72e31; font-weight:bold; font-size:12px;">🚪 Logout</button>
+    <button id="btn-refresh" onclick="confirmRefresh()" style="width:100%; margin-top:auto; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
+    <button onclick="confirmLogout()" style="width:100%; margin-top:10px; padding:10px; background:#fdecea; border:1px solid #c72e31; border-radius:6px; cursor:pointer; color:#c72e31; font-weight:bold; font-size:12px;">🚪 Logout</button>
     <div id="loading-indicator" style="margin-top:10px; text-align:center; font-size:11px; color:#aaa; display:none;">Syncing...</div>
   </div>
 
@@ -287,6 +351,50 @@
                 System Status: <span id="sys-status" style="color:var(--orange);">Initializing...</span>
             </p>
         </div>
+    </div>
+
+    <div id="view-students" class="view-section">
+      <h2>Student Registry</h2>
+      <input type="text" id="studentSearch" onkeyup="filterStudents()" placeholder="Search Student JIN or Name..." style="padding:12px; width:100%; border:1px solid #ddd; border-radius:8px; margin-bottom:15px; font-size:16px;">
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="student-table">
+          <thead><tr><th>JIN</th><th>Name</th><th>Age</th><th>Parents</th><th>Mobile</th><th>Batch</th><th>Status</th></tr></thead>
+          <tbody id="student-body"></tbody>
+        </table>
+        <div id="student-loader" style="display:none; text-align:center; padding:20px;">Fetching Students...</div>
+      </div>
+    </div>
+
+    <div id="view-team-mgmt" class="view-section">
+      <h2>Team Management</h2>
+      
+      <div class="form-card">
+        <div class="form-header" onclick="document.getElementById('add-member-form').style.display = document.getElementById('add-member-form').style.display==='none'?'block':'none'">
+            <span style="font-weight:bold; color:var(--green);">+ Add New Team Member</span>
+            <span style="font-size:12px; color:#999;">▼</span>
+        </div>
+        <div id="add-member-form" style="display:none;">
+            <form id="teamForm" onsubmit="submitNewMember(event)">
+                <div class="form-grid">
+                    <div class="form-group"><label>Employee Code</label><input type="text" name="code" required placeholder="JC..."></div>
+                    <div class="form-group"><label>Full Name</label><input type="text" name="name" required></div>
+                    <div class="form-group"><label>Role</label><select name="role"><option>Educator</option><option>Lead</option><option>Admin</option></select></div>
+                    <div class="form-group"><label>Mobile</label><input type="tel" name="mobile" required></div>
+                    <div class="form-group"><label>Email</label><input type="email" name="email"></div>
+                    <div class="form-group"><label>Default Centre</label><input type="text" name="centre" required></div>
+                    <div class="form-group"><label>Leave Limit</label><input type="number" name="leaves" value="20"></div>
+                </div>
+                <button type="submit" id="btn-add-team" class="btn-approve" style="margin-top:15px; width:100%;">Add to Roster</button>
+            </form>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="team-table">
+            <thead><tr><th>Code</th><th>Name</th><th>Role</th><th>Mobile</th><th>Centre</th><th>Status</th></tr></thead>
+            <tbody id="team-body"></tbody>
+        </table>
+      </div>
     </div>
 
     <div id="view-pending" class="view-section">
@@ -312,7 +420,6 @@
     </div>
 
     <div id="view-allocation" class="view-section">
-        
         <div class="alloc-header-top">
             <div class="alloc-title-group">
                 <div class="live-cal-icon">
@@ -327,6 +434,7 @@
                 <button onclick="goToToday()" class="btn-today">Today</button>
                 <div class="date-picker-wrapper">
                     <button onclick="changeDate(-1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">◀</button>
+                    <span id="alloc-day-display" class="day-name-display">...</span>
                     <input type="date" id="allocDate" onchange="loadAllocations()" style="border:none; outline:none; font-family:inherit; font-weight:500;">
                     <button onclick="changeDate(1)" style="border:none; background:none; cursor:pointer; font-weight:bold; padding:5px 10px;">▶</button>
                 </div>
@@ -341,8 +449,8 @@
                 <button onclick="copyPlan(-7)" class="btn-tool">📅 Copy Last Wk</button>
             </div>
             <div class="btn-action-group">
-                <button onclick="resetPlan()" class="btn-action" style="background:#f39c12; color:white;">✨ Reset</button>
-                <button onclick="savePlan()" class="btn-action" style="background:#287844; color:white;">💾 Save Changes</button>
+                <button id="btn-reset" onclick="resetPlan()" class="btn-action" style="background:#f39c12; color:white;">✨ Reset</button>
+                <button id="btn-save-plan" onclick="savePlan()" class="btn-action" style="background:#287844; color:white;">💾 Save Changes</button>
             </div>
         </div>
 
@@ -364,11 +472,60 @@
         </div>
     </div>
 
+    <div id="view-team" class="view-section">
+      <h2>Team Stats</h2>
+      <div class="stats-nav">
+          <button class="stats-tab active" onclick="switchStatsTab('insights')">📊 Insights</button>
+          <button class="stats-tab" onclick="switchStatsTab('roster')">👥 Roster</button>
+      </div>
+      <div id="team-roster-view" class="team-grid" style="display:none;">Loading...</div>
+      <div id="team-insights-view">
+          <div id="insights-loading" style="text-align:center; padding:30px; color:#888;">⏳ Loading analytics...</div>
+          <div class="chart-container"><div class="chart-title">🏃 Late Arrivals Leaderboard (Top 5)</div><div id="chart-late"></div></div>
+          <div class="chart-container"><div class="chart-title">🏆 Top Punctual Staff (On Time)</div><div id="chart-ontime"></div></div>
+          <div class="chart-container"><div class="chart-title">🏖️ Highest Leave Takers (Top 5)</div><div id="chart-leave"></div></div>
+          <div class="chart-container"><div class="chart-title">📅 Leave Day Trends</div><div id="chart-trend" class="trend-chart"></div></div>
+      </div>
+    </div>
+
+    <div id="view-payroll" class="view-section">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Payroll Preparation</h2>
+        <div style="display:flex; gap:10px; background:white; padding:10px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.05);">
+            <select id="payMonth" style="padding:8px; border:1px solid #ddd; border-radius:4px; font-weight:bold;">
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <select id="payYear" style="padding:8px; border:1px solid #ddd; border-radius:4px; font-weight:bold;">
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+            </select>
+            <button onclick="loadPayroll()" style="background:var(--green); color:white; border:none; padding:8px 15px; border-radius:4px; cursor:pointer; font-weight:bold;">⚡ Generate</button>
+        </div>
+      </div>
+      <div id="payroll-loading" style="display:none; text-align:center; padding:40px; color:#888;">⏳ Crunching numbers...</div>
+      <div id="payroll-error" style="display:none; text-align:center; padding:20px; color:var(--red); font-weight:bold; background:#fff5f5; border:1px solid #fed7d7; border-radius:8px; margin-bottom:15px;"></div>
+      <table id="payroll-table" style="display:none;">
+        <thead><tr><th>Employee</th><th>Total Days</th><th style="color:var(--green);">Present</th><th style="color:var(--orange);">Leaves</th><th style="color:#2196F3;">Holidays</th><th style="background:#f9f9f9; border-left:2px solid #ddd;">PAYABLE DAYS</th></tr></thead>
+        <tbody id="payroll-body"></tbody>
+      </table>
+    </div>
+
     <div id="view-calendar" class="view-section">
-      <h2>Leave Calendar</h2>
+      <h2>Team Calendar</h2>
       <div class="cal-header">
         <button class="cal-btn" onclick="changeMonth(-1)">◀ Prev</button>
-        <strong id="cal-month-year" style="font-size:16px;">--</strong>
+        <strong id="cal-month-year">--</strong>
         <button class="cal-btn" onclick="changeMonth(1)">Next ▶</button>
       </div>
       <div class="cal-grid" id="cal-grid"></div>
@@ -377,215 +534,521 @@
     <div id="view-history" class="view-section">
       <h2>Leave History</h2>
       <input type="text" id="searchBox" onkeyup="filterHistory()" placeholder="Search name..." style="padding:12px; width:100%; border:1px solid #ddd; border-radius:8px; margin-bottom:15px; font-size:16px;">
-      <div id="history-list-container"></div> </div>
-
-    <div id="view-team" class="view-section">
-      <h2>Team Stats</h2>
-      <div class="team-grid" id="team-grid"></div>
+      <div id="history-list-container"></div> 
     </div>
 
-  </div> <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzOc6GOtqGBZ2Did2geWF_ZnZiPbxcdMmmvLwqXC6qQjTWtoS7yVJGMnDy2d1UWDLTZcw/exec'; 
+  </div> 
+
+<script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFkVIxRQGxYtV8e-Xs381TBRhR4vh5_5aSZWJMNU1IkoJg9B2XdPAjzuSZawLQYgH6kA/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
     let currentTab = 'home';
     let hasUnsavedChanges = false;
+    let lastLoadedDate = "";
 
-    const quotes = [
-        { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-        { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
-        { text: "Leadership is not about being in charge. It is about taking care of those in your charge.", author: "Simon Sinek" }
-    ];
+    function checkPin() { if(document.getElementById('pinInput').value===CORRECT_PIN){ document.getElementById('login-screen').style.display='none'; window.scrollTo(0,0); initDashboard(); } else alert("Wrong PIN"); }
+    
+    function confirmLogout() {
+        if(hasUnsavedChanges) {
+            if(confirm("⚠️ You have UNSAVED changes in Allocations.\n\nAre you sure you want to Logout? Changes will be lost.")) {
+                location.reload();
+            }
+        } else {
+            location.reload();
+        }
+    }
+    
+    function confirmRefresh() {
+        if(hasUnsavedChanges) {
+            if(confirm("⚠️ You have UNSAVED changes in Allocations.\n\nRefreshing will discard them. Continue?")) {
+                hasUnsavedChanges = false;
+                fetchData();
+            }
+        } else {
+            fetchData();
+        }
+    }
+
+
+    function renderDashboard() {
+    const tbody = document.querySelector('#att-table tbody');
+    if (!tbody) return;
+    tbody.innerHTML = "";
+    
+    let present = 0, late = 0;
+    
+    // Check if data exists before looping
+    if(dashboardData.attendance && dashboardData.attendance.length > 0) {
+        dashboardData.attendance.forEach(a => {
+            present++;
+            if(a.isLate) late++;
+            
+            let statusHtml = a.isLate 
+                ? `<span class="status-pill st-late">LATE</span>` 
+                : `<span class="status-pill st-active">ON TIME</span>`;
+            
+            tbody.innerHTML += `
+            <tr>
+                <td><strong>${a.name}</strong></td>
+                <td>${a.timestamp}</td>
+                <td>${a.session}</td>
+                <td>${a.location}</td>
+                <td>${statusHtml}</td>
+            </tr>`;
+        });
+    } else {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No check-ins yet today.</td></tr>`;
+    }
+
+    // Update the Summary Cards at the top
+    if(document.getElementById('st-present')) document.getElementById('st-present').innerText = present;
+    if(document.getElementById('st-late')) document.getElementById('st-late').innerText = late;
+    if(document.getElementById('st-leave')) document.getElementById('st-leave').innerText = "-"; 
+}
+
+function renderLeaves() {
+    // Try to find Table (New Design) or Container (Old Design)
+    const pTable = document.querySelector('#pending-table tbody');
+    const pContainer = document.getElementById('pending-container');
+    const hTable = document.querySelector('#history-table tbody');
+    const hContainer = document.getElementById('history-list-container');
+
+    // --- 1. RENDER PENDING REQUESTS ---
+    if (dashboardData.pending && dashboardData.pending.length > 0) {
+        // A. If Table Exists -> Render Rows
+        if (pTable) {
+            pTable.innerHTML = "";
+            dashboardData.pending.forEach(p => {
+                pTable.innerHTML += `
+                <tr>
+                    <td><strong>${p.name}</strong><br><small>${p.mobile}</small></td>
+                    <td>${p.start} - ${p.end}</td>
+                    <td>${p.days}</td>
+                    <td>${p.reason}</td>
+                    <td>
+                        <button class="btn-action btn-approve" onclick="decideLeave(${p.rowIndex}, 'Approved', '${p.name}', '${p.email}', '${p.start}-${p.end}', '${p.mobile}')">✔</button>
+                        <button class="btn-action btn-reject" onclick="decideLeave(${p.rowIndex}, 'Rejected', '${p.name}', '${p.email}', '${p.start}-${p.end}', '${p.mobile}')">✖</button>
+                    </td>
+                </tr>`;
+            });
+        } 
+        // B. If Container Exists -> Render Cards
+        else if (pContainer) {
+            pContainer.innerHTML = "";
+            dashboardData.pending.forEach(p => {
+                pContainer.innerHTML += `
+                <div class="pending-card">
+                    <div class="pc-header"><b>${p.name}</b> <span style="font-size:12px">(${p.days} days)</span></div>
+                    <div class="pc-body">
+                        <div style="margin-bottom:5px;">📅 ${p.start} - ${p.end}</div>
+                        <div style="font-style:italic; margin-bottom:10px;">"${p.reason}"</div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-approve" onclick="decideLeave(${p.rowIndex}, 'Approved', '${p.name}', '${p.email}', '${p.start}-${p.end}', '${p.mobile}')">Approve</button>
+                            <button class="btn-reject" onclick="decideLeave(${p.rowIndex}, 'Rejected', '${p.name}', '${p.email}', '${p.start}-${p.end}', '${p.mobile}')">Reject</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+        }
+    } else {
+        if (pTable) pTable.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px;">No pending requests.</td></tr>`;
+        if (pContainer) pContainer.innerHTML = `<div style="text-align:center; padding:20px; color:#999;">No pending requests.</div>`;
+    }
+
+    // --- 2. RENDER HISTORY ---
+    if (dashboardData.history) {
+        if (hTable) hTable.innerHTML = "";
+        if (hContainer) hContainer.innerHTML = "";
+
+        dashboardData.history.slice(0, 15).forEach(h => {
+            let badge = h.status === 'Approved' ? 'st-approved' : (h.status === 'Rejected' ? 'st-rejected' : 'st-pending');
+            
+            // Render Table Row
+            if (hTable) {
+                hTable.innerHTML += `<tr><td>${h.name}</td><td>${h.start} - ${h.end}</td><td><span class="status-badge ${badge}">${h.status}</span></td></tr>`;
+            }
+            // Render List Item
+            if (hContainer) {
+                hContainer.innerHTML += `
+                <div style="padding:12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                    <div><strong>${h.name}</strong><div style="font-size:12px; color:#666;">${h.start}</div></div>
+                    <span class="status-pill ${badge}">${h.status}</span>
+                </div>`;
+            }
+        });
+    }
+}
+
+function initDashboard() {
+    // Show status
+    document.getElementById('sys-status').innerText = "Connecting...";
+    
+    // 1. Fetch Holidays
+    fetch(SCRIPT_URL + "?action=getHolidays").then(r => r.json()).then(d => { 
+        globalHolidays = d; 
+        
+        // 2. Fetch Main Dashboard Data
+        fetch(SCRIPT_URL + "?action=getDashboardData").then(r => r.json()).then(data => {
+            dashboardData = data;
+            
+            // 3. Render ALL Views safely
+            renderDashboard(); // Home Widget
+            renderAttendance(); // Live Attendance Tab
+            renderLeaves();    // Pending & History
+            renderCalendar();  // Calendar View
+            renderTeamRoster(); // Team Stats Roster
+            
+            // Update Status
+            document.getElementById('sys-status').innerText = "✅ System Ready";
+            document.getElementById('sys-status').style.color = "var(--green)";
+        });
+    });
+}
+    
+    function setBtnLoading(btnId, isLoading, text) {
+        var btn = document.getElementById(btnId);
+        if(!btn) return;
+        if(isLoading) {
+            btn.dataset.origText = btn.innerText;
+            btn.innerText = text;
+            btn.classList.add('btn-processing');
+            btn.disabled = true;
+        } else {
+            btn.innerText = btn.dataset.origText || "Action";
+            btn.classList.remove('btn-processing');
+            btn.disabled = false;
+        }
+    }
+    
+    function setUIBusy(isBusy) {
+        var board = document.querySelector('.alloc-layout');
+        var resetBtn = document.getElementById('btn-reset');
+        
+        if(isBusy) {
+            board.classList.add('locked-ui');
+            if(resetBtn) resetBtn.disabled = true;
+            if(resetBtn) resetBtn.style.opacity = '0.5';
+        } else {
+            board.classList.remove('locked-ui');
+            if(resetBtn) resetBtn.disabled = false;
+            if(resetBtn) resetBtn.style.opacity = '1';
+        }
+    }
+
+    function fetchData() { 
+        document.getElementById('sys-status').innerText = "Fetching Records..."; 
+        setBtnLoading('btn-refresh', true, "Syncing...");
+        fetch(SCRIPT_URL + "?action=getDashboardData").then(r=>r.json()).then(d=>{ 
+            dashboardData=d; renderAll(); 
+            document.getElementById('sys-status').innerText="✅ System Ready."; document.getElementById('sys-status').style.color="var(--green)"; 
+            setBtnLoading('btn-refresh', false);
+        }); 
+    }
+    function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeamRoster(); renderCalendar(); }
+
+function switchTab(id, el) {
+    // 1. UI Switching
+    document.querySelectorAll('.view-section').forEach(m => m.classList.remove('active'));
+    document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+    var target = document.getElementById('view-'+id);
+    if(target) target.classList.add('active');
+    
+    // 2. Sidebar Highlighting
+    if (el) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        el.classList.add('active');
+        // Update Header Title
+        var titleEl = document.getElementById('page-title');
+        if(titleEl) titleEl.innerText = el.innerText.trim();
+    }
+
+    // 3. TRIGGER DATA LOADING (The Missing Part)
+    if(id === 'analytics' || id === 'team') loadAnalytics();
+    if(id === 'students') loadStudentRegistry();
+    if(id === 'team-mgmt') loadTeamMgmt();
+    
+    if(id === 'allocation') {
+        // Initialize date if empty
+        if(!document.getElementById('allocDate').value) goToToday(); 
+        else loadAllocations();
+    }
+    
+    // Force refresh attendance if tab is clicked
+    if(id === 'attendance') renderAttendance();
+}
+    function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
 
     function updateTime() {
         const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const mins = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('live-time').innerText = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
         const dNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
         const mNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        document.getElementById('live-time').innerText = hours + ":" + mins;
         document.getElementById('live-date').innerText = dNames[now.getDay()] + ", " + now.getDate() + " " + mNames[now.getMonth()] + " " + now.getFullYear();
-        
-        const attHeader = document.getElementById('att-header-date');
-        if(attHeader) attHeader.innerHTML = `Live Attendance <span style='font-size:14px; color:#666; font-weight:normal; display:block;'>${dNames[now.getDay()]}, ${now.getDate()} ${mNames[now.getMonth()]}</span>`;
+        if(document.getElementById('att-header-date')) document.getElementById('att-header-date').innerHTML = `Live Attendance <span style='font-size:14px; color:#666; font-weight:normal; display:block;'>${dNames[now.getDay()]}, ${now.getDate()} ${mNames[now.getMonth()]}</span>`;
+        document.getElementById('sidebar-date-display').innerText = "It's " + dNames[now.getDay()] + ", " + now.getDate() + " " + mNames[now.getMonth()].substring(0,3) + " today";
     }
-    setInterval(updateTime, 1000); updateTime();
-    const rq = quotes[Math.floor(Math.random() * quotes.length)];
-    document.getElementById('daily-quote').innerText = '"' + rq.text + '"'; document.getElementById('quote-author').innerText = "- " + rq.author;
+    setInterval(updateTime, 1000); 
+    const quotes=[{text:"The future belongs to those who believe in the beauty of their dreams.",author:"Eleanor Roosevelt"},{text:"Keep going.",author:"Sam Levenson"}];
+    const rq=quotes[Math.floor(Math.random()*quotes.length)]; document.getElementById('daily-quote').innerText='"'+rq.text+'"'; document.getElementById('quote-author').innerText="- "+rq.author;
 
-    function checkPin() { 
-        if(document.getElementById('pinInput').value===CORRECT_PIN){ 
-            document.getElementById('login-screen').style.display='none'; 
-            window.scrollTo(0,0); 
-            initDashboard(); 
-        } else alert("Wrong PIN"); 
-    }
-    function logout() { location.reload(); }
-
-    function initDashboard() { switchTab('home'); document.getElementById('sys-status').innerText = "Connecting..."; document.getElementById('loading-indicator').style.display='block'; fetch(SCRIPT_URL + "?action=getHolidays").then(r=>r.json()).then(d=>{ globalHolidays=d; fetchData(); }).catch(e=>fetchData()); }
-    function fetchData() { document.getElementById('sys-status').innerText = "Fetching Records..."; fetch(SCRIPT_URL + "?action=getDashboardData").then(r=>r.json()).then(d=>{ dashboardData=d; renderAll(); document.getElementById('sys-status').innerText="✅ System Ready."; document.getElementById('sys-status').style.color="var(--green)"; document.getElementById('loading-indicator').style.display='none'; }).catch(e=>console.error(e)); }
-    function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeam(); renderCalendar(); }
-
-    function switchTab(t) {
-        if(currentTab === 'allocation' && hasUnsavedChanges && t !== 'allocation') {
-            if(!confirm("⚠️ You have unsaved changes in Allocations.\n\nDiscard changes and switch tabs?")) return;
-            hasUnsavedChanges = false; 
-        }
-        
-        currentTab = t;
-        document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(el=>{ if(el.getAttribute('onclick')&&el.getAttribute('onclick').includes(t)) el.classList.add('active'); });
-        document.querySelectorAll('.view-section').forEach(el=>el.classList.remove('active'));
-        if(document.getElementById('view-'+t)) document.getElementById('view-'+t).classList.add('active');
-        if(t==='allocation') { 
-            if(!document.getElementById('allocDate').value) { let x=new Date(); document.getElementById('allocDate').value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
-            loadAllocations(); 
-        }
-    }
-    function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
-
-    function getConflicts(pStart, pEnd, pName) {
-        let s1 = parseDate(pStart), e1 = parseDate(pEnd);
-        let conflicts = [];
-        if(dashboardData.history) {
-            dashboardData.history.forEach(h => {
-                if(h.status === "Approved" && h.name !== pName) { 
-                    let s2 = parseDate(h.start), e2 = parseDate(h.end);
-                    if (s1 <= e2 && e1 >= s2) { conflicts.push(h.name); }
-                }
+    // --- NEW: STUDENT MODULE LOGIC ---
+    let globalStudents = [];
+    function loadStudentRegistry() {
+        document.getElementById('student-loader').style.display='block';
+        document.getElementById('student-body').innerHTML='';
+        fetch(SCRIPT_URL + "?action=getStudentList")
+            .then(res => res.json())
+            .then(data => {
+                globalStudents = data;
+                renderStudentTable(data);
+                document.getElementById('student-loader').style.display='none';
             });
-        }
-        return [...new Set(conflicts)];
     }
 
-    function renderPending() {
-        var c = document.getElementById('pending-container'); c.innerHTML="";
-        if(!dashboardData.pending || !dashboardData.pending.length) { c.innerHTML="<p>All caught up!</p>"; return; }
-        dashboardData.pending.forEach(l => {
-            var used = l.usedLeaves || 0; var limit = l.totalLimit || 0; var total = used + l.days;
-            var isOver = (limit > 0 && total > limit);
-            var badgeClass = isOver ? "limit-bad" : "limit-ok";
-            var badgeText = isOver ? `⚠️ Over Limit (${total}/${limit})` : `✅ Within Limit (${total}/${limit})`;
+    function renderStudentTable(data) {
+        const tb = document.getElementById('student-body'); tb.innerHTML='';
+        if(data.length === 0) { tb.innerHTML='<tr><td colspan="7" style="text-align:center;">No students found.</td></tr>'; return; }
+        
+        data.forEach(s => {
+            tb.innerHTML += `<tr>
+                <td><strong>${s.jin}</strong></td>
+                <td>${s.name}</td>
+                <td>${s.age}</td>
+                <td><small>${s.parent}</small></td>
+                <td>${s.contact}</td>
+                <td><span class="status-pill" style="background:#eee;">${s.batch}</span></td>
+                <td><span class="status-pill ${s.status==='Active'?'st-active':'st-inactive'}">${s.status}</span></td>
+            </tr>`;
+        });
+    }
+
+    function filterStudents() {
+        var term = document.getElementById('studentSearch').value.toLowerCase();
+        var filtered = globalStudents.filter(s => s.name.toLowerCase().includes(term) || s.jin.toLowerCase().includes(term));
+        renderStudentTable(filtered);
+    }
+
+    // --- NEW: TEAM MGMT LOGIC ---
+    function loadTeamMgmt() {
+        fetch(SCRIPT_URL + "?action=getTeamList")
+            .then(res => res.json())
+            .then(data => {
+                const tb = document.getElementById('team-body'); tb.innerHTML='';
+                data.forEach(t => {
+                   tb.innerHTML += `<tr>
+                        <td><strong>${t.code}</strong></td>
+                        <td>${t.name}</td>
+                        <td>${t.role}</td>
+                        <td>${t.mobile}</td>
+                        <td>${t.centre}</td>
+                        <td><span class="status-pill ${t.active==='Yes'?'st-active':'st-inactive'}">${t.active}</span></td>
+                   </tr>`; 
+                });
+            });
+    }
+
+    function submitNewMember(e) {
+        e.preventDefault();
+        setBtnLoading('btn-add-team', true, "Adding...");
+        
+        var form = document.getElementById('teamForm');
+        var fd = new FormData(form);
+        fd.append('type', 'addTeamMember');
+        
+        fetch(SCRIPT_URL, { method: 'POST', body: fd })
+            .then(res => res.json())
+            .then(data => {
+                alert("Team Member Added Successfully!");
+                form.reset();
+                document.getElementById('add-member-form').style.display='none';
+                loadTeamMgmt(); // Refresh list
+                setBtnLoading('btn-add-team', false);
+            })
+            .catch(err => { alert("Error adding member"); setBtnLoading('btn-add-team', false); });
+    }
+
+    // --- EXISTING STATS LOGIC ---
+    function switchStatsTab(mode) {
+        document.querySelectorAll('.stats-tab').forEach(b => b.classList.remove('active'));
+        const btns = document.querySelectorAll('.stats-tab');
+        btns.forEach(b => { if(b.getAttribute('onclick').includes(mode)) b.classList.add('active'); });
+
+        document.getElementById('team-roster-view').style.display = (mode==='roster'?'grid':'none');
+        document.getElementById('team-insights-view').style.display = (mode==='insights'?'block':'none');
+        if(mode === 'insights') loadAnalytics();
+    }
+
+function renderTeamRoster() {
+    var g = document.getElementById('team-roster-view'); 
+    g.innerHTML = "";
+    
+    // Safety Check
+    if(!dashboardData.employees || !Array.isArray(dashboardData.employees)) {
+        g.innerHTML = "<p>No team data available.</p>";
+        return;
+    }
+
+    dashboardData.employees.forEach(e => {
+        var pct = e.limit > 0 ? Math.min(100, (e.used / e.limit) * 100) : 0;
+        g.innerHTML += `
+        <div class="member-card">
+            <div class="member-avatar">${e.name.charAt(0)}</div>
+            <h3>${e.name}</h3>
+            <div style="font-size:12px; color:#999;">${e.code}</div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width:${pct}%; background:${pct > 90 ? 'var(--red)' : 'var(--green)'}"></div>
+            </div>
+            <div style="font-size:13px; margin-top:5px;">Used: <strong>${e.used}</strong> / ${e.limit}</div>
+        </div>`;
+    });
+}
+
+// --- ADD THESE CHART HELPER FUNCTIONS TO DASHBOARD.HTML ---
+
+function loadAnalytics() {
+    // Show loader
+    const loader = document.getElementById('insights-loading');
+    if(loader) loader.style.display = 'block';
+    
+    fetch(SCRIPT_URL + "?action=getAnalytics")
+        .then(res => res.json())
+        .then(d => {
+            if(loader) loader.style.display = 'none';
             
-            var confs = getConflicts(l.start, l.end, l.name);
-            var confHtml = confs.length > 0 
-                ? `<div class="pc-conflict">⚠️ Others on Leave: <strong>${confs.join(", ")}</strong></div>`
-                : `<div class="pc-conflict-none">✅ No other leaves during this period</div>`;
+            // --- SAFETY FIX: Default to empty arrays if data is missing ---
+            const data = d || {};
+            const late = data.late || [];
+            const onTime = data.onTime || [];
+            const leaves = data.leaves || [];
+            
+            // Render Charts safely
+            renderBarChart('chart-late', late, '#c72e31');   // Red
+            renderBarChart('chart-ontime', onTime, '#287844'); // Green
+            renderBarChart('chart-leave', leaves, '#f39c12');  // Orange
+            
+            if(data.trends && typeof renderTrendChart === 'function') {
+                renderTrendChart(data.trends);
+            }
+        })
+        .catch(err => {
+            console.error("Stats failed:", err);
+            if(loader) loader.innerHTML = "<small>Stats unavailable</small>";
+        });
+}
 
-            var card = document.createElement('div'); card.className = 'pending-card';
-            card.innerHTML = `
-                <div class="pc-header"><div class="pc-name">${l.name}</div><div class="pc-days">${l.days} Days</div></div>
-                <div class="pc-body">
-                    <div class="pc-limit-badge ${badgeClass}">${badgeText}</div>
-                    ${confHtml}
-                    <div class="pc-dates">📅 ${l.start} ➝ ${l.end}</div>
-                    <div class="pc-reason">"${l.reason}"</div>
-                    <div class="pc-actions">
-                        <button class="btn-approve" onclick="decide(${l.rowIndex},'Approved')">Approve</button>
-                        <button class="btn-reject" onclick="decide(${l.rowIndex},'Rejected')">Reject</button>
-                    </div>
-                </div>
-            `;
-            c.appendChild(card);
+function renderBarChart(id, items, color) {
+    var el = document.getElementById(id); 
+    if(!el) return;
+    el.innerHTML = "";
+    
+    if(!items || items.length === 0) { el.innerHTML = "<small style='color:#999'>No data available.</small>"; return; }
+    
+    var max = Math.max(...items.map(i => i.count)) || 1;
+    items.forEach(i => {
+        var pct = (i.count / max) * 100;
+        el.innerHTML += `
+        <div style="display:flex; align-items:center; margin-bottom:8px; font-size:13px;">
+            <div style="width:120px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#555;">${i.name}</div>
+            <div style="flex:1; background:#f0f0f0; height:10px; border-radius:5px; margin:0 10px;">
+                <div style="width:${pct}%; background:${color}; height:100%; border-radius:5px;"></div>
+            </div>
+            <div style="width:20px; font-weight:bold; text-align:right;">${i.count}</div>
+        </div>`;
+    });
+}
+
+function renderTrendChart(trends) {
+    var el = document.getElementById('chart-trend'); 
+    if(!el) return;
+    el.innerHTML = "";
+    
+    var days = ["Mon","Tue","Wed","Thu","Fri","Sat"];
+    var counts = days.map(d => trends[d] || 0);
+    var max = Math.max(...counts) || 1; 
+    
+    days.forEach(d => {
+        var val = trends[d] || 0;
+        var h = (val / max) * 100; // Scale height
+        // Minimum height for visual
+        if(val > 0 && h < 10) h = 10; 
+        
+        el.innerHTML += `
+        <div class="trend-col">
+            <div class="trend-val">${val}</div>
+            <div class="trend-bar" style="height:${h}%; width:15px; background:var(--green); border-radius:3px;"></div>
+            <div class="trend-label">${d}</div>
+        </div>`;
+    });
+}
+    function loadPayroll() {
+        var m = document.getElementById('payMonth').value, y = document.getElementById('payYear').value;
+        document.getElementById('payroll-table').style.display='none'; document.getElementById('payroll-loading').style.display='block'; document.getElementById('payroll-error').style.display='none';
+        fetch(SCRIPT_URL + "?action=getPayrollData&month=" + m + "&year=" + y).then(r=>r.json()).then(d=>{
+            if(d.error) { document.getElementById('payroll-error').innerText = "❌ "+d.message; document.getElementById('payroll-error').style.display='block'; }
+            else renderPayrollTable(d);
+            document.getElementById('payroll-loading').style.display='none';
         });
     }
-
-    function renderAttendance() {
-        var logs = dashboardData.attendance||[]; var m=document.getElementById('att-morning'); var e=document.getElementById('att-evening');
-        var grp={}; 
-        logs.forEach(l=>{ 
-            var k=l.code+"_"+l.session; if(!grp[k]) grp[k]={code:l.code,name:l.name,loc:l.location,sess:l.session,in:"--:--",out:"--:--",stat:"Absent",cls:"ab-out"};
-            if(l.action==="Check-In"){ grp[k].in=l.timestamp; grp[k].stat="Checked In"; grp[k].cls="ab-in"; if(l.isLate) grp[k].late=true; }
-            else if(l.action==="Check-Out"){ grp[k].out=l.timestamp; grp[k].stat="Checked Out"; grp[k].cls="ab-out"; }
+    function renderPayrollTable(d) {
+        var tb = document.getElementById('payroll-body'); tb.innerHTML="";
+        d.forEach(r => {
+            var p = r.present+r.leaves+r.holidays; var cls = p<r.totalMonthDays?"pay-loss":"pay-full";
+            tb.innerHTML += `<tr><td><strong>${r.name}</strong><br><small style='color:#999'>${r.code}</small></td><td>${r.totalMonthDays}</td><td>${r.present}</td><td>${r.leaves}</td><td>${r.holidays}</td><td><span class="pay-badge ${cls}">${p}</span></td></tr>`;
         });
-        var mH="", eH="";
-        for(var k in grp){
-            var i=grp[k]; var lb=i.late?`<span class="att-late">LATE</span>`:"";
-            var btn=(i.stat==="Checked In")?`<div class="btn-force" onclick="forceOut('${i.code}','${i.name}','${i.sess}')">Force Out</div>`:"";
-            var h=`<div class="att-item"><div class="att-left"><div class="att-emp">${i.name}</div><div class="att-place">📍 ${i.loc}</div></div><div class="att-right"><span class="att-badge ${i.cls}">${i.stat}</span>${btn}<div class="att-time">⬇ ${i.in} ${lb}</div><div class="att-time" style="color:#888;">⬆ ${i.out}</div></div></div>`;
-            if(i.sess.includes("Morning")) mH+=h; else eH+=h;
-        }
-        m.innerHTML=mH||"<p style='color:#ccc; font-size:13px;'>Empty</p>"; e.innerHTML=eH||"<p style='color:#ccc; font-size:13px;'>Empty</p>";
+        document.getElementById('payroll-table').style.display='table';
     }
 
-    function renderHistory() {
-        var c = document.getElementById('history-list-container'); c.innerHTML="";
-        if(!dashboardData.history) return;
-        dashboardData.history.forEach(r => {
-            var div = document.createElement('div'); div.className = 'history-card h-'+r.status;
-            div.innerHTML = `<div class="h-header"><div class="h-name">${r.name}</div><div class="h-status st-${r.status}">${r.status}</div></div><div class="h-date">📅 ${r.start} - ${r.end} (${r.days}d)</div><div class="h-reason">"${r.reason}"</div>`;
-            c.appendChild(div);
-        });
-    }
-
-    function renderTeam() {
-        var g = document.getElementById('team-grid'); g.innerHTML="";
-        if(!dashboardData.employees) return;
-        dashboardData.employees.forEach(e => {
-            var pct = e.limit>0 ? Math.min(100, (e.used/e.limit)*100) : 0;
-            g.innerHTML += `<div class="member-card"><div class="member-avatar">${e.name.charAt(0)}</div><h3>${e.name}</h3><div style="font-size:12px; color:#999;">${e.code}</div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%; background:${pct>90?'var(--red)':'var(--green)'}"></div></div><div style="font-size:13px; margin-top:5px;">Used: <strong>${e.used}</strong> / ${e.limit}</div></div>`;
-        });
-    }
-
-    function renderCalendar() {
-        const y=currentCalDate.getFullYear(), m=currentCalDate.getMonth();
-        const mNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-        document.getElementById('cal-month-year').innerText = mNames[m]+" "+y;
-        const fDay=new Date(y,m,1).getDay(), nDays=new Date(y,m+1,0).getDate();
-        const g=document.getElementById('cal-grid'); g.innerHTML="";
-        ["S","M","T","W","T","F","S"].forEach(d=>g.innerHTML+=`<div class="cal-day-name">${d}</div>`);
-        for(let i=0; i<fDay; i++) g.innerHTML+=`<div class="cal-cell"></div>`;
-        for(let d=1; d<=nDays; d++) {
-            let isT = (d===new Date().getDate() && m===new Date().getMonth());
-            let k = y+"-"+(m+1)+"-"+d;
-            let h = `<div class="cal-cell"><div class="${isT?'cal-date-num today':'cal-date-num'}">${d}</div>`;
-            if(globalHolidays[k]) h+=`<div class="cal-event" style="background:#fdecea; color:red;">★ ${globalHolidays[k]}</div>`;
-            if(dashboardData.history) dashboardData.history.forEach(l=>{
-                if(l.status==="Approved"){ let s=parseDate(l.start), e=parseDate(l.end); s.setHours(0,0,0,0); e.setHours(0,0,0,0); let c=new Date(y,m,d);
-                if(c>=s && c<=e) h+=`<div class="cal-event">${l.name}</div>`; }
-            });
-            g.innerHTML += h+"</div>";
-        }
-    }
-
-    // --- ALLOCATION LOGIC ---
     let globalStaff=[], globalCentres=[], globalLeaves=[], historyStack=[], redoStack=[], isInternalUpdate=false, tempSnapshot=null;
 
-    function loadAllocations() {
-        var d = document.getElementById('allocDate').value; if(!d) return;
-        var dojb = new Date(d);
-        document.getElementById('icon-month').innerText = dojb.toLocaleString('default', { month: 'short' });
-        document.getElementById('icon-day').innerText = String(dojb.getDate()).padStart(2, '0');
-        document.getElementById('alloc-board').innerHTML = '<p style="padding:20px; text-align:center;">Loading...</p>';
-        historyStack=[]; redoStack=[]; updateHistoryButtons(); hasUnsavedChanges=false;
-        fetch(SCRIPT_URL + "?action=getAllocationData&date=" + d).then(r=>r.json()).then(data=>{
-            globalStaff=data.staff; globalCentres=data.centres; globalLeaves=data.leaves; renderBoard(data.savedPlan);
-        });
-    }
+    function loadAllocations(){ 
+        var d = document.getElementById('allocDate').value; 
+        if(!d) return; 
 
-    function renderBoard(plan) {
-        var b = document.getElementById('alloc-board'); b.innerHTML = "";
-        var cityMap = {}; globalCentres.forEach(c => { if(!cityMap[c.city]) cityMap[c.city]=[]; cityMap[c.city].push(c); });
-        for(var city in cityMap) {
-            var sec = document.createElement("div"); sec.innerHTML=`<div class="city-header">${city}</div>`;
-            var gr = document.createElement("div"); gr.className="alloc-grid";
-            cityMap[city].forEach(cen => { gr.appendChild(createCard(cen, plan)); });
-            sec.appendChild(gr); b.appendChild(sec);
+        if(hasUnsavedChanges && !isInternalUpdate) {
+            if(!confirm("⚠️ You have UNSAVED changes on the current date.\n\nSwitching dates will discard them.\nAre you sure you want to switch?")) {
+                isInternalUpdate = true;
+                document.getElementById('allocDate').value = lastLoadedDate;
+                isInternalUpdate = false;
+                return;
+            } else {
+                hasUnsavedChanges = false;
+            }
         }
-        updateAvailability();
+
+        lastLoadedDate = d;
+
+        const dateObj = new Date(d);
+        const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+        document.getElementById('alloc-day-display').innerText = dayNames[dateObj.getDay()];
+        document.getElementById('icon-day').innerText = dateObj.getDate(); 
+        document.getElementById('icon-month').innerText = dateObj.toLocaleString('default',{month:'short'}); 
+        
+        document.getElementById('alloc-board').innerHTML = '<div class="loader-spinner"></div><div class="loader-text">Fetching roster...</div>';
+        document.getElementById('pool-leave').innerHTML = '...';
+        document.getElementById('pool-free').innerHTML = '...';
+
+        fetch(SCRIPT_URL+"?action=getAllocationData&date="+d).then(r=>r.json()).then(d=>{ 
+            globalStaff=d.staff;
+            globalCentres=d.centres;
+            globalLeaves=d.leaves;
+            renderBoard(d.savedPlan); 
+        }); 
     }
 
+    function renderBoard(plan){ var b=document.getElementById('alloc-board'); b.innerHTML=""; var m={}; globalCentres.forEach(c=>{ if(!m[c.city]) m[c.city]=[]; m[c.city].push(c); }); for(var k in m){ var s=document.createElement('div'); s.innerHTML=`<div class="city-header">${k}</div>`; var g=document.createElement('div'); g.className='alloc-grid'; m[k].forEach(c=>g.appendChild(createCard(c,plan))); s.appendChild(g); b.appendChild(s); } updateAvailability(); }
+    
     function createCard(c, plan) {
         var d = document.createElement("div"); d.className="card"; d.id="card-"+c.code;
         d.innerHTML = `<h3 style="margin:0 0 10px 0; font-size:15px;">${c.name}</h3>`;
         var vals = ["","","",""];
-        if(plan && plan[c.code]) {
-            vals = plan[c.code];
+        
+        if(plan && plan[c.code]) { 
+            vals = plan[c.code]; 
         } else {
-            // Auto-Fill
-            var defaults = globalStaff.filter(s => s.defaultLoc === c.code);
-            defaults.sort((a,b) => (a.role === 'Admin') ? -1 : 1);
-            for(let k=0; k<defaults.length && k<4; k++) vals[k] = defaults[k].code;
+            var def = globalStaff.filter(s => (s.defaultLoc && (s.defaultLoc == c.code || s.defaultLoc == c.name)));
+            def.sort((a,b) => (a.role === 'Admin') ? -1 : 1);
+            for(let k=0; k<4; k++) if(def[k]) vals[k] = def[k].code;
         }
 
         for(let i=0; i<4; i++) {
@@ -599,133 +1062,222 @@
             });
             
             sel.addEventListener('focus', ()=>tempSnapshot=getBoardState());
-            sel.addEventListener('change', ()=>{ 
-                hasUnsavedChanges = true;
-                if(tempSnapshot){ historyStack.push(tempSnapshot); redoStack=[]; updateHistoryButtons(); } 
-                updateAvailability(); 
-            });
+            sel.addEventListener('change', ()=>{ hasUnsavedChanges=true; if(tempSnapshot){ historyStack.push(tempSnapshot); redoStack=[]; updateHistoryButtons(); } updateAvailability(); });
             d.appendChild(sel);
         }
         var msg = document.createElement("div"); msg.className="min-req-msg"; msg.innerText="⚠️ Min 2 req."; d.appendChild(msg);
         return d;
     }
-
-    function updateAvailability() {
-        var sels = document.querySelectorAll('.staff-select');
-        var assigned=[], counts={}, filled=0, err=false;
-        
-        sels.forEach(s=>{ if(s.value){ assigned.push(s.value); if(!counts[s.getAttribute("data-c")]) counts[s.getAttribute("data-c")]=0; counts[s.getAttribute("data-c")]++; filled++; } });
-        
-        sels.forEach(s=>{
-            var curr = s.value;
-            var opts = Array.from(s.options);
-            var def = opts[0];
-            
-            // SORT: Available -> Busy -> Alphabetical
-            var rest = opts.slice(1).sort((a, b) => {
-                var aBusy = (a.value && assigned.includes(a.value) && a.value !== curr);
-                var bBusy = (b.value && assigned.includes(b.value) && b.value !== curr);
-                if (aBusy === bBusy) return a.text.localeCompare(b.text);
-                return aBusy ? 1 : -1; 
+    
+    function updateAvailability(){ 
+        var counts={}, assigned=[]; document.querySelectorAll('.staff-select').forEach(s=>{ if(s.value){ assigned.push(s.value); var c=s.getAttribute('data-c'); counts[c]=(counts[c]||0)+1; } });
+        document.querySelectorAll('.staff-select').forEach(s=>{ var curr=s.value; var opts=Array.from(s.options); var def=opts[0];
+            var rest=opts.slice(1).sort((a, b) => {
+                var aBusy=(a.value&&assigned.includes(a.value)&&a.value!==curr);
+                var bBusy=(b.value&&assigned.includes(b.value)&&b.value!==curr);
+                if(aBusy===bBusy) return a.text.localeCompare(b.text); return aBusy?1:-1; 
             });
-            
-            s.innerHTML = ""; s.appendChild(def);
-            rest.forEach(o => {
-                o.disabled = (o.value && assigned.includes(o.value) && o.value !== curr);
-                o.innerText = o.text.replace(" (Busy)","") + (o.disabled ? " (Busy)" : "");
-                s.appendChild(o);
+            s.innerHTML=""; s.appendChild(def);
+            rest.forEach(o=>{ o.disabled=(assigned.includes(o.value)&&o.value!==curr); o.innerText=o.text.replace(" (Busy)","")+(o.disabled?" (Busy)":""); s.appendChild(o); });
+            s.value=curr; 
+        });
+        document.getElementById('pool-leave').innerHTML=globalLeaves.map(l=>`<div class="staff-pill pill-leave">${l.name}</div>`).join("")||"<small style='color:#ccc'>None</small>";
+        var f="",b=""; globalStaff.forEach(s=>{ if(assigned.includes(s.code)) b+=`<div class="staff-pill pill-busy">${s.name}</div>`; else f+=`<div class="staff-pill pill-free">${s.name}</div>`; });
+        document.getElementById('pool-free').innerHTML=f; 
+        for(var k in counts) { var el=document.getElementById('card-'+k); if(el) { if(counts[k]<2) el.classList.add('card-error'); else el.classList.remove('card-error'); } }
+        document.getElementById('plan-status').innerHTML = assigned.length===0?"⚪ Empty" : "🟢 Ready";
+        genSummary(); 
+    }
+
+    function genSummary(){ var txt=`*Allocations* ${document.getElementById('allocDate').value}\n\n`; var d={}; document.querySelectorAll('.staff-select').forEach(s=>{ if(s.value){ var c=s.getAttribute('data-city'), n=s.getAttribute('data-n'); if(!d[c])d[c]={}; if(!d[c][n])d[c][n]=[]; d[c][n].push(s.options[s.selectedIndex].text.replace(" (Busy)","")); } });
+        for(var city in d){ txt+=`*${city}*\n`; for(var cen in d[city]) txt+=`${cen}:\n`+d[city][cen].join(", ")+"\n\n"; } document.getElementById('summary-text').innerText=txt; }
+    
+    function renderPending() { 
+        var c=document.getElementById('pending-container'); c.innerHTML=""; if(!dashboardData.pending.length) { c.innerHTML="<p>All caught up!</p>"; return; }
+        dashboardData.pending.forEach(l => {
+            var u=l.usedLeaves||0, lim=l.totalLimit||0, tot=u+l.days; var bad = lim>0 && tot>lim;
+            var confs = getConflicts(l.start, l.end, l.name);
+            var confHtml = confs.length > 0 ? `<div class="pc-conflict">⚠️ Overlap: <strong>${confs.join(", ")}</strong></div>` : `<div class="pc-conflict-none">✅ No conflicts</div>`;
+            c.innerHTML += `<div class="pending-card"><div class="pc-header"><div class="pc-name">${l.name}</div><div class="pc-days">${l.days} Days</div></div><div class="pc-body"><div class="limit-${bad?'bad':'ok'}">${bad?'⚠️ Over Limit':'✅ Within Limit'}</div>${confHtml}<div class="pc-dates">📅 ${l.start} ➝ ${l.end}</div><div class="pc-reason">"${l.reason}"</div><div class="pc-actions"><button class="btn-approve" onclick="decide(${l.rowIndex},'Approved', this)">Approve</button><button class="btn-reject" onclick="decide(${l.rowIndex},'Rejected', this)">Reject</button></div></div></div>`;
+        });
+    }
+    
+    function getConflicts(s,e,n) { var s1=parseDate(s),e1=parseDate(e),c=[]; if(dashboardData.history) dashboardData.history.forEach(h=>{ if(h.status==='Approved'&&h.name!==n){ var s2=parseDate(h.start),e2=parseDate(h.end); if(s1<=e2&&e1>=s2) c.push(h.name); } }); return [...new Set(c)]; }
+
+function renderHistory() { 
+    var c = document.getElementById('history-list-container'); 
+    if(!c) return;
+    c.innerHTML = ""; 
+    
+    // Safety check for empty data
+    if(!dashboardData.history || !Array.isArray(dashboardData.history) || dashboardData.history.length === 0) {
+        c.innerHTML = "<div class='card' style='text-align:center; padding:40px; color:#999;'>No history available.</div>";
+        return;
+    }
+
+    dashboardData.history.forEach(r => { 
+        // 1. Normalize Status (ensure Capitalized like "Approved" for CSS)
+        let rawStatus = r.status || "Pending";
+        // Convert "approved" -> "Approved" to match CSS classes
+        let statusClass = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+
+        // 2. Render Card with status class on the MAIN wrapper
+        // The ${statusClass} here is what triggers your Green/Red border CSS
+        c.innerHTML += `
+        <div class="history-card ${statusClass}">
+            <div class="h-header">
+                <div class="h-name">${r.name}</div>
+                <div class="h-status ${statusClass}">${rawStatus}</div>
+            </div>
+            <div class="h-body">
+                <div class="h-date">📅 ${r.start} ➝ ${r.end}</div>
+                <div class="h-reason">"${r.reason}"</div>
+            </div>
+        </div>`; 
+    }); 
+}
+    
+function renderCalendar() {
+    const y = currentCalDate.getFullYear(), m = currentCalDate.getMonth();
+    document.getElementById('cal-month-year').innerText = new Date(y, m).toLocaleString('default', { month: 'long' }) + " " + y;
+    
+    const fDay = new Date(y, m, 1).getDay();
+    const nDays = new Date(y, m + 1, 0).getDate();
+    const g = document.getElementById('cal-grid'); 
+    g.innerHTML = "";
+    
+    ["S","M","T","W","T","F","S"].forEach(d => g.innerHTML += `<div class="cal-day-name">${d}</div>`);
+    for(let i=0; i<fDay; i++) g.innerHTML += `<div class="cal-cell" style="background:#f9f9f9; border:none;"></div>`;
+    
+    for(let d=1; d<=nDays; d++) {
+        // KEY GENERATION: Check both formats to ensure holiday match
+        let k1 = y + "-" + (m + 1) + "-" + d; 
+        let k2 = y + "-" + String(m + 1).padStart(2, '0') + "-" + String(d).padStart(2, '0');
+        let holidayName = globalHolidays[k1] || globalHolidays[k2];
+
+        // Styling Logic
+        let dayOfWeek = new Date(y, m, d).getDay();
+        let bgClass = (dayOfWeek === 0 || dayOfWeek === 6) ? "weekend-cell" : "";
+        let isT = (d === new Date().getDate() && m === new Date().getMonth());
+        let borderClass = isT ? "today-cell" : "";
+
+        let h = `<div class="cal-cell ${bgClass} ${borderClass}"><div class="cal-date-num">${d}</div>`;
+        
+        // Render Holiday
+        if(holidayName) h += `<div class="cal-event ev-holiday">★ ${holidayName}</div>`;
+        
+        // Render Approved Leaves
+        if(dashboardData.history) {
+            dashboardData.history.forEach(l => {
+                if(l.status === "Approved") {
+                    let sParts = l.start.split('/'); 
+                    let eParts = l.end.split('/');
+                    let sDate = new Date(sParts[2], sParts[1]-1, sParts[0]);
+                    let eDate = new Date(eParts[2], eParts[1]-1, eParts[0]);
+                    let cDate = new Date(y, m, d);
+                    
+                    if(cDate >= sDate && cDate <= eDate) {
+                        h += `<div class="cal-event ev-leave">${l.name}</div>`;
+                    }
+                }
             });
-            s.value = curr; 
-        });
-
-        document.getElementById('pool-leave').innerHTML = globalLeaves.map(l=>`<div class="staff-pill pill-leave">${l.name}</div>`).join("") || "<small style='color:#ccc'>None</small>";
-        var freeHtml="", busyHtml="";
-        globalStaff.forEach(s=>{
-            if(assigned.includes(s.code)) busyHtml+=`<div class="staff-pill pill-busy">${s.name}</div>`;
-            else freeHtml+=`<div class="staff-pill pill-free">${s.name}</div>`;
-        });
-        document.getElementById('pool-free').innerHTML = freeHtml;
-
-        for(var c in counts) {
-            var cd = document.getElementById("card-"+c);
-            if(cd) { if(counts[c]<2) { cd.classList.add("card-error"); err=true; } else cd.classList.remove("card-error"); }
         }
-        document.getElementById('plan-status').innerHTML = filled===0?"⚪ Empty" : (err?"🟠 Unfinished":"🟢 Ready");
-        genSummary();
+        g.innerHTML += h + "</div>";
+    }
+}
+    function renderAttendance() { 
+        var m = document.getElementById('att-morning');
+        var e = document.getElementById('att-evening'); 
+        var hM = "", hE = "";
+
+        if (dashboardData.attendance) {
+            dashboardData.attendance.forEach(a => {
+                var timeStyle = "";
+                var lateLabel = "";
+                
+                if (a.isLate) {
+                    timeStyle = "color:var(--red); font-weight:bold;";
+                    // LATE Badge style
+                    lateLabel = `<span style='font-size:10px; background:#ffebee; color:var(--red); padding:3px 6px; border-radius:4px; border:1px solid #ffcdd2; font-weight:bold;'>LATE</span>`;
+                }
+
+                var html = `
+                <div class="att-item">
+                    <div class="att-left">
+                        <div class="att-emp">${a.name}</div>
+                        <div class="att-place">📍 ${a.location}</div>
+                    </div>
+                    <div class="att-right">
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            ${lateLabel}
+                            <span class="att-badge ${a.action === 'Check-In' ? 'ab-in' : 'ab-out'}">${a.action}</span>
+                        </div>
+                        <div class="att-time" style="${timeStyle}">
+                            ${a.timestamp}
+                        </div>
+                    </div>
+                </div>`;
+
+                if (a.session.includes("Morning")) hM += html; 
+                else hE += html;
+            });
+        }
+        
+        m.innerHTML = hM || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
+        e.innerHTML = hE || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
     }
 
-    function genSummary() {
-        var d = new Date(document.getElementById('allocDate').value);
-        var txt = `*Jungle Cubs Allocations*\n📅 ${d.getDate()} ${d.toLocaleString('default',{month:'short'})}\n\n`;
-        var data={}; 
-        document.querySelectorAll('.staff-select').forEach(s=>{
-            if(s.value) {
-                var city=s.getAttribute("data-city"), name=s.getAttribute("data-n");
-                if(!data[city]) data[city]={}; if(!data[city][name]) data[city][name]=[];
-                data[city][name].push(s.options[s.selectedIndex].text.replace(" (Busy)",""));
-            }
-        });
-        Object.keys(data).sort().forEach(c=>{
-            txt+=`*${c} Teams*\n`;
-            for(var n in data[c]) txt+=`📍 *${n}*\n${data[c][n].join(", ")}\n\n`;
-        });
-        if(globalLeaves.length) { txt+="🔴 *On Leave:*\n"; globalLeaves.forEach(l=>txt+=l.name+"\n"); }
-        document.getElementById('summary-text').innerText = txt;
+    function goToToday(){ var t=new Date(), y=t.getFullYear(), m=String(t.getMonth()+1).padStart(2,'0'), d=String(t.getDate()).padStart(2,'0'); 
+        document.getElementById('allocDate').value=`${y}-${m}-${d}`; 
+        loadAllocations(); 
+    }
+    
+    function changeDate(d){ 
+        var i=document.getElementById('allocDate'), x=new Date(i.value); 
+        x.setDate(x.getDate()+d); 
+        var y=x.getFullYear(), m=String(x.getMonth()+1).padStart(2,'0'), da=String(x.getDate()).padStart(2,'0'); 
+        i.value=`${y}-${m}-${da}`; 
+        loadAllocations(); 
     }
 
-    function copySummary() { 
+    function savePlan(){ 
+        setBtnLoading('btn-save-plan', true, "Saving...");
+        setUIBusy(true);
+        var d=document.getElementById('allocDate').value, a={}, n={}; document.querySelectorAll('.staff-select').forEach(s=>{ var c=s.getAttribute('data-c'); if(!a[c])a[c]=[]; if(s.value) a[c].push(s.value); n[c]=s.getAttribute('data-n'); }); var fd=new FormData(); fd.append('type','saveAllocations'); fd.append('json',JSON.stringify({date:d,allocations:a,names:n})); 
+        fetch(SCRIPT_URL,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ 
+            alert("Saved!"); 
+            hasUnsavedChanges=false; 
+            setBtnLoading('btn-save-plan', false);
+            setUIBusy(false);
+        }); 
+    }
+
+    function copyPlan(d){ var i=document.getElementById('allocDate'), t=new Date(i.value); t.setDate(t.getDate()+d); var y=t.getFullYear(), m=String(t.getMonth()+1).padStart(2,'0'), da=String(t.getDate()).padStart(2,'0'); var s=`${y}-${m}-${da}`; if(confirm("Copy from "+s+"?")) fetch(SCRIPT_URL+"?action=getAllocationData&date="+s).then(r=>r.json()).then(d=>{ if(d.savedPlan) { renderBoard(d.savedPlan); hasUnsavedChanges=true; } else alert("No plan found."); }); }
+    function resetPlan(){ if(confirm("Reset?")) { renderBoard(null); hasUnsavedChanges=true; } }
+    function forceOutAll(){ if(confirm("Close All?")) fetch(SCRIPT_URL,{method:'POST',body:new FormData().append('type','forceOutAll')}).then(r=>r.json()).then(d=>{ alert("Closed "+d.count); fetchData(); }); }
+    
+    function decide(ix,dec, btnElement){ 
+        if(confirm(dec+"?")) { 
+            btnElement.disabled = true;
+            btnElement.style.opacity = "0.5";
+            btnElement.innerText = "...";
+            var l=dashboardData.pending.find(r=>r.rowIndex===ix); var f=new FormData(); f.append('type','decision'); f.append('rowIndex',ix); f.append('decision',dec); f.append('name',l.name); f.append('email',l.email); f.append('dates',l.start+"-"+l.end); f.append('mobile',l.mobile); 
+            fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); 
+        } 
+    }
+    
+    function copySummary(){ 
         if(hasUnsavedChanges) {
-            if(!confirm("⚠️ You have unsaved changes!\n\nIt is recommended to SAVE first so the database matches this summary.\n\nClick OK to Save & Copy, or Cancel to just Copy.")) {
-                navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied (Unsaved Changes)"));
-                return;
-            } else {
-                savePlan();
-                setTimeout(() => { navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Saved & Copied!")); }, 1500);
-                return;
-            }
+            alert("⚠️ Unsaved Changes Detected!\n\nPlease SAVE the plan before copying to WhatsApp to ensure the schedule is properly recorded in the system.");
+            return;
         }
         navigator.clipboard.writeText(document.getElementById('summary-text').innerText).then(()=>alert("Copied!")); 
     }
 
-    function changeDate(d) { var i=document.getElementById('allocDate'), x=new Date(i.value); x.setDate(x.getDate()+d); i.value=x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); loadAllocations(); }
-    function goToToday() { var t=new Date(), s=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0'); if(document.getElementById('allocDate').value!==s){ document.getElementById('allocDate').value=s; loadAllocations(); } }
-
-    function savePlan() {
-        var d=document.getElementById('allocDate').value;
-        var all={}, n={};
-        document.querySelectorAll('.staff-select').forEach(s=>{
-            var c=s.getAttribute("data-c"); if(!all[c]) all[c]=[];
-            if(s.value) all[c].push(s.value); n[c]=s.getAttribute("data-n");
-        });
-        var btn=document.querySelector(".btn-action[onclick='savePlan()']"), old=btn.innerText; btn.innerText="Saving..."; btn.disabled=true;
-        var fd=new FormData(); fd.append('type','saveAllocations'); fd.append('json',JSON.stringify({date:d,allocations:all,names:n}));
-        fetch(SCRIPT_URL,{method:'POST',body:fd}).then(r=>r.json()).then(d=>{ 
-            alert("Saved!"); btn.innerText=old; btn.disabled=false; hasUnsavedChanges=false; 
-        });
-    }
-    
-    function copyPlan(days) {
-        var i=document.getElementById('allocDate'), t=new Date(i.value); t.setDate(t.getDate()+days);
-        var ds=t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
-        if(!confirm("Copy from "+ds+"?")) return; captureHistory();
-        fetch(SCRIPT_URL+"?action=getAllocationData&date="+ds).then(r=>r.json()).then(d=>{ if(d.savedPlan) { renderBoard(d.savedPlan); hasUnsavedChanges=true; } else alert("No plan found."); });
-    }
-    
-    function resetPlan() { if(confirm("Reset Board?")) { captureHistory(); renderBoard(null); hasUnsavedChanges=true; } }
-    
-    function captureHistory() { if(!isInternalUpdate) { historyStack.push(getBoardState()); redoStack=[]; updateHistoryButtons(); } }
-    function undo() { if(historyStack.length) { redoStack.push(getBoardState()); isInternalUpdate=true; renderBoard(historyStack.pop()); isInternalUpdate=false; updateHistoryButtons(); hasUnsavedChanges=true; } }
-    function redo() { if(redoStack.length) { historyStack.push(getBoardState()); isInternalUpdate=true; renderBoard(redoStack.pop()); isInternalUpdate=false; updateHistoryButtons(); hasUnsavedChanges=true; } }
-    function getBoardState() { var s={}; document.querySelectorAll('.staff-select').forEach(sel=>{ var c=sel.getAttribute("data-c"); if(!s[c]) s[c]=[]; s[c].push(sel.value); }); return s; }
-    function updateHistoryButtons() { document.getElementById('btn-undo').disabled=!historyStack.length; document.getElementById('btn-redo').disabled=!redoStack.length; }
-
-    function forceOut(c,n,s) { if(confirm("Force Out "+n+"?")) { var f=new FormData(); f.append('type','forceOut'); f.append('code',c); f.append('name',n); f.append('session',s); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); } }
-    function forceOutAll() { if(confirm("Force Close ALL?")) { var f=new FormData(); f.append('type','forceOutAll'); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>{ alert("Closed "+d.count); fetchData(); }); } }
-    function decide(ix,dec) { if(confirm(dec+"?")) { var l=dashboardData.pending.find(r=>r.rowIndex===ix); var f=new FormData(); f.append('type','decision'); f.append('rowIndex',ix); f.append('decision',dec); f.append('name',l.name); f.append('email',l.email); f.append('dates',l.start+" to "+l.end); f.append('mobile',l.mobile); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); } }
-    function changeMonth(d) { currentCalDate.setMonth(currentCalDate.getMonth()+d); renderCalendar(); }
-    function filterHistory() { var v=document.getElementById('searchBox').value.toLowerCase(); document.querySelectorAll('.history-card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?"flex":"none"); }
+    function undo(){ alert("Undo/Redo requires logic stack re-implementation"); } function redo(){} 
+    function filterHistory(){ var v=document.getElementById('searchBox').value.toLowerCase(); document.querySelectorAll('.history-card').forEach(c=>c.style.display=c.innerText.toLowerCase().includes(v)?'block':'none'); }
     function parseDate(d) { var p=d.split('/'); return new Date(p[2],p[1]-1,p[0]); }
-
+    function forceOut(c,n,s) { if(confirm("Force Out "+n+"?")) { var f=new FormData(); f.append('type','forceOut'); f.append('code',c); f.append('name',n); f.append('session',s); fetch(SCRIPT_URL,{method:'POST',body:f}).then(r=>r.json()).then(d=>fetchData()); } }
 </script>
 </body>
 </html>
