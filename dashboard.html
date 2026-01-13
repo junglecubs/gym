@@ -44,8 +44,13 @@
 .sidebar-overlay {
     display: none; /* Hidden by default */
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5); z-index: 900; /* Behind sidebar (z=1000) */
+    background: rgba(0,0,0,0.5); z-index: 900;
     backdrop-filter: blur(2px);
+}
+
+/* Only show it on Mobile when active */
+@media (max-width: 768px) {
+    .sidebar-overlay.active { display: block; }
 }
 .sidebar-overlay.active { display: block; }
 
@@ -351,16 +356,16 @@
     </div>
     
     <div class="sidebar-scroll">
-        <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
-        <div class="nav-item" onclick="switchTab('students'); toggleMenu()">🎓 Students</div>
-        <div class="nav-item" onclick="switchTab('team-mgmt'); toggleMenu()">👥 Team Mgmt</div>
-        <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
-        <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
-        <div class="nav-item" onclick="switchTab('allocation'); toggleMenu()">🏢 Centre Allocations</div>
-        <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Team Calendar</div>
-        <div class="nav-item" onclick="switchTab('history'); toggleMenu()">📜 Leave History</div>
-        <div class="nav-item" onclick="switchTab('team'); toggleMenu()">📊 Team Stats</div>
-        <div class="nav-item" onclick="switchTab('payroll'); toggleMenu()">💰 Payroll Prep</div>
+        <div class="nav-item active" onclick="switchTab('home')"">🏠 Dashboard</div>
+        <div class="nav-item" onclick="switchTab('students')">🎓 Students</div>
+        <div class="nav-item" onclick="switchTab('team-mgmt')">👥 Team Mgmt</div>
+        <div class="nav-item" onclick="switchTab('pending')">🔔 Pending Approvals</div>
+        <div class="nav-item" onclick="switchTab('attendance')">📍 Live Attendance</div>
+        <div class="nav-item" onclick="switchTab('allocation')">🏢 Centre Allocations</div>
+        <div class="nav-item" onclick="switchTab('calendar')">📅 Team Calendar</div>
+        <div class="nav-item" onclick="switchTab('history')">📜 Leave History</div>
+        <div class="nav-item" onclick="switchTab('team')">📊 Team Stats</div>
+        <div class="nav-item" onclick="switchTab('payroll')">💰 Payroll Prep</div>
     </div>
 
     <div class="sidebar-footer">
@@ -781,34 +786,41 @@ function initDashboard() {
     function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeamRoster(); renderCalendar(); }
 
 function switchTab(id, el) {
-    // 1. UI Switching
+    // 1. UI Switching (Existing Logic)
     document.querySelectorAll('.view-section').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
     var target = document.getElementById('view-'+id);
     if(target) target.classList.add('active');
     
-    // 2. Sidebar Highlighting
+    // 2. Sidebar Highlighting (Existing Logic)
     if (el) {
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         el.classList.add('active');
-        // Update Header Title
         var titleEl = document.getElementById('page-title');
         if(titleEl) titleEl.innerText = el.innerText.trim();
+    } else {
+        // Fallback: highlight based on ID if 'el' wasn't passed
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => {
+            if(n.getAttribute('onclick') && n.getAttribute('onclick').includes(id)) n.classList.add('active');
+        });
     }
 
-    // 3. TRIGGER DATA LOADING (The Missing Part)
+    // 3. TRIGGER DATA LOADING (Existing Logic)
     if(id === 'analytics' || id === 'team') loadAnalytics();
     if(id === 'students') loadStudentRegistry();
     if(id === 'team-mgmt') loadTeamMgmt();
-    
     if(id === 'allocation') {
-        // Initialize date if empty
         if(!document.getElementById('allocDate').value) goToToday(); 
         else loadAllocations();
     }
-    
-    // Force refresh attendance if tab is clicked
     if(id === 'attendance') renderAttendance();
+
+    // --- 4. NEW: AUTO-CLOSE SIDEBAR (MOBILE ONLY) ---
+    // This checks if we are on a small screen before closing
+    if(window.innerWidth <= 768) {
+        toggleMenu(); 
+    }
 }
     function toggleMenu() { 
     document.getElementById("mySidebar").classList.toggle("active"); 
