@@ -81,13 +81,75 @@
         .leave-header { display: flex; justify-content: space-between; font-size: 14px; font-weight: bold; margin-bottom: 5px; }
         .leave-meta { font-size: 12px; color: #666; }
 
-        /* CALENDAR */
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); background: white; border-radius: 8px; border: 1px solid #eee; }
-        .cal-cell { min-height: 50px; padding: 2px; position: relative; font-size: 10px; text-align: center; border: 1px solid #f9f9f9; }
-        .weekend-cell { background-color: var(--weekend-bg); }
-        .ev-holiday { background: var(--holiday-bg); }
-        .ev-leave { background: var(--leave-bg); }
-        .cal-event { display: block; font-size: 9px; padding: 2px; margin-bottom: 1px; border-radius: 2px; color: white; overflow: hidden; }
+/* --- CALENDAR STYLES (Matched to Dashboard) --- */
+/* --- CALENDAR STYLES (Strict Uniformity) --- */
+.cal-grid { 
+    display: grid; 
+    /* THIS IS THE KEY FIX: minmax(0, 1fr) prevents expansion by text */
+    grid-template-columns: repeat(7, minmax(0, 1fr)); 
+    background: white; 
+    border-radius: 8px; 
+    border: 1px solid #eee; 
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.cal-day-head { 
+    font-weight: bold; 
+    color: #888; 
+    padding: 10px 2px; /* Reduced padding for mobile */
+    background: #f9f9f9; 
+    text-transform: uppercase; 
+    font-size: 10px; 
+    text-align: center;
+    overflow: hidden; /* Ensure headers don't break layout */
+}
+
+.cal-cell { 
+    min-height: 80px; 
+    padding: 4px; 
+    position: relative; 
+    font-size: 10px; 
+    border: 1px solid #eee; /* Slightly darker border to see the grid lines */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    overflow: hidden; /* Cut off content that is too wide */
+}
+
+/* Dates */
+.cal-num { 
+    font-weight: bold; 
+    font-size: 12px; 
+    color: #333; 
+    margin-bottom: 4px; 
+    display: inline-block; 
+    width: 22px; /* Slightly smaller for mobile fit */
+    height: 22px; 
+    line-height: 22px; 
+    text-align: center; 
+    border-radius: 50%; 
+    align-self: flex-start;
+}
+/* Colors */
+.weekend-cell { background-color: #e8f5e9 !important; } /* Light Green */
+.today-cell .cal-num { background: var(--green); color: white; }
+.ev-holiday { background: #f39c12; }
+.ev-leave { background: #c72e31; }
+
+.cal-event { 
+    display: block; 
+    font-size: 10px; 
+    padding: 3px 6px; 
+    margin-bottom: 2px; 
+    border-radius: 4px; 
+    color: white; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    font-weight: 500;
+    width: 100%;
+    box-sizing: border-box;
+}
 
         /* OTHER STYLES PRESERVED */
         .status-card { text-align: center; padding: 20px; background: #fff; border-radius: 15px; margin-bottom: 20px; border: 1px solid #eee; }
@@ -365,7 +427,7 @@
             </div>
 
             <div id="view-calendar" class="module">
-                <div class="module-header"><h3>📅 Team Schedule</h3></div>
+                <div class="module-header"><h3>📅 Team Calendar</h3></div>
                 <div class="cal-header">
                     <button onclick="changeMonth(-1)" style="border:none; background:none; font-size:18px;">◀</button>
                     <strong id="cal-month-year">--</strong>
@@ -389,7 +451,7 @@
     </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFkVIxRQGxYtV8e-Xs381TBRhR4vh5_5aSZWJMNU1IkoJg9B2XdPAjzuSZawLQYgH6kA/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxP3zH0x1WobKNQeqSHClV6XYu7WWV18EnNRg92y_Y7PTEqnyNofNjsYGmGV8ky_uj4hw/exec'; 
     let userData = {}; let locations = []; let calendarEvents = []; let globalHolidays = {};
     let currentCalDate = new Date(); let todaySessions = {}; let currentActiveSession = null; let activeTime = "";
 
@@ -425,13 +487,35 @@
     function showApp() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('app-interface').style.display = 'block';
-        document.getElementById('display-name').innerText = "Hi, " + userData.name.split(" ")[0];
-        document.getElementById('display-date').innerText = new Date().toDateString();
+        
+        // 1. UPDATE: User + Employee Code
+        // Example: "Rajiv (JC024)"
+        document.getElementById('display-name').innerText = userData.name.split(" ")[0] + " (" + userData.code + ")";
+        
+        // 2. UPDATE: Start Live Day & Time
+        updateHeaderTime(); 
+        setInterval(updateHeaderTime, 1000); // Update every second
+
+        // Sidebar info
         document.getElementById('sb-name').innerText = userData.name;
         document.getElementById('sb-code').innerText = userData.code;
+        
+        // Set Default Session based on time
         const hour = new Date().getHours();
         document.getElementById('att-session').value = (hour >= 15) ? "Evening - Centre" : "Morning - Head Office";
+        
         refreshData();
+    }
+
+    // New Helper Function for Live Time
+    function updateHeaderTime() {
+        const now = new Date();
+        // Format: "Tue, Jan 13 • 11:45 AM"
+        const dateStr = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+        const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        const el = document.getElementById('display-date');
+        if(el) el.innerText = `${dateStr} • ${timeStr}`;
     }
 
     function refreshData() {
@@ -558,20 +642,23 @@
     }
 
     function updateDashboardText(name) {
-        // 1. Update the Header (Big Text)
-        // This replaces "Hello, User! 👋" with just "Hey User 👋"
-        const headerEl = document.querySelector('.dash-h2');
-        if(headerEl) headerEl.innerHTML = `Hey ${name} 👋`;
+        // 1. Get Time-Based Greeting
+        const hour = new Date().getHours();
+        let greeting = "Good morning";
+        if (hour >= 12) greeting = "Good afternoon";
+        if (hour >= 17) greeting = "Good evening";
 
-        // 2. Update the Subtext (Status)
-        // Removes the name repetition here
+        // 2. Update the Header
+        const headerEl = document.querySelector('.dash-h2');
+        if(headerEl) headerEl.innerHTML = `${greeting}, ${name} 👋`;
+
+        // 3. Update the Status Subtext
         const subEl = document.getElementById('dash-greeting');
-        
         if(currentActiveSession) {
             let timeStr = activeTime ? " at " + activeTime : "";
             subEl.innerHTML = `You are checked in: <span class="highlight">${currentActiveSession.session}</span>${timeStr}`;
         } else {
-            subEl.innerHTML = `You aren't checked in yet, please mark your attendance.`;
+            subEl.innerHTML = `You aren't checked in yet, let's go and mark attendance.`;
         }
     }
 
@@ -657,20 +744,62 @@
         fetch(SCRIPT_URL, {method:'POST', body:fd}).then(()=>{ alert("Leave Request Saved! Redirecting to WhatsApp..."); window.location.href = waUrl; document.getElementById('l-btn').innerText = "Submit via WhatsApp"; document.getElementById('leave-form').reset(); });
     }
 
-    function renderCalendar() {
-        const y = currentCalDate.getFullYear(); const m = currentCalDate.getMonth(); document.getElementById('cal-month-year').innerText = new Date(y, m).toLocaleString('default', { month: 'long', year: 'numeric' });
-        const fDay = new Date(y, m, 1).getDay(); const nDays = new Date(y, m + 1, 0).getDate(); const g = document.getElementById('cal-grid'); g.innerHTML = "";
+function renderCalendar() {
+        const y = currentCalDate.getFullYear();
+        const m = currentCalDate.getMonth();
+        document.getElementById('cal-month-year').innerText = new Date(y, m).toLocaleString('default', { month: 'long', year: 'numeric' });
+        
+        const fDay = new Date(y, m, 1).getDay();
+        const nDays = new Date(y, m + 1, 0).getDate();
+        const g = document.getElementById('cal-grid'); 
+        g.innerHTML = "";
+        
+        // Helper to parse dates
+        function getObj(dStr) {
+            if(!dStr) return null;
+            if(dStr.includes('-')) return new Date(dStr); 
+            const p = dStr.split('/');
+            return new Date(p[2], p[1]-1, p[0]); 
+        }
+
+        // Headers
         ["S","M","T","W","T","F","S"].forEach(d => g.innerHTML += `<div class="cal-day-head">${d}</div>`);
-        for(let i=0; i<fDay; i++) g.innerHTML += `<div class="cal-cell"></div>`;
+        
+        // Empty Cells
+        for(let i=0; i<fDay; i++) g.innerHTML += `<div class="cal-cell" style="background:#fcfcfc;"></div>`;
+        
+        // Days
         for(let d=1; d<=nDays; d++) {
             let eventsHtml = "";
-            calendarEvents.forEach(ev => { let evDate = new Date(ev.start); if(evDate.getDate() === d && evDate.getMonth() === m && evDate.getFullYear() === y) { let cls = ev.type === 'holiday' ? 'ev-holiday' : 'ev-leave'; eventsHtml += `<span class="cal-event ${cls}">${ev.title}</span>`; } });
-            let dateObj = new Date(y, m, d); let dayOfWeek = dateObj.getDay();
-            let isToday = (d === new Date().getDate() && m === new Date().getMonth()) ? "today-cell" : "";
+            let currentDayObj = new Date(y, m, d);
+            currentDayObj.setHours(0,0,0,0);
+            
+            // Events Logic
+            calendarEvents.forEach(ev => {
+                let sDate = getObj(ev.start);
+                let eDate = getObj(ev.end);
+                
+                sDate.setHours(0,0,0,0);
+                if(eDate) eDate.setHours(0,0,0,0);
+                else eDate = sDate; 
+
+                if(currentDayObj >= sDate && currentDayObj <= eDate) {
+                    let cls = ev.type === 'holiday' ? 'ev-holiday' : 'ev-leave';
+                    eventsHtml += `<span class="cal-event ${cls}">${ev.title}</span>`;
+                }
+            });
+
+            // Styling
+            let dayOfWeek = currentDayObj.getDay();
+            let isToday = (d === new Date().getDate() && m === new Date().getMonth() && y === new Date().getFullYear()) ? "today-cell" : "";
+            // Ensure Weekend Class is applied (0=Sun, 6=Sat)
             let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6) ? "weekend-cell" : "";
+
             g.innerHTML += `<div class="cal-cell ${isToday} ${isWeekend}"><span class="cal-num">${d}</span>${eventsHtml}</div>`;
         }
     }
+    
+    
     function changeMonth(dir) { currentCalDate.setMonth(currentCalDate.getMonth() + dir); renderCalendar(); }
     function switchTab(id) { document.querySelectorAll('.module').forEach(el => el.classList.remove('active')); document.getElementById('view-'+id).classList.add('active'); }
     function sidebarClick(id) { switchTab(id); toggleSidebar(); }
