@@ -24,6 +24,31 @@
     .sidebar { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 1000; transition: transform 0.3s ease; position: relative; }
     .main-content { flex: 1; padding: 30px; overflow-y: auto; position: relative; scroll-behavior: smooth; }
     
+/* SCROLLABLE SIDEBAR */
+.sidebar { 
+    /* Ensure flex column for sticky header/footer */
+    display: flex; flex-direction: column; 
+    height: 100vh; /* Full height */
+    /* Keep existing styles... */
+    width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); 
+    box-shadow: 2px 0 10px rgba(0,0,0,0.05); z-index: 1000; transition: transform 0.3s ease; position: relative; 
+}
+
+/* Scrollable Middle Area */
+.sidebar-scroll { flex: 1; overflow-y: auto; padding-top: 10px; }
+
+/* Footer Area */
+.sidebar-footer { flex-shrink: 0; padding: 20px; background: var(--sidebar); border-top: 1px solid #eee; }
+
+/* NEW: Overlay for Mobile (Click outside to close) */
+.sidebar-overlay {
+    display: none; /* Hidden by default */
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5); z-index: 900; /* Behind sidebar (z=1000) */
+    backdrop-filter: blur(2px);
+}
+.sidebar-overlay.active { display: block; }
+
     /* --- MOBILE HEADER --- */
     .mobile-header { display: none; background: white; padding: 0 15px; border-bottom: 1px solid #ddd; align-items: center; justify-content: space-between; z-index: 2000; position: fixed; top: 0; left: 0; width: 100%; height: 60px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
     .menu-btn { font-size: 28px; cursor: pointer; color: var(--green); background: none; border: none; padding: 0; }
@@ -312,32 +337,40 @@
     </div>
   </div>
 
-  <div class="sidebar" id="mySidebar">
-    <button class="sidebar-close-btn" onclick="toggleMenu()">×</button>
-    <div class="logo-container">
-        <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Logo" class="logo-img">
-    </div>
-    <div class="welcome-text">Welcome, Aparna</div>
-    <div class="date-today-text" id="sidebar-date-display">Loading date...</div>
-    
-    <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
-    <div class="nav-item" onclick="switchTab('students'); toggleMenu()">🎓 Students</div>
-    <div class="nav-item" onclick="switchTab('team-mgmt'); toggleMenu()">👥 Team Mgmt</div>
-    
-    <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
-    <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
-    <div class="nav-item" onclick="switchTab('allocation'); toggleMenu()">🏢 Centre Allocations</div>
-    <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Team Calendar</div>
-    <div class="nav-item" onclick="switchTab('history'); toggleMenu()">📜 Leave History</div>
-    <div class="nav-item" onclick="switchTab('team'); toggleMenu()">📊 Team Stats</div>
-    <div class="nav-item" onclick="switchTab('payroll'); toggleMenu()">💰 Payroll Prep</div>
-    
-    <button id="btn-refresh" onclick="confirmRefresh()" style="width:100%; margin-top:auto; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
-    <button onclick="confirmLogout()" style="width:100%; margin-top:10px; padding:10px; background:#fdecea; border:1px solid #c72e31; border-radius:6px; cursor:pointer; color:#c72e31; font-weight:bold; font-size:12px;">🚪 Logout</button>
-    <div id="loading-indicator" style="margin-top:10px; text-align:center; font-size:11px; color:#aaa; display:none;">Syncing...</div>
-  </div>
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
 
-  <div class="main-content">
+<div class="sidebar" id="mySidebar">
+    <button class="sidebar-close-btn" onclick="toggleMenu()">×</button>
+    
+    <div style="padding:20px 20px 0 20px;">
+        <div class="logo-container">
+            <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Logo" class="logo-img">
+        </div>
+        <div class="welcome-text">Welcome, Aparna</div>
+        <div class="date-today-text" id="sidebar-date-display">Loading date...</div>
+    </div>
+    
+    <div class="sidebar-scroll">
+        <div class="nav-item active" onclick="switchTab('home'); toggleMenu()">🏠 Dashboard</div>
+        <div class="nav-item" onclick="switchTab('students'); toggleMenu()">🎓 Students</div>
+        <div class="nav-item" onclick="switchTab('team-mgmt'); toggleMenu()">👥 Team Mgmt</div>
+        <div class="nav-item" onclick="switchTab('pending'); toggleMenu()">🔔 Pending Approvals</div>
+        <div class="nav-item" onclick="switchTab('attendance'); toggleMenu()">📍 Live Attendance</div>
+        <div class="nav-item" onclick="switchTab('allocation'); toggleMenu()">🏢 Centre Allocations</div>
+        <div class="nav-item" onclick="switchTab('calendar'); toggleMenu()">📅 Team Calendar</div>
+        <div class="nav-item" onclick="switchTab('history'); toggleMenu()">📜 Leave History</div>
+        <div class="nav-item" onclick="switchTab('team'); toggleMenu()">📊 Team Stats</div>
+        <div class="nav-item" onclick="switchTab('payroll'); toggleMenu()">💰 Payroll Prep</div>
+    </div>
+
+    <div class="sidebar-footer">
+        <button id="btn-refresh" onclick="confirmRefresh()" style="width:100%; padding:10px; background:white; border:1px solid #ddd; border-radius:6px; cursor:pointer; color:#666; font-size:12px;">🔄 Refresh Data</button>
+        <button onclick="confirmLogout()" style="width:100%; margin-top:10px; padding:10px; background:#fdecea; border:1px solid #c72e31; border-radius:6px; cursor:pointer; color:#c72e31; font-weight:bold; font-size:12px;">🚪 Logout</button>
+        <div id="loading-indicator" style="margin-top:10px; text-align:center; font-size:11px; color:#aaa; display:none;">Syncing...</div>
+    </div>
+</div>
+
+     <div class="main-content">
     
     <div id="view-home" class="view-section active">
         <div class="home-container">
@@ -777,7 +810,12 @@ function switchTab(id, el) {
     // Force refresh attendance if tab is clicked
     if(id === 'attendance') renderAttendance();
 }
-    function toggleMenu() { document.getElementById("mySidebar").classList.toggle("active"); }
+    function toggleMenu() { 
+    document.getElementById("mySidebar").classList.toggle("active"); 
+    // Toggle the overlay too
+    var overlay = document.getElementById("sidebar-overlay");
+    if(overlay) overlay.classList.toggle("active");
+}
 
     function updateTime() {
         const now = new Date();

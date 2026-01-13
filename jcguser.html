@@ -19,52 +19,44 @@
         .menu-btn { font-size: 26px; cursor: pointer; background: none; border: none; color: var(--green); padding: 0; }
         .user-greeting { font-weight: bold; font-size: 16px; color: var(--green); }
         
-        /* --- SIDEBAR UPDATES --- */
+/* --- SIDEBAR (Fixed Layout with Scrollable Middle) --- */
 .sidebar { 
-    /* Add Flexbox properties to existing class */
     display: flex; 
     flex-direction: column; 
-    /* Keep existing properties below */
     position: fixed; top: 0; left: -280px; width: 260px; height: 100%; 
-    background: white; z-index: 2500; transition: 0.3s; 
+    background: white; z-index: 2500; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
     box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
-    padding-top: 0; /* Reset padding for cleaner layout */
+}
+.sidebar.active { left: 0; }
+
+/* 1. Header stays fixed at top */
+.sidebar-header { flex-shrink: 0; padding: 30px 20px 20px 20px; border-bottom: 1px solid #eee; background: #fafafa; }
+
+/* 2. Middle section SCROLLS if list is long */
+.sidebar-scroll-area { 
+    flex: 1;          /* Takes all available space */
+    overflow-y: auto; /* Scrolls vertically if needed */
+    padding: 10px 0;
 }
 
-/* Close Button (x) */
-.sidebar-close {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    background: transparent;
-    border: none;
-    font-size: 28px;
-    color: #999;
-    cursor: pointer;
-    line-height: 1;
-    z-index: 10;
+/* 3. Logout section stays visible at bottom */
+.sidebar-footer { 
+    flex-shrink: 0; 
+    padding: 20px; 
+    border-top: 1px solid #eee; 
+    background: white;
+    padding-bottom: 40px; /* Extra padding for mobile safe area */
 }
 
-/* Spacer to push Logout to bottom */
-.nav-spacer { flex: 1; }
+.sidebar-close { position: absolute; top: 15px; right: 15px; border: none; background: none; font-size: 28px; color: #999; cursor: pointer; }
 
 /* Red Logout Button */
 .btn-logout-sidebar {
-    background: var(--red);
-    color: white;
-    margin: 20px;
-    padding: 12px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(199, 46, 49, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    background: #ffebee; color: var(--red); border: 1px solid #ffcdd2;
+    padding: 12px; text-align: center; border-radius: 8px;
+    font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
 }
-.btn-logout-sidebar:active { transform: scale(0.98); }
+.btn-logout-sidebar:active { background: var(--red); color: white; }
         
         .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; z-index: 2500; transition: 0.3s; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding-top: 20px; }
         .sidebar.active { left: 0; }
@@ -261,26 +253,28 @@
             <img src="https://junglecubsgyms.com/imgw/logo_light.png" style="height:30px;">
         </div>
 
-        <div class="sidebar" id="sidebar">
+    <div class="sidebar" id="sidebar">
     <button class="sidebar-close" onclick="toggleSidebar()">×</button>
 
-    <div style="padding:30px 20px 20px 20px; border-bottom:1px solid #eee; background:#fafafa;">
+    <div class="sidebar-header">
         <h3 style="margin:0; color:var(--green); padding-right: 20px;" id="sb-name">User</h3>
         <div style="font-size:12px; color:#666;" id="sb-code">JC---</div>
     </div>
 
-    <div class="nav-item active" onclick="sidebarClick('dashboard')">🏠 Dashboard</div>
-    <div class="nav-item" onclick="sidebarClick('attendance')">📍 Live Attendance</div>
-    <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
-    <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
-    <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
-    <div class="nav-item" onclick="requestNotifyPermission(); toggleSidebar()">🔔 Enable Notifications</div>
-    <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
+    <div class="sidebar-scroll-area">
+        <div class="nav-item active" onclick="sidebarClick('dashboard')">🏠 Dashboard</div>
+        <div class="nav-item" onclick="sidebarClick('attendance')">📍 Live Attendance</div>
+        <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
+        <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
+        <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
+        <div class="nav-item" onclick="requestNotifyPermission(); toggleSidebar()">🔔 Enable Notifications</div>
+        <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
+    </div>
 
-    <div class="nav-spacer"></div>
-
-    <div class="btn-logout-sidebar" onclick="logout()">
-        🚪 Logout
+    <div class="sidebar-footer">
+        <div class="btn-logout-sidebar" onclick="logout()">
+            🚪 Logout
+        </div>
     </div>
 </div>
         <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
