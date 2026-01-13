@@ -290,6 +290,27 @@
     position: relative;
     top: -1px; /* Optical alignment */
 }
+
+/* --- WORK UPDATE FORM --- */
+.update-area { background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px; }
+.update-label { font-size: 12px; font-weight: bold; color: #555; margin-bottom: 5px; display: block; }
+.update-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: white; font-family: inherit; margin-bottom: 15px; resize: vertical; min-height: 80px; }
+.reminder-card { background: #fff3e0; border-left: 5px solid #f39c12; padding: 15px; margin-bottom: 20px; border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+.reminder-text { font-weight: bold; color: #e67e22; font-size: 14px; }
+
+/* --- STATUS CHIPS --- */
+.status-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; }
+.status-option { display: none; } /* Hide actual checkbox */
+.status-label { 
+    padding: 8px 12px; border: 1px solid #ddd; border-radius: 20px; 
+    font-size: 12px; font-weight: bold; color: #666; cursor: pointer; 
+    background: white; transition: 0.2s; 
+}
+/* When Checked */
+.status-option:checked + .status-label { 
+    background: var(--green); color: white; border-color: var(--green); 
+}
+
     </style>
 </head>
 <body>
@@ -330,6 +351,7 @@
         <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
         <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
         <div class="nav-item" onclick="requestNotifyPermission(); toggleSidebar()">🔔 Enable Notifications</div>
+        <div class="nav-item" onclick="sidebarClick('daily-update')">📝 Daily Work Update</div>
         <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
     </div>
 
@@ -369,6 +391,14 @@
             <span style="font-size:14px;">🗺️</span> Tap to open Map location
         </div>
     </div>
+
+<div id="update-reminder" class="reminder-card" style="display:none;" onclick="switchTab('daily-update')">
+    <div>
+        <div class="reminder-text">⚠️ Daily Update Pending</div>
+        <div style="font-size:11px; color:#888; margin-top:2px;">Submit your end-of-day report</div>
+    </div>
+    <div style="font-size:20px;">➔</div>
+</div>
 
     <div class="interactive-card card-leave" onclick="switchTab('leave')">
         <div class="card-label">
@@ -426,6 +456,50 @@
                 </div>
             </div>
 
+<div id="view-daily-update" class="module">
+    <div class="card">
+        <div class="module-header"><h3>📝 Daily Work Update</h3></div>
+        <div id="update-success-msg" class="status-msg msg-success">✅ Update Submitted!</div>
+
+        <form id="work-form" onsubmit="submitWorkForm(event)">
+            
+            <label class="update-label">Select Date</label>
+            <input type="date" name="date" id="work-date" class="update-input" style="height:45px;" required>
+
+            <label class="update-label">Work Status (Select all that apply)</label>
+            <div class="status-grid">
+                <input type="checkbox" id="st-office" name="statusOption" value="Office" class="status-option" checked>
+                <label for="st-office" class="status-label">🏢 Office</label>
+
+                <input type="checkbox" id="st-wfh" name="statusOption" value="WFH" class="status-option">
+                <label for="st-wfh" class="status-label">🏠 WFH</label>
+
+                <input type="checkbox" id="st-field" name="statusOption" value="Field/Event" class="status-option">
+                <label for="st-field" class="status-label">🏟️ Field / Event</label>
+                
+                <input type="checkbox" id="st-pleave" name="statusOption" value="Personal Leave" class="status-option">
+                <label for="st-pleave" class="status-label">🏖️ Personal Leave</label>
+
+                <input type="checkbox" id="st-oleave" name="statusOption" value="Official Leave" class="status-option">
+                <label for="st-oleave" class="status-label">💼 Official Leave</label>
+            </div>
+
+            <div class="update-area">
+                <label class="update-label">Key Tasks Completed *</label>
+                <textarea name="work1" class="update-input" required placeholder="List tasks..."></textarea>
+                
+                <label class="update-label">Challenges (Optional)</label>
+                <textarea name="work2" class="update-input" placeholder="Any issues?"></textarea>
+                
+                <label class="update-label">Plan for Tomorrow (Optional)</label>
+                <textarea name="work3" class="update-input" placeholder="Focus for tomorrow..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn-hero" id="btn-submit-update" style="margin-bottom:0;">Submit Update</button>
+        </form>
+    </div>
+</div>
+
             <div id="view-calendar" class="module">
                 <div class="module-header"><h3>📅 Team Calendar</h3></div>
                 <div class="cal-header">
@@ -451,7 +525,7 @@
     </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxP3zH0x1WobKNQeqSHClV6XYu7WWV18EnNRg92y_Y7PTEqnyNofNjsYGmGV8ky_uj4hw/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOMKlCO9POTMqPqjMZL3M4tvJomtqa2G9G3m4St58y5nYVFeMQQm64J7TKnHVs4TME0w/exec'; 
     let userData = {}; let locations = []; let calendarEvents = []; let globalHolidays = {};
     let currentCalDate = new Date(); let todaySessions = {}; let currentActiveSession = null; let activeTime = "";
 
@@ -528,6 +602,28 @@
             .then(res => res.json()).then(data => {
                 
                 // --- DASHBOARD UPDATES ---
+                
+                    // ... inside refreshData ...
+
+// ... inside refreshData() ...
+
+// CHECK: Daily Update Reminder
+const hour = new Date().getHours();
+const isWorkingDay = (todaySessions && Object.keys(todaySessions).length > 0) || hour >= 15; 
+
+// If NOT submitted today AND (User is working OR it's late)
+if (!data.today.dailyUpdateDone && isWorkingDay) {
+    document.getElementById('update-reminder').style.display = 'flex';
+} else {
+    document.getElementById('update-reminder').style.display = 'none';
+}
+
+// AUTO-SET DATE INPUT TO TODAY
+if(document.getElementById('work-date')) {
+    if(!document.getElementById('work-date').value) {
+        document.getElementById('work-date').valueAsDate = new Date();
+    }
+}
                 
                 // Handle Assignment Card
                 if(data.today.assignment) {
@@ -869,6 +965,41 @@ function renderCalendar() {
         }, 60000); // Check every minute
     }
 
+function submitWorkForm(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-submit-update');
+    btn.innerText = "Submitting..."; btn.disabled = true;
+
+    // 1. Gather Checkboxes
+    const checked = document.querySelectorAll('input[name="statusOption"]:checked');
+    let statusList = Array.from(checked).map(c => c.value).join(", ");
+    if(statusList === "") statusList = "Office"; // Default fallback
+
+    const fd = new FormData(document.getElementById('work-form'));
+    fd.append('type', 'saveWorkUpdate');
+    fd.append('code', userData.code);
+    fd.append('name', userData.name);
+    fd.append('workStatus', statusList); // Send the combined string
+
+    fetch(SCRIPT_URL, { method: 'POST', body: fd })
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('work-form').reset();
+            // Reset Date to Today after submit
+            document.getElementById('work-date').valueAsDate = new Date();
+            
+            document.getElementById('update-success-msg').style.display = 'block';
+            btn.innerText = "Submit Update"; btn.disabled = false;
+            document.getElementById('update-reminder').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('update-success-msg').style.display = 'none';
+                switchTab('dashboard');
+                refreshData(); 
+            }, 2000);
+        })
+        .catch(err => { alert("Error"); btn.innerText = "Submit Update"; btn.disabled = false; });
+}
 </script>
 
 </body>

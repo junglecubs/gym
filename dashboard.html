@@ -322,6 +322,25 @@
     .pay-full { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
     .pay-loss { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
 
+/* --- DAILY UPDATES MODULE --- */
+.update-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.update-card { background: white; border-radius: 12px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-direction: column; }
+.uc-header { padding: 15px; background: #f8f9fa; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: flex-start; }
+.uc-name { font-weight: bold; font-size: 15px; color: #333; }
+.uc-code { font-size: 11px; color: #888; margin-top: 2px; }
+.uc-time { font-size: 11px; color: #999; text-align: right; margin-top: 4px; }
+.uc-body { padding: 15px; font-size: 13px; line-height: 1.5; color: #555; }
+.uc-section { margin-bottom: 12px; }
+.uc-label { font-size: 11px; font-weight: bold; text-transform: uppercase; color: #aaa; margin-bottom: 4px; display: block; }
+.uc-text { white-space: pre-wrap; } /* Preserves line breaks from user input */
+
+/* Status Badges */
+.uc-badge { font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 12px; display: inline-block; }
+.st-office { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+.st-wfh { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+.st-field { background: #fff3e0; color: #f57f17; border: 1px solid #ffe0b2; }
+.st-leave { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
+
   </style>
 </head>
 <body>
@@ -362,6 +381,7 @@
         <div class="nav-item" onclick="switchTab('pending')">🔔 Pending Approvals</div>
         <div class="nav-item" onclick="switchTab('attendance')">📍 Live Attendance</div>
         <div class="nav-item" onclick="switchTab('allocation')">🏢 Centre Allocations</div>
+        <div class="nav-item" onclick="switchTab('daily-updates')">📝 Daily Updates</div>
         <div class="nav-item" onclick="switchTab('calendar')">📅 Team Calendar</div>
         <div class="nav-item" onclick="switchTab('history')">📜 Leave History</div>
         <div class="nav-item" onclick="switchTab('team')">📊 Team Stats</div>
@@ -456,6 +476,20 @@
         </div>
       </div>
     </div>
+
+<div id="view-daily-updates" class="view-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+        <h2>Daily Work Updates</h2>
+        <div class="date-picker-wrapper">
+            <button onclick="changeUpdateDate(-1)" style="border:none; background:none; cursor:pointer;">◀</button>
+            <input type="date" id="updateViewDate" onchange="loadWorkUpdates()" style="border:none; font-weight:bold; font-family:inherit; color:var(--green);">
+            <button onclick="changeUpdateDate(1)" style="border:none; background:none; cursor:pointer;">▶</button>
+        </div>
+    </div>
+
+    <div id="updates-loader" style="display:none; text-align:center; padding:40px; color:#999;">Fetching updates...</div>
+    <div id="updates-container" class="update-grid"></div>
+</div>
 
     <div id="view-allocation" class="view-section">
         <div class="alloc-header-top">
@@ -578,7 +612,7 @@
   </div> 
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxP3zH0x1WobKNQeqSHClV6XYu7WWV18EnNRg92y_Y7PTEqnyNofNjsYGmGV8ky_uj4hw/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOMKlCO9POTMqPqjMZL3M4tvJomtqa2G9G3m4St58y5nYVFeMQQm64J7TKnHVs4TME0w/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
     let currentTab = 'home';
@@ -785,12 +819,105 @@ function initDashboard() {
     }
     function renderAll() { renderPending(); renderAttendance(); renderHistory(); renderTeamRoster(); renderCalendar(); }
 
+// --- DAILY UPDATES LOGIC ---
+
+function loadWorkUpdates() {
+    const dStr = document.getElementById('updateViewDate').value;
+    if(!dStr) return;
+
+    document.getElementById('updates-container').innerHTML = "";
+    document.getElementById('updates-loader').style.display = 'block';
+
+    fetch(SCRIPT_URL + "?action=getWorkUpdates&date=" + dStr)
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('updates-loader').style.display = 'none';
+            renderUpdates(data);
+        });
+}
+
+function renderUpdates(data) {
+    const c = document.getElementById('updates-container');
+    c.innerHTML = "";
+
+    if(data.length === 0) {
+        c.innerHTML = "<div style='grid-column:1/-1; text-align:center; padding:40px; color:#999; background:white; border-radius:12px;'>No updates found for this date.</div>";
+        return;
+    }
+
+    data.forEach(u => {
+        // Determine Badge Color
+        let badgeClass = "st-office";
+        if(u.status.includes("WFH")) badgeClass = "st-wfh";
+        if(u.status.includes("Field")) badgeClass = "st-field";
+        if(u.status.includes("Leave")) badgeClass = "st-leave";
+
+        // Conditional Sections (Only show if they have content)
+        let issuesHtml = u.issues ? `<div class="uc-section"><span class="uc-label" style="color:#d32f2f;">⚠️ Challenges</span><div class="uc-text">${u.issues}</div></div>` : "";
+        let planHtml = u.plan ? `<div class="uc-section"><span class="uc-label" style="color:#1976d2;">🚀 Tomorrow's Plan</span><div class="uc-text">${u.plan}</div></div>` : "";
+
+        c.innerHTML += `
+        <div class="update-card">
+            <div class="uc-header">
+                <div>
+                    <div class="uc-name">${u.name}</div>
+                    <div class="uc-code">${u.code}</div>
+                </div>
+                <div style="text-align:right;">
+                    <span class="uc-badge ${badgeClass}">${u.status}</span>
+                    <div class="uc-time">${u.time}</div>
+                </div>
+            </div>
+            <div class="uc-body">
+                <div class="uc-section">
+                    <span class="uc-label">✅ Key Tasks</span>
+                    <div class="uc-text">${u.summary}</div>
+                </div>
+                ${issuesHtml}
+                ${planHtml}
+            </div>
+        </div>`;
+    });
+}
+
+function changeUpdateDate(days) {
+    const input = document.getElementById('updateViewDate');
+    const d = new Date(input.value);
+    d.setDate(d.getDate() + days);
+    
+    // Format back to yyyy-mm-dd
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    
+    input.value = `${y}-${m}-${da}`;
+    loadWorkUpdates();
+}
+
+// UPDATE SWITCH TAB TO INITIALIZE DATE
+// Add this inside your existing switchTab function
+/*
+    if(id === 'daily-updates') {
+        if(!document.getElementById('updateViewDate').value) {
+            document.getElementById('updateViewDate').valueAsDate = new Date();
+        }
+        loadWorkUpdates();
+    }
+*/
+
 function switchTab(id, el) {
     // 1. UI Switching (Existing Logic)
     document.querySelectorAll('.view-section').forEach(m => m.classList.remove('active'));
     document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
     var target = document.getElementById('view-'+id);
     if(target) target.classList.add('active');
+    
+    if(id === 'daily-updates') {
+        if(!document.getElementById('updateViewDate').value) {
+            document.getElementById('updateViewDate').valueAsDate = new Date();
+        }
+        loadWorkUpdates();
+    }
     
     // 2. Sidebar Highlighting (Existing Logic)
     if (el) {
