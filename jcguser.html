@@ -274,6 +274,7 @@
     <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
     <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
     <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
+    <div class="nav-item" onclick="requestNotifyPermission(); toggleSidebar()">🔔 Enable Notifications</div>
     <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
 
     <div class="nav-spacer"></div>
@@ -683,55 +684,66 @@
     function logout() { if(confirm("Logout?")) { localStorage.removeItem("JCG_App_User_V5"); location.reload(); } }
     function getDist(lat1, lon1, lat2, lon2) { var R = 6371000; var dLat = (lat2-lat1)*(Math.PI/180); var dLon = (lon2-lon1)*(Math.PI/180); var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*(Math.PI/180))*Math.cos(lat2*(Math.PI/180))*Math.sin(dLon/2)*Math.sin(dLon/2); var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R*c; }
 
-// --- NOTIFICATION SYSTEM ---
-    function setupNotifications() {
-        // Request permission immediately
-        if ("Notification" in window && Notification.permission !== "granted") {
-            Notification.requestPermission();
+// --- UPDATED NOTIFICATION SYSTEM ---
+
+    // 1. Called manually by the button click (Required for Mobile)
+    function requestNotifyPermission() {
+        if (!("Notification" in window)) {
+            alert("This browser does not support notifications.");
+            return;
         }
 
-        // Check time every minute (60,000 ms)
+        if (Notification.permission === "granted") {
+            alert("✅ Notifications are already enabled!");
+            // Send a test immediately to confirm
+            sendNotify("Test Notification", "Great! You will now receive reminders.");
+        } 
+        else if (Notification.permission !== "denied") {
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    alert("✅ Permission Granted! You will now receive reminders.");
+                    sendNotify("Welcome!", "Notifications are now active.");
+                } else {
+                    alert("❌ Permission Denied. Check your browser settings.");
+                }
+            });
+        }
+    }
+
+    // 2. Starts the clock (Call this in window.onload)
+    function setupNotifications() {
+        // We DO NOT ask for permission here anymore.
+        // We just start the timer.
+
         setInterval(() => {
+            if (Notification.permission !== "granted") return; // Skip if no permission
+
             const now = new Date();
             const currentTime = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
             const userName = userData.name ? userData.name.split(" ")[0] : "Team";
 
-            // --- 1. TEST NOTIFICATION (9:00 AM) ---
-            if (currentTime === "09:00") {
-                sendNotify("Good Morning " + userName + "!", "Have a productive day ahead at Jungle Cubs!");
+            // --- 1. TEST (9:00 AM) ---
+            if (currentTime === "09:20") {
+                sendNotify("Good Morning " + userName + "!", "Have a productive day ahead!");
             }
-
-            // 2. Morning Check-In (11:00 AM)
+            // --- 2. Morning Check-In (11:00 AM) ---
             else if (currentTime === "11:00") {
-                sendNotify("Check-In Reminder", "Hi " + userName + ", it's time to check-in for the Morning session.");
+                sendNotify("Check-In Reminder", "Hi " + userName + ", please check-in for the Morning session.");
             }
-            // 3. Leave for Centre (3:30 PM)
+            // --- 3. Leave for Centre (3:30 PM) ---
             else if (currentTime === "15:30") {
                 sendNotify("Afternoon Session", "Hey " + userName + ", time to leave for the centre. Don't forget to check-out!");
             }
-            // 4. Evening Check-In (3:50 PM)
+            // --- 4. Evening Check-In (3:50 PM) ---
             else if (currentTime === "15:50") {
-                sendNotify("Centre Check-In", "Good afternoon " + userName + ", please mark your attendance at the centre.");
+                sendNotify("Centre Check-In", "Good afternoon " + userName + ", please mark your attendance.");
             }
-            // 5. Evening Check-Out (7:50 PM)
+            // --- 5. Evening Check-Out (7:50 PM) ---
             else if (currentTime === "19:50") {
-                sendNotify("Check-Out Reminder", "Hope you had a great day! Don't forget to check-out before you go.");
+                sendNotify("Check-Out Reminder", "Hope you had a great day! Don't forget to check-out.");
             }
 
-        }, 60000); // Check every 60 seconds
-    }
-
-    function sendNotify(title, body) {
-        if (!("Notification" in window)) return;
-        
-        if (Notification.permission === "granted") {
-            // Note: On mobile, notifications only appear if the browser is open/minimized
-            new Notification(title, { 
-                body: body, 
-                icon: 'https://junglecubsgyms.com/imgw/logo_light.png',
-                vibrate: [200, 100, 200]
-            });
-        }
+        }, 60000); // Check every minute
     }
 
 </script>
