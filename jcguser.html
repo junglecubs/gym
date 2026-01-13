@@ -19,6 +19,53 @@
         .menu-btn { font-size: 26px; cursor: pointer; background: none; border: none; color: var(--green); padding: 0; }
         .user-greeting { font-weight: bold; font-size: 16px; color: var(--green); }
         
+        /* --- SIDEBAR UPDATES --- */
+.sidebar { 
+    /* Add Flexbox properties to existing class */
+    display: flex; 
+    flex-direction: column; 
+    /* Keep existing properties below */
+    position: fixed; top: 0; left: -280px; width: 260px; height: 100%; 
+    background: white; z-index: 2500; transition: 0.3s; 
+    box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
+    padding-top: 0; /* Reset padding for cleaner layout */
+}
+
+/* Close Button (x) */
+.sidebar-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    color: #999;
+    cursor: pointer;
+    line-height: 1;
+    z-index: 10;
+}
+
+/* Spacer to push Logout to bottom */
+.nav-spacer { flex: 1; }
+
+/* Red Logout Button */
+.btn-logout-sidebar {
+    background: var(--red);
+    color: white;
+    margin: 20px;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(199, 46, 49, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.btn-logout-sidebar:active { transform: scale(0.98); }
+        
         .sidebar { position: fixed; top: 0; left: -280px; width: 260px; height: 100%; background: white; z-index: 2500; transition: 0.3s; box-shadow: 5px 0 15px rgba(0,0,0,0.1); padding-top: 20px; }
         .sidebar.active { left: 0; }
         .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2400; display: none; }
@@ -57,9 +104,31 @@
         .stat-box { display: flex; justify-content: space-between; text-align: center; margin-top: 10px; }
         .stat-val { font-size: 20px; font-weight: bold; display: block; }
         .stat-label { font-size: 10px; color: #999; letter-spacing: 0.5px; margin-top: 3px; display: block; }
-        .btn-hero { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 40px 20px; border-radius: 20px; border: none; font-size: 22px; font-weight: bold; margin-bottom: 20px; cursor: pointer; box-shadow: 0 10px 20px rgba(40, 120, 68, 0.2); background: linear-gradient(135deg, #287844, #3b9e5c); color: white; transition: transform 0.1s; }
-        .btn-hero:active { transform: scale(0.96); }
-        .hero-icon { font-size: 36px; margin-bottom: 10px; }
+        /* --- BOUNCY HERO BUTTON --- */
+.btn-hero { 
+    display: flex; flex-direction: column; align-items: center; justify-content: center; 
+    width: 100%; padding: 30px 20px; border-radius: 20px; border: none; 
+    font-size: 20px; font-weight: 800; margin-bottom: 20px; cursor: pointer; 
+    box-shadow: 0 10px 25px rgba(40, 120, 68, 0.25); 
+    background: linear-gradient(135deg, #287844, #3b9e5c); 
+    color: white; 
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* The Bounce */
+    position: relative; overflow: hidden;
+}
+
+/* Hover State: Lifts up */
+.btn-hero:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 20px 30px rgba(40, 120, 68, 0.35);
+}
+
+/* Active/Click State: Presses down */
+.btn-hero:active { 
+    transform: scale(0.95) translateY(0); 
+    box-shadow: 0 5px 10px rgba(40, 120, 68, 0.2);
+}
+
+.hero-icon { font-size: 32px; margin-bottom: 8px; }
         .att-status-box { text-align: center; padding: 15px; background: #f8f9fa; border-radius: 10px; margin-bottom: 20px; border: 1px solid #eee; }
         .gps-stat { font-size: 12px; color: #666; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .btn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
@@ -120,6 +189,53 @@
     margin-top: 8px; font-size: 12px; color: #666; font-style: italic; 
     padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.05); 
 }
+
+/* --- INTERACTIVE DASHBOARD CARDS --- */
+.interactive-card {
+    background: white; 
+    border-radius: 12px; 
+    padding: 20px; 
+    margin-bottom: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03); 
+    border: 1px solid #f0f0f0;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy effect */
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+.interactive-card:active, .interactive-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    border-color: var(--green);
+}
+
+/* Specific Card Accents */
+.card-assign { border-left: 5px solid #2196F3; } /* Blue for Assignment */
+.card-leave { border-left: 5px solid #f39c12; }  /* Orange for Leaves */
+
+/* Typography */
+.dash-welcome { margin-bottom: 20px; padding: 0 5px; }
+.dash-h2 { margin: 0; font-size: 22px; color: #333; font-weight: 800; }
+.dash-sub { font-size: 14px; color: #666; margin-top: 4px; }
+
+.card-label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: #999; font-weight: bold; display: flex; justify-content: space-between; }
+.card-main-text { font-size: 18px; font-weight: bold; color: #333; margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+.card-hint { font-size: 12px; color: #888; margin-top: 5px; display: flex; align-items: center; gap: 4px; }
+
+/* --- INLINE SPINNER --- */
+.spinner-inline {
+    display: inline-block;
+    width: 14px; 
+    height: 14px;
+    border: 2px solid #e0e0e0;
+    border-top: 2px solid var(--green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+    position: relative;
+    top: -1px; /* Optical alignment */
+}
     </style>
 </head>
 <body>
@@ -146,46 +262,70 @@
         </div>
 
         <div class="sidebar" id="sidebar">
-            <div style="padding:20px; border-bottom:1px solid #eee; background:#fafafa;">
-                <h3 style="margin:0; color:var(--green);" id="sb-name">User</h3>
-                <div style="font-size:12px; color:#666;" id="sb-code">JC---</div>
-            </div>
-            <div class="nav-item active" onclick="sidebarClick('dashboard')">🏠 Dashboard</div>
-            <div class="nav-item" onclick="sidebarClick('attendance')">📍 Live Attendance</div>
-            <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
-            <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
-            <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
-            <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
-            <div class="nav-item" onclick="logout()" style="color:var(--red);">🚪 Logout</div>
-        </div>
+    <button class="sidebar-close" onclick="toggleSidebar()">×</button>
+
+    <div style="padding:30px 20px 20px 20px; border-bottom:1px solid #eee; background:#fafafa;">
+        <h3 style="margin:0; color:var(--green); padding-right: 20px;" id="sb-name">User</h3>
+        <div style="font-size:12px; color:#666;" id="sb-code">JC---</div>
+    </div>
+
+    <div class="nav-item active" onclick="sidebarClick('dashboard')">🏠 Dashboard</div>
+    <div class="nav-item" onclick="sidebarClick('attendance')">📍 Live Attendance</div>
+    <div class="nav-item" onclick="sidebarClick('leave')">📝 Apply for Leave</div>
+    <div class="nav-item" onclick="sidebarClick('calendar')">📅 Team Calendar</div>
+    <div class="nav-item" onclick="sidebarClick('stats')">📊 My History</div>
+    <div class="nav-item" onclick="refreshData(); toggleSidebar()">🔄 Refresh Data</div>
+
+    <div class="nav-spacer"></div>
+
+    <div class="btn-logout-sidebar" onclick="logout()">
+        🚪 Logout
+    </div>
+</div>
         <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
 
         <div class="container">
             
             <div id="view-dashboard" class="module active">
-                <div class="status-card">
-                    <div id="dash-greeting" class="status-text">Loading status...</div>
-                </div>
-                <div class="card" id="assign-card" style="display:none; border-left:5px solid var(--green); background:#e8f5e9; align-items:center; justify-content:space-between; padding:15px;">
-                    <div>
-                        <div style="font-size:10px; color:#666; text-transform:uppercase; font-weight:bold;">Today's Assignment</div>
-                        <div style="font-size:15px; font-weight:bold; color:var(--green); margin-top:2px;" id="assign-loc">...</div>
-                    </div>
-                    <div style="font-size:20px;">📍</div>
-                </div>
-                <button class="btn-hero" onclick="switchTab('attendance')">
-                    <div class="hero-icon">📍</div>
-                    Mark Attendance
-                </button>
-                <div class="card">
-                    <h4 style="margin:0 0 15px 0; border-bottom:1px solid #eee; padding-bottom:10px; font-size:14px; color:#555;">My Leave Balance</h4>
-                    <div class="stat-box">
-                        <div><span class="stat-val" style="color:#333;" id="leave-limit">--</span><span class="stat-label">ALLOWED</span></div>
-                        <div><span class="stat-val" style="color:var(--red);" id="leave-used">--</span><span class="stat-label">USED</span></div>
-                        <div><span class="stat-val" style="color:var(--green);" id="leave-bal">--</span><span class="stat-label">BALANCE</span></div>
-                    </div>
-                </div>
-            </div>
+    
+   <div class="dash-welcome">
+    <h2 class="dash-h2">Hey there! 👋</h2>
+    <div id="dash-greeting" class="dash-sub">
+        <span class="spinner-inline"></span> Getting things ready...
+    </div>
+</div>
+
+    <button class="btn-hero" onclick="switchTab('attendance')">
+        <div class="hero-icon">📍</div>
+        Mark Attendance
+    </button>
+
+    <div id="assign-card" class="interactive-card card-assign" style="display:none;">
+        <div class="card-label">
+            <span>Today's Assignment</span>
+            <span id="assign-date">--</span>
+        </div>
+        <div class="card-main-text" id="assign-loc">
+            Loading...
+        </div>
+        <div class="card-hint">
+            <span style="font-size:14px;">🗺️</span> Tap to open Map location
+        </div>
+    </div>
+
+    <div class="interactive-card card-leave" onclick="switchTab('leave')">
+        <div class="card-label">
+            <span>My Leave Balance</span>
+            <span style="color:var(--green);">APPLY NOW →</span>
+        </div>
+        <div class="stat-box" style="margin-top:15px;">
+            <div><span class="stat-val" style="color:#333;" id="leave-limit">--</span><span class="stat-label">ALLOWED</span></div>
+            <div><span class="stat-val" style="color:var(--red);" id="leave-used">--</span><span class="stat-label">USED</span></div>
+            <div><span class="stat-val" style="color:var(--green);" id="leave-bal">--</span><span class="stat-label">BALANCE</span></div>
+        </div>
+    </div>
+
+</div>
 
             <div id="view-attendance" class="module">
                 <div class="card">
@@ -263,6 +403,7 @@
         startGPS();
         checkSession();
         setupDateListeners();
+        setupNotifications(); // Notification Setup
     };
 
     function checkSession() {
@@ -299,122 +440,108 @@
     }
 
     function refreshData() {
+        // 1. Show Spinner Immediately
+        const greetingEl = document.getElementById('dash-greeting');
+        if(greetingEl) greetingEl.innerHTML = '<span class="spinner-inline"></span> Updating status...';
+
+        // 2. Start Fetch
         fetch(SCRIPT_URL + "?action=getUserContext&code=" + userData.code + "&t=" + new Date().getTime())
             .then(res => res.json()).then(data => {
-                // 1. Dashboard Updates
-                // ... inside refreshData() function ...
+                
+                // --- DASHBOARD UPDATES ---
+                
+                // Handle Assignment Card
+                if(data.today.assignment) {
+                    const card = document.getElementById('assign-card');
+                    const cName = data.today.assignment.centre;
+                    
+                    card.style.display = 'block'; 
+                    document.getElementById('assign-loc').innerText = cName;
+                    
+                    // Set Date
+                    const today = new Date();
+                    document.getElementById('assign-date').innerText = today.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' });
 
-            // 1. Dashboard Updates
-            if(data.today.assignment) {
-                const card = document.getElementById('assign-card');
-                const cName = data.today.assignment.centre;
-                
-                card.style.display = 'flex';
-                document.getElementById('assign-loc').innerText = "📍 " + cName;
-                
-                // --- NEW: Make Assignment Clickable ---
-                // Find the location details from the global 'locations' array
-                const loc = locations.find(l => l.name === cName);
-                
-                if (loc) {
-                    // Priority 1: Use specific Map Link from Column G (assuming mapped to 'mapLink')
-                    // Priority 2: Generate Google Maps link using Lat/Lng as backup
-                    const mapUrl = loc.mapLink || `https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.lng}`;
-                    
-                    card.style.cursor = "pointer";
-                    card.onclick = function() { 
-                        window.open(mapUrl, '_blank'); 
-                    };
-                    
-                    // Optional: Add a visual cue (small icon)
-                    if(!card.querySelector('.link-icon')) {
-                        const icon = document.createElement('div');
-                        icon.className = 'link-icon';
-                        icon.innerHTML = '↗️';
-                        icon.style.fontSize = '12px';
-                        card.appendChild(icon);
+                    // Map Link Logic
+                    const loc = locations.find(l => l.name === cName);
+                    if (loc) {
+                        const mapUrl = loc.mapLink || `https://www.google.com/maps/search/?api=1&query=${loc.lat},${loc.lng}`;
+                        card.onclick = function() { window.open(mapUrl, '_blank'); };
                     }
+                } else {
+                    document.getElementById('assign-card').style.display = 'none';
                 }
-            }
+
+                // Update Leaves
                 document.getElementById('leave-limit').innerText = data.leaves.limit;
                 document.getElementById('leave-used').innerText = data.leaves.used;
                 document.getElementById('leave-bal').innerText = data.leaves.limit - data.leaves.used;
 
-                // 2. ENHANCED HISTORY LOGIC
-                const st = document.getElementById('stats-list'); st.innerHTML = "";
-                let mixedHistory = [];
-                
-                // Add Attendance
-                data.attendance.forEach(a => {
-                    mixedHistory.push({ 
-                        date: a.date, 
-                        time: a.timestamp || a.time, // Handle both formats
-                        action: a.action, 
-                        type: 'attendance' 
-                    });
-                    if(a.date === data.today.date && a.action === "Check-In") activeTime = a.time;
-                });
-                
-                // Add Leaves (Now capturing 'end' and 'reason')
-                if(data.leaves.history) {
-                    data.leaves.history.forEach(l => {
-                        mixedHistory.push({ 
-                            start: l.start, 
-                            end: l.end, 
-                            days: l.days, 
-                            reason: l.reason, 
-                            status: l.status, 
-                            type: 'leave' 
+                // --- HISTORY TIMELINE ---
+                const st = document.getElementById('stats-list'); 
+                if(st) {
+                    st.innerHTML = "";
+                    let mixedHistory = [];
+                    
+                    // Add Attendance
+                    if(data.attendance) {
+                        data.attendance.forEach(a => {
+                            mixedHistory.push({ 
+                                date: a.date, time: a.timestamp || a.time, action: a.action, type: 'attendance' 
+                            });
+                            if(a.date === data.today.date && a.action === "Check-In") activeTime = a.time;
                         });
+                    }
+                    
+                    // Add Leaves
+                    if(data.leaves.history) {
+                        data.leaves.history.forEach(l => {
+                            mixedHistory.push({ 
+                                start: l.start, end: l.end, days: l.days, reason: l.reason, status: l.status, type: 'leave' 
+                            });
+                        });
+                    }
+
+                    // Sort Newest First
+                    mixedHistory.sort((a,b) => {
+                        let dateA = new Date(a.type==='leave' ? a.start : a.date);
+                        let dateB = new Date(b.type==='leave' ? b.start : b.date);
+                        return dateB - dateA;
+                    });
+
+                    if(mixedHistory.length === 0) st.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>No recent history.</p>";
+                    
+                    mixedHistory.forEach(item => {
+                        if(item.type === 'attendance') {
+                            let icon = item.action === 'Check-In' ? '🟢' : '🔴';
+                            st.innerHTML += `
+                            <div class="att-row">
+                                <div style="display:flex; align-items:center;">
+                                    <span class="att-icon">${icon}</span>
+                                    <div>
+                                        <div style="font-weight:bold; font-size:14px;">${item.action}</div>
+                                        <div style="font-size:11px; color:#888;">${item.date}</div>
+                                    </div>
+                                </div>
+                                <div style="font-weight:bold; font-size:13px;">${item.time}</div>
+                            </div>`;
+                        } else {
+                            let rawStatus = item.status || "Pending";
+                            let statusClass = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
+                            st.innerHTML += `
+                            <div class="leave-card-user ${statusClass}">
+                                <div class="lc-header">
+                                    <div class="lc-title">Leave (${item.days} days)</div>
+                                    <div class="lc-status">${item.status}</div>
+                                </div>
+                                <div class="lc-date">📅 ${item.start} ➝ ${item.end}</div>
+                                <div class="lc-reason">"${item.reason}"</div>
+                            </div>`;
+                        }
                     });
                 }
 
-                // Sort by Date (Newest First)
-                mixedHistory.sort((a,b) => {
-                    let dateA = new Date(a.type==='leave' ? a.start : a.date);
-                    let dateB = new Date(b.type==='leave' ? b.start : b.date);
-                    return dateB - dateA;
-                });
-
-                if(mixedHistory.length === 0) st.innerHTML = "<p style='text-align:center; color:#999; padding:20px;'>No recent history.</p>";
-                
-                // Render List
-                mixedHistory.forEach(item => {
-                    if(item.type === 'attendance') {
-                        // Simple Row for Attendance
-                        let icon = item.action === 'Check-In' ? '🟢' : '🔴';
-                        let color = item.action === 'Check-In' ? 'var(--green)' : 'var(--red)';
-                        st.innerHTML += `
-                        <div class="att-row">
-                            <div style="display:flex; align-items:center;">
-                                <div class="att-icon">${icon}</div>
-                                <div>
-                                    <div style="font-weight:bold; font-size:14px; color:#333;">${item.action}</div>
-                                    <div style="font-size:11px; color:#888;">${item.date}</div>
-                                </div>
-                            </div>
-                            <div style="font-weight:bold; font-size:13px; color:${color};">${item.time}</div>
-                        </div>`;
-                    } 
-                    else {
-                        // Rich Card for Leaves
-                        // Normalize Status for CSS class (Approved, Rejected, Pending)
-                        let rawStatus = item.status || "Pending";
-                        let statusClass = rawStatus.charAt(0).toUpperCase() + rawStatus.slice(1).toLowerCase();
-                        
-                        st.innerHTML += `
-                        <div class="leave-card-user ${statusClass}">
-                            <div class="lc-header">
-                                <div class="lc-title">Leave Request (${item.days} days)</div>
-                                <div class="lc-status">${item.status}</div>
-                            </div>
-                            <div class="lc-date">📅 ${item.start} ➝ ${item.end}</div>
-                            <div class="lc-reason">"${item.reason}"</div>
-                        </div>`;
-                    }
-                });
-
-                // 3. Session Logic
+                // --- SESSION & CALENDAR ---
                 todaySessions = data.today.sessions || {}; 
                 currentActiveSession = null;
                 for(let key in todaySessions) {
@@ -423,10 +550,11 @@
                         break;
                     }
                 }
+                
+                // Update Name & Greeting
                 updateDashboardText(userData.name.split(" ")[0]);
                 updateButtonsState();
                 
-                // 4. Calendar
                 calendarEvents = data.calendar; 
                 renderCalendar();
                 globalHolidays = {};
@@ -435,12 +563,20 @@
     }
 
     function updateDashboardText(name) {
-        const dashText = document.getElementById('dash-greeting');
+        // 1. Update the Header (Big Text)
+        // This replaces "Hello, User! 👋" with just "Hey User 👋"
+        const headerEl = document.querySelector('.dash-h2');
+        if(headerEl) headerEl.innerHTML = `Hey ${name} 👋`;
+
+        // 2. Update the Subtext (Status)
+        // Removes the name repetition here
+        const subEl = document.getElementById('dash-greeting');
+        
         if(currentActiveSession) {
             let timeStr = activeTime ? " at " + activeTime : "";
-            dashText.innerHTML = `Hey ${name}, you <span class="highlight">Checked In: ${currentActiveSession.session}</span>${timeStr}`;
+            subEl.innerHTML = `You are checked in: <span class="highlight">${currentActiveSession.session}</span>${timeStr}`;
         } else {
-            dashText.innerHTML = `Hey ${name}, you aren't checked in yet, let's go and mark attendance.`;
+            subEl.innerHTML = `You aren't checked in yet, please mark your attendance.`;
         }
     }
 
@@ -546,6 +682,58 @@
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); document.getElementById('overlay').classList.toggle('active'); }
     function logout() { if(confirm("Logout?")) { localStorage.removeItem("JCG_App_User_V5"); location.reload(); } }
     function getDist(lat1, lon1, lat2, lon2) { var R = 6371000; var dLat = (lat2-lat1)*(Math.PI/180); var dLon = (lon2-lon1)*(Math.PI/180); var a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*(Math.PI/180))*Math.cos(lat2*(Math.PI/180))*Math.sin(dLon/2)*Math.sin(dLon/2); var c = 2*Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R*c; }
+
+// --- NOTIFICATION SYSTEM ---
+    function setupNotifications() {
+        // Request permission immediately
+        if ("Notification" in window && Notification.permission !== "granted") {
+            Notification.requestPermission();
+        }
+
+        // Check time every minute (60,000 ms)
+        setInterval(() => {
+            const now = new Date();
+            const currentTime = String(now.getHours()).padStart(2, '0') + ":" + String(now.getMinutes()).padStart(2, '0');
+            const userName = userData.name ? userData.name.split(" ")[0] : "Team";
+
+            // --- 1. TEST NOTIFICATION (9:00 AM) ---
+            if (currentTime === "09:00") {
+                sendNotify("Good Morning " + userName + "!", "Have a productive day ahead at Jungle Cubs!");
+            }
+
+            // 2. Morning Check-In (11:00 AM)
+            else if (currentTime === "11:00") {
+                sendNotify("Check-In Reminder", "Hi " + userName + ", it's time to check-in for the Morning session.");
+            }
+            // 3. Leave for Centre (3:30 PM)
+            else if (currentTime === "15:30") {
+                sendNotify("Afternoon Session", "Hey " + userName + ", time to leave for the centre. Don't forget to check-out!");
+            }
+            // 4. Evening Check-In (3:50 PM)
+            else if (currentTime === "15:50") {
+                sendNotify("Centre Check-In", "Good afternoon " + userName + ", please mark your attendance at the centre.");
+            }
+            // 5. Evening Check-Out (7:50 PM)
+            else if (currentTime === "19:50") {
+                sendNotify("Check-Out Reminder", "Hope you had a great day! Don't forget to check-out before you go.");
+            }
+
+        }, 60000); // Check every 60 seconds
+    }
+
+    function sendNotify(title, body) {
+        if (!("Notification" in window)) return;
+        
+        if (Notification.permission === "granted") {
+            // Note: On mobile, notifications only appear if the browser is open/minimized
+            new Notification(title, { 
+                body: body, 
+                icon: 'https://junglecubsgyms.com/imgw/logo_light.png',
+                vibrate: [200, 100, 200]
+            });
+        }
+    }
+
 </script>
 
 </body>
