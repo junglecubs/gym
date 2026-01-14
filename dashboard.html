@@ -240,6 +240,23 @@
     .ab-in { background: #e8f5e9; color: var(--green); } .ab-out { background: #eee; color: #666; }
     .att-time { font-size: 13px; font-weight: 500; color: #444; }
     .btn-force { background: #fff0f0; border: 1px solid #ffcccc; color: var(--red); font-size: 10px; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-top: 4px; }
+/* --- CONSOLIDATED ATTENDANCE BADGES --- */
+.att-row-group { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+.badge-line { display: flex; align-items: center; gap: 6px; }
+
+/* Time Badges */
+.badge-time { font-size: 11px; padding: 2px 7px; border-radius: 4px; font-weight: 600; }
+.bt-in { background: #e8f5e9; color: var(--green); border: 1px solid #c8e6c9; }
+.bt-out { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
+
+/* Status Tags */
+.att-tag { font-size: 9px; padding: 1px 5px; border-radius: 3px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+.tag-late { background: #ffebee; color: var(--red); border: 1px solid #ffcdd2; }
+.tag-auto { background: #e3f2fd; color: #1976d2; border: 1px solid #bbdefb; }
+.tag-far  { background: #fff3e0; color: #f57f17; border: 1px solid #ffe0b2; }
+
+/* Duration */
+.att-dur { font-size: 10px; font-weight: bold; color: #888; margin-left: 4px; }
 
     /* --- TEAM STATS (Base Grid) --- */
     .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; }
@@ -617,11 +634,10 @@
       <input type="text" id="searchBox" onkeyup="filterHistory()" placeholder="Search name..." style="padding:12px; width:100%; border:1px solid #ddd; border-radius:8px; margin-bottom:15px; font-size:16px;">
       <div id="history-list-container"></div> 
     </div>
-
   </div> 
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyw2gEr_ca29qmOuzSIXh0R1hKl7WwPvb2jNAXdw956EYl84EF82jjbZ_gq7RglhI2VrQ/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyD69bMHLIb8TlaHJ1QbTUuERgMKR5mz5rQRvWvxpgBh7erls6hwWX6X9_Y9U5QUGKx/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
     let currentTab = 'home';
@@ -1374,46 +1390,51 @@ function renderCalendar() {
     }
 }
     function renderAttendance() { 
-        var m = document.getElementById('att-morning');
-        var e = document.getElementById('att-evening'); 
-        var hM = "", hE = "";
+    var m = document.getElementById('att-morning');
+    var e = document.getElementById('att-evening'); 
+    var hM = "", hE = "";
 
-        if (dashboardData.attendance) {
-            dashboardData.attendance.forEach(a => {
-                var timeStyle = "";
-                var lateLabel = "";
-                
-                if (a.isLate) {
-                    timeStyle = "color:var(--red); font-weight:bold;";
-                    // LATE Badge style
-                    lateLabel = `<span style='font-size:10px; background:#ffebee; color:var(--red); padding:3px 6px; border-radius:4px; border:1px solid #ffcdd2; font-weight:bold;'>LATE</span>`;
-                }
+    if (dashboardData.attendance) {
+        dashboardData.attendance.forEach(a => {
+            
+            // 1. Build IN Badge
+            let inHtml = `<span class="badge-time bt-in">IN ${a.inTime}</span>`;
+            if (a.isLate) inHtml += `<span class="att-tag tag-late">LATE</span>`;
+            
+            // 2. Build OUT Badge (Only if checked out)
+            let outHtml = "";
+            if (a.outTime !== "-") {
+                outHtml = `<div class="badge-line"><span class="badge-time bt-out">OUT ${a.outTime}</span>`;
+                if (a.outTag === "AUTO") outHtml += `<span class="att-tag tag-auto">AUTO</span>`;
+                if (a.outTag === "FAR")  outHtml += `<span class="att-tag tag-far">FAR</span>`;
+                if (a.duration) outHtml += `<span class="att-dur">${a.duration}</span>`;
+                outHtml += `</div>`;
+            }
 
-                var html = `
-                <div class="att-item">
-                    <div class="att-left">
-                        <div class="att-emp">${a.name}</div>
-                        <div class="att-place">📍 ${a.location}</div>
+            // 3. Construct Row
+            var html = `
+            <div class="att-item">
+                <div class="att-left">
+                    <div class="att-emp">${a.name}</div>
+                    <div class="att-place">📍 ${a.location}</div>
+                </div>
+                <div class="att-right">
+                    <div class="att-row-group">
+                        <div class="badge-line">${inHtml}</div>
+                        ${outHtml}
                     </div>
-                    <div class="att-right">
-                        <div style="display:flex; gap:5px; align-items:center;">
-                            ${lateLabel}
-                            <span class="att-badge ${a.action === 'Check-In' ? 'ab-in' : 'ab-out'}">${a.action}</span>
-                        </div>
-                        <div class="att-time" style="${timeStyle}">
-                            ${a.timestamp}
-                        </div>
-                    </div>
-                </div>`;
+                </div>
+            </div>`;
 
-                if (a.session.includes("Morning")) hM += html; 
-                else hE += html;
-            });
-        }
-        
-        m.innerHTML = hM || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
-        e.innerHTML = hE || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
+            if (a.session.includes("Morning")) hM += html; 
+            else hE += html;
+        });
     }
+    
+    m.innerHTML = hM || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
+    e.innerHTML = hE || "<small style='color:#999; padding:10px; display:block;'>No check-ins yet.</small>"; 
+}
+
 
     function goToToday(){ var t=new Date(), y=t.getFullYear(), m=String(t.getMonth()+1).padStart(2,'0'), d=String(t.getDate()).padStart(2,'0'); 
         document.getElementById('allocDate').value=`${y}-${m}-${d}`; 
