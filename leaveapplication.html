@@ -82,7 +82,7 @@
 
 <script>
     // --- CONFIGURATION ---
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOMKlCO9POTMqPqjMZL3M4tvJomtqa2G9G3m4St58y5nYVFeMQQm64J7TKnHVs4TME0w/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyw2gEr_ca29qmOuzSIXh0R1hKl7WwPvb2jNAXdw956EYl84EF82jjbZ_gq7RglhI2VrQ/exec'; 
     // ---------------------
 
     let globalHolidays = {}; 
@@ -110,6 +110,7 @@
     function verifyCode() {
         var input = document.getElementById('employeeCode');
         var nameField = document.getElementById('educatorName');
+        var mobileField = document.getElementById('mobile'); // <--- NEW TARGET
         var code = input.value.trim().toUpperCase();
 
         if (code.length < 3) return; 
@@ -123,22 +124,40 @@
             .then(data => {
                 input.style.backgroundColor = "white";
                 if (data.found) {
+                    // 1. Populate Name
                     nameField.value = data.name;
                     nameField.style.backgroundColor = "#e8f5e9"; 
                     nameField.style.borderColor = "#287844";
                     nameField.readOnly = true; 
                     nameField.disabled = false;
+
+                    // 2. Populate Mobile (NEW LOGIC)
+                    if(data.mobile) {
+                        mobileField.value = data.mobile;
+                        mobileField.style.backgroundColor = "#e8f5e9"; // Green tint
+                        mobileField.style.borderColor = "#287844";
+                        mobileField.readOnly = true; // Lock field
+                    }
+
                 } else {
                     alert("❌ Employee Code '" + code + "' not found.");
                     input.value = "";
+                    
+                    // Reset Fields
                     nameField.value = "";
                     nameField.style.backgroundColor = "white";
+                    
+                    mobileField.value = "";
+                    mobileField.style.backgroundColor = "white";
+                    mobileField.readOnly = false; // Unlock if not found
+
                     input.focus();
                 }
             })
             .catch(e => {
                 nameField.value = "";
                 nameField.disabled = false;
+                console.error("Lookup failed", e);
             });
     }
 

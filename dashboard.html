@@ -553,10 +553,19 @@
       <div id="team-roster-view" class="team-grid" style="display:none;">Loading...</div>
       <div id="team-insights-view">
           <div id="insights-loading" style="text-align:center; padding:30px; color:#888;">⏳ Loading analytics...</div>
-          <div class="chart-container"><div class="chart-title">🏃 Late Arrivals Leaderboard (Top 5)</div><div id="chart-late"></div></div>
           <div class="chart-container"><div class="chart-title">🏆 Top Punctual Staff (On Time)</div><div id="chart-ontime"></div></div>
-          <div class="chart-container"><div class="chart-title">🏖️ Highest Leave Takers (Top 5)</div><div id="chart-leave"></div></div>
+          <div class="chart-container"><div class="chart-title">🏃 Late Arrivals Leaderboard (Top 5)</div><div id="chart-late"></div></div>
+                    <div class="chart-container"><div class="chart-title">🏖️ Highest Leave Takers (Top 5)</div><div id="chart-leave"></div></div>
           <div class="chart-container"><div class="chart-title">📅 Leave Day Trends</div><div id="chart-trend" class="trend-chart"></div></div>
+          
+    
+    <div class="chart-container" style="border-left: 5px solid #c72e31;">
+        <div class="chart-title" style="color:#c72e31;">📍 Distance Offenders (Forgotten Logouts)</div>
+        <div id="chart-offenders"></div>
+    </div>
+
+    <div class="chart-container"><div class="chart-title">📅 Leave Day Trends</div><div id="chart-trend" class="trend-chart"></div></div>
+</div>
       </div>
     </div>
 
@@ -612,7 +621,7 @@
   </div> 
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOMKlCO9POTMqPqjMZL3M4tvJomtqa2G9G3m4St58y5nYVFeMQQm64J7TKnHVs4TME0w/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyw2gEr_ca29qmOuzSIXh0R1hKl7WwPvb2jNAXdw956EYl84EF82jjbZ_gq7RglhI2VrQ/exec'; 
     const CORRECT_PIN = "1234"; 
     let dashboardData = {}, globalHolidays = {}, currentCalDate = new Date();
     let currentTab = 'home';
@@ -1098,11 +1107,13 @@ function loadAnalytics() {
             const late = data.late || [];
             const onTime = data.onTime || [];
             const leaves = data.leaves || [];
-            
+            const offenders = data.offenders || []; // <--- GET DATA
+       
             // Render Charts safely
             renderBarChart('chart-late', late, '#c72e31');   // Red
             renderBarChart('chart-ontime', onTime, '#287844'); // Green
             renderBarChart('chart-leave', leaves, '#f39c12');  // Orange
+            renderBarChart('chart-offenders', offenders, '#333'); // Dark Gray for offenders
             
             if(data.trends && typeof renderTrendChart === 'function') {
                 renderTrendChart(data.trends);

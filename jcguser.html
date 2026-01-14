@@ -170,6 +170,14 @@
     position: relative; overflow: hidden;
 }
 
+/* Yellow State for Check-Out */
+.btn-hero.btn-checkout {
+    background: linear-gradient(135deg, #f9ca2b, #f39c12); /* Jungle Yellow */
+    box-shadow: 0 10px 25px rgba(249, 202, 43, 0.3); /* Yellow Glow */
+}
+/* Optional: Ensure text remains readable */
+.btn-hero.btn-checkout .hero-icon { text-shadow: none; }
+
 /* Hover State: Lifts up */
 .btn-hero:hover { 
     transform: translateY(-5px); 
@@ -374,9 +382,9 @@
     </div>
 </div>
 
-    <button class="btn-hero" onclick="switchTab('attendance')">
-        <div class="hero-icon">📍</div>
-        Mark Attendance
+    <button id="hero-btn" class="btn-hero" onclick="switchTab('attendance')">
+    <div class="hero-icon">📍</div>
+    <span id="hero-text">Check-In</span>
     </button>
 
     <div id="assign-card" class="interactive-card card-assign" style="display:none;">
@@ -525,7 +533,7 @@
     </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxOMKlCO9POTMqPqjMZL3M4tvJomtqa2G9G3m4St58y5nYVFeMQQm64J7TKnHVs4TME0w/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyw2gEr_ca29qmOuzSIXh0R1hKl7WwPvb2jNAXdw956EYl84EF82jjbZ_gq7RglhI2VrQ/exec'; 
     let userData = {}; let locations = []; let calendarEvents = []; let globalHolidays = {};
     let currentCalDate = new Date(); let todaySessions = {}; let currentActiveSession = null; let activeTime = "";
 
@@ -601,11 +609,7 @@
         fetch(SCRIPT_URL + "?action=getUserContext&code=" + userData.code + "&t=" + new Date().getTime())
             .then(res => res.json()).then(data => {
                 
-                // --- DASHBOARD UPDATES ---
-                
-                    // ... inside refreshData ...
-
-// ... inside refreshData() ...
+        // --- DASHBOARD UPDATES ---
 
 // CHECK: Daily Update Reminder
 const hour = new Date().getHours();
@@ -719,9 +723,13 @@ if(document.getElementById('work-date')) {
                 // --- SESSION & CALENDAR ---
                 todaySessions = data.today.sessions || {}; 
                 currentActiveSession = null;
+                activeTime = ""; // Reset
+
                 for(let key in todaySessions) {
                     if(todaySessions[key].in && !todaySessions[key].out) {
                         currentActiveSession = { session: key, location: todaySessions[key].loc };
+                        // NEW: Get the correct time directly from this session
+                        if(todaySessions[key].time) activeTime = todaySessions[key].time;
                         break;
                     }
                 }
@@ -748,13 +756,30 @@ if(document.getElementById('work-date')) {
         const headerEl = document.querySelector('.dash-h2');
         if(headerEl) headerEl.innerHTML = `${greeting}, ${name} 👋`;
 
-        // 3. Update the Status Subtext
+        // 3. Update the Status Subtext AND The Hero Button
         const subEl = document.getElementById('dash-greeting');
+        const heroBtn = document.getElementById('hero-btn');
+        const heroText = document.getElementById('hero-text');
+
         if(currentActiveSession) {
+            // --- USER IS CHECKED IN ---
             let timeStr = activeTime ? " at " + activeTime : "";
             subEl.innerHTML = `You are checked in: <span class="highlight">${currentActiveSession.session}</span>${timeStr}`;
+            
+            // Button becomes Yellow "Check-Out"
+            if(heroBtn) {
+                heroBtn.classList.add('btn-checkout');
+                if(heroText) heroText.innerText = "Check-Out";
+            }
         } else {
+            // --- USER IS NOT CHECKED IN ---
             subEl.innerHTML = `You aren't checked in yet, let's go and mark attendance.`;
+            
+            // Button becomes Green "Check-In"
+            if(heroBtn) {
+                heroBtn.classList.remove('btn-checkout');
+                if(heroText) heroText.innerText = "Check-In";
+            }
         }
     }
 
@@ -810,8 +835,21 @@ if(document.getElementById('work-date')) {
             document.getElementById('att-loader').style.display = 'none';
             const msgBox = document.getElementById('att-msg'); msgBox.style.display = 'block';
             document.getElementById('btnIn').classList.remove('btn-locked'); document.getElementById('btnOut').classList.remove('btn-locked');
-            if(d.result==='success') { msgBox.className = 'status-msg msg-success'; msgBox.innerHTML = d.message; setTimeout(() => { refreshData(); switchTab('dashboard'); }, 1500); } else { msgBox.className = 'status-msg msg-error'; msgBox.innerHTML = d.message; }
-        });
+            if(d.result==='success') 
+            {// --- NEW: POPUP WARNING ---
+        if(d.warning) {
+            alert("⚠️ " + d.warning);
+        }
+        // --------------------------
+
+        msgBox.className = 'status-msg msg-success'; 
+        msgBox.innerHTML = d.message; 
+        setTimeout(() => { refreshData(); switchTab('dashboard'); }, 1500); 
+    } else { 
+        msgBox.className = 'status-msg msg-error'; 
+        msgBox.innerHTML = d.message; 
+    }
+});
     }
 
     function setupDateListeners() { document.getElementById('l-start').addEventListener('change', calcDays); document.getElementById('l-end').addEventListener('change', calcDays); }
