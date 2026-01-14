@@ -218,6 +218,21 @@
         .msg-success { background:#e8f5e9; color:var(--green); border:1px solid #c8e6c9; }
         .msg-error { background:#ffebee; color:var(--red); border:1px solid #ffcdd2; }
 
+/* --- SUB TABS --- */
+.sub-tabs { display: flex; background: #eee; padding: 4px; border-radius: 8px; margin-bottom: 20px; }
+.sub-tab { flex: 1; text-align: center; padding: 10px; font-size: 13px; font-weight: bold; color: #666; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+.sub-tab.active { background: white; color: var(--green); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+/* --- HISTORY CARDS --- */
+.hist-card { background: white; border: 1px solid #eee; border-radius: 10px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+.hc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; border-bottom: 1px solid #f9f9f9; padding-bottom: 8px; }
+.hc-date { font-weight: bold; color: #333; font-size: 14px; }
+.hc-time { font-size: 11px; color: #999; }
+.hc-status { font-size: 10px; padding: 3px 8px; border-radius: 10px; background: #f0f0f0; color: #555; font-weight: bold; }
+.hc-section { margin-top: 10px; }
+.hc-label { font-size: 10px; font-weight: bold; color: #999; text-transform: uppercase; display: block; margin-bottom: 3px; }
+.hc-text { font-size: 13px; color: #444; white-space: pre-wrap; line-height: 1.4; }
+
         /* --- ENHANCED HISTORY TAB --- */
 .history-sep { font-size: 12px; font-weight: bold; color: #999; margin: 15px 0 5px 0; text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -467,44 +482,52 @@
 <div id="view-daily-update" class="module">
     <div class="card">
         <div class="module-header"><h3>📝 Daily Work Update</h3></div>
-        <div id="update-success-msg" class="status-msg msg-success">✅ Update Submitted!</div>
+        
+        <div class="sub-tabs">
+            <div class="sub-tab active" onclick="switchUpdateTab('new', this)">✍️ Submit New</div>
+            <div class="sub-tab" onclick="switchUpdateTab('history', this)">📜 My History</div>
+        </div>
 
-        <form id="work-form" onsubmit="submitWorkForm(event)">
-            
-            <label class="update-label">Select Date</label>
-            <input type="date" name="date" id="work-date" class="update-input" style="height:45px;" required>
+        <div id="tab-update-new">
+            <div id="update-success-msg" class="status-msg msg-success">✅ Update Submitted!</div>
+            <form id="work-form" onsubmit="submitWorkForm(event)">
+                <label class="update-label">Select Date</label>
+                <input type="date" name="date" id="work-date" class="update-input" style="height:45px;" required>
 
-            <label class="update-label">Work Status (Select all that apply)</label>
-            <div class="status-grid">
-                <input type="checkbox" id="st-office" name="statusOption" value="Office" class="status-option" checked>
-                <label for="st-office" class="status-label">🏢 Office</label>
+                <label class="update-label">Work Status</label>
+                <div class="status-grid">
+                    <input type="checkbox" id="st-office" name="statusOption" value="Office" class="status-option" checked>
+                    <label for="st-office" class="status-label">🏢 Office</label>
+                    <input type="checkbox" id="st-wfh" name="statusOption" value="WFH" class="status-option">
+                    <label for="st-wfh" class="status-label">🏠 WFH</label>
+                    <input type="checkbox" id="st-field" name="statusOption" value="Field/Event" class="status-option">
+                    <label for="st-field" class="status-label">🏟️ Field / Event</label>
+                    <input type="checkbox" id="st-pleave" name="statusOption" value="Personal Leave" class="status-option">
+                    <label for="st-pleave" class="status-label">🏖️ Personal Leave</label>
+                    <input type="checkbox" id="st-oleave" name="statusOption" value="Official Leave" class="status-option">
+                    <label for="st-oleave" class="status-label">💼 Official Leave</label>
+                </div>
 
-                <input type="checkbox" id="st-wfh" name="statusOption" value="WFH" class="status-option">
-                <label for="st-wfh" class="status-label">🏠 WFH</label>
-
-                <input type="checkbox" id="st-field" name="statusOption" value="Field/Event" class="status-option">
-                <label for="st-field" class="status-label">🏟️ Field / Event</label>
+                <div class="update-area">
+                    <label class="update-label">Key Tasks Completed *</label>
+                    <textarea name="work1" class="update-input" required placeholder="List tasks..."></textarea>
+                    
+                    <label class="update-label">Challenges (Optional)</label>
+                    <textarea name="work2" class="update-input" placeholder="Any issues?"></textarea>
+                    
+                    <label class="update-label">Plan for Tomorrow (Optional)</label>
+                    <textarea name="work3" class="update-input" placeholder="Focus for tomorrow..."></textarea>
+                </div>
                 
-                <input type="checkbox" id="st-pleave" name="statusOption" value="Personal Leave" class="status-option">
-                <label for="st-pleave" class="status-label">🏖️ Personal Leave</label>
+                <button type="submit" class="btn-hero" id="btn-submit-update" style="margin-bottom:0;">Submit Update</button>
+            </form>
+        </div>
 
-                <input type="checkbox" id="st-oleave" name="statusOption" value="Official Leave" class="status-option">
-                <label for="st-oleave" class="status-label">💼 Official Leave</label>
-            </div>
+        <div id="tab-update-history" style="display:none;">
+            <div id="update-history-loader" style="text-align:center; padding:30px; color:#999;">Loading history...</div>
+            <div id="update-history-list"></div>
+        </div>
 
-            <div class="update-area">
-                <label class="update-label">Key Tasks Completed *</label>
-                <textarea name="work1" class="update-input" required placeholder="List tasks..."></textarea>
-                
-                <label class="update-label">Challenges (Optional)</label>
-                <textarea name="work2" class="update-input" placeholder="Any issues?"></textarea>
-                
-                <label class="update-label">Plan for Tomorrow (Optional)</label>
-                <textarea name="work3" class="update-input" placeholder="Focus for tomorrow..."></textarea>
-            </div>
-            
-            <button type="submit" class="btn-hero" id="btn-submit-update" style="margin-bottom:0;">Submit Update</button>
-        </form>
     </div>
 </div>
 
@@ -533,7 +556,7 @@
     </div>
 
 <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyw2gEr_ca29qmOuzSIXh0R1hKl7WwPvb2jNAXdw956EYl84EF82jjbZ_gq7RglhI2VrQ/exec'; 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbAh_6PiQQFLXZ4yj7ldEzpwonrIk6GazaKWQ_yIlA9tkSkv1YkV2YVyCE77yBBbD4/exec'; 
     let userData = {}; let locations = []; let calendarEvents = []; let globalHolidays = {};
     let currentCalDate = new Date(); let todaySessions = {}; let currentActiveSession = null; let activeTime = "";
 
@@ -610,17 +633,6 @@
             .then(res => res.json()).then(data => {
                 
         // --- DASHBOARD UPDATES ---
-
-// CHECK: Daily Update Reminder
-const hour = new Date().getHours();
-const isWorkingDay = (todaySessions && Object.keys(todaySessions).length > 0) || hour >= 15; 
-
-// If NOT submitted today AND (User is working OR it's late)
-if (!data.today.dailyUpdateDone && isWorkingDay) {
-    document.getElementById('update-reminder').style.display = 'flex';
-} else {
-    document.getElementById('update-reminder').style.display = 'none';
-}
 
 // AUTO-SET DATE INPUT TO TODAY
 if(document.getElementById('work-date')) {
@@ -734,6 +746,32 @@ if(document.getElementById('work-date')) {
                     }
                 }
                 
+                // CHECK: Daily Update Reminder & Status
+const hour = new Date().getHours();
+const isWorkingDay = (todaySessions && Object.keys(todaySessions).length > 0) || hour >= 15; 
+
+// 1. Update the Text with Last Submitted Date
+const reminderEl = document.getElementById('update-reminder');
+// We select the small text div inside the card
+const reminderSub = reminderEl.querySelector('div[style*="font-size:11px"]');
+
+if (data.today.lastUpdate) {
+    reminderSub.innerText = "Last submitted: " + data.today.lastUpdate;
+    // Optional: Make it green if it was recent
+    reminderSub.style.color = "#287844";
+} else {
+    reminderSub.innerText = "No updates submitted yet";
+}
+
+// 2. Show/Hide Logic
+if (!data.today.dailyUpdateDone && isWorkingDay) {
+    reminderEl.style.display = 'flex';
+} else {
+    // Keep it hidden if done or not working
+    reminderEl.style.display = 'none'; 
+}
+
+                
                 // Update Name & Greeting
                 updateDashboardText(userData.name.split(" ")[0]);
                 updateButtonsState();
@@ -744,6 +782,8 @@ if(document.getElementById('work-date')) {
                 calendarEvents.filter(e => e.type === 'holiday').forEach(h => { globalHolidays[h.start] = h.title; });
             });
     }
+
+
 
     function updateDashboardText(name) {
         // 1. Get Time-Based Greeting
@@ -1038,6 +1078,64 @@ function submitWorkForm(e) {
         })
         .catch(err => { alert("Error"); btn.innerText = "Submit Update"; btn.disabled = false; });
 }
+
+function switchUpdateTab(mode, btn) {
+    // 1. Toggle UI
+    document.getElementById('tab-update-new').style.display = mode === 'new' ? 'block' : 'none';
+    document.getElementById('tab-update-history').style.display = mode === 'history' ? 'block' : 'none';
+    
+    // 2. Toggle Tab Styles
+    document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+    if(btn) btn.classList.add('active');
+
+    // 3. Load Data if History
+    if(mode === 'history') loadMyUpdateHistory();
+}
+
+function loadMyUpdateHistory() {
+    const list = document.getElementById('update-history-list');
+    const loader = document.getElementById('update-history-loader');
+    
+    list.innerHTML = "";
+    loader.style.display = 'block';
+
+    fetch(SCRIPT_URL + "?action=getMyWorkUpdates&code=" + userData.code)
+        .then(res => res.json())
+        .then(data => {
+            loader.style.display = 'none';
+            if(data.length === 0) {
+                list.innerHTML = "<div style='text-align:center; padding:20px; color:#999;'>No updates found.</div>";
+                return;
+            }
+
+            data.forEach(u => {
+                // Determine Badge Style
+                let badgeStyle = "background:#eee;";
+                if(u.status.includes("WFH")) badgeStyle = "background:#e3f2fd; color:#1976d2;";
+                if(u.status.includes("Office")) badgeStyle = "background:#e8f5e9; color:#287844;";
+                if(u.status.includes("Field")) badgeStyle = "background:#fff3e0; color:#f57f17;";
+
+                let issuesHtml = u.issues ? `<div class="hc-section"><span class="hc-label" style="color:#d32f2f;">⚠️ Challenges</span><div class="hc-text">${u.issues}</div></div>` : "";
+                
+                list.innerHTML += `
+                <div class="hist-card">
+                    <div class="hc-header">
+                        <div>
+                            <div class="hc-date">${u.date}</div>
+                            <div class="hc-time">Submitted: ${u.time}</div>
+                        </div>
+                        <span class="hc-status" style="${badgeStyle}">${u.status}</span>
+                    </div>
+                    <div class="hc-section">
+                        <span class="hc-label">✅ Summary</span>
+                        <div class="hc-text">${u.summary}</div>
+                    </div>
+                    ${issuesHtml}
+                </div>`;
+            });
+        });
+}
+
 </script>
 
 </body>
