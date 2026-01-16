@@ -38,7 +38,7 @@
     }
 
     /* =========================================
-       🏃 RUNNING CHARACTER LOADER 🏃
+       🏃 RUNNING CHARACTER LOADER (R to L) 🏃
        ========================================= */
     #loader {
       position: fixed;
@@ -48,7 +48,7 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       transition: opacity 0.5s ease;
-      overflow: hidden; /* Keep running char inside */
+      overflow: hidden; 
     }
     
     .loader-track {
@@ -60,13 +60,14 @@
     }
 
     .running-char {
-      width: 120px; /* Size of runner */
+      width: 120px; 
       position: absolute;
       top: 20px;
-      left: -150px; /* Start off-screen left */
+      /* Start off-screen RIGHT */
+      left: 100%; 
       
-      /* The Running Animation */
-      animation: runAcross 2.5s linear infinite, bob 0.3s ease-in-out infinite alternate;
+      /* Animation: Run Left (5s = Slower) + Bob up/down */
+      animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate;
     }
     
     .loading-text {
@@ -78,16 +79,16 @@
       animation: pulse 1s infinite;
     }
 
-    /* Move from Left (-150px) to Right (100% + width) */
-    @keyframes runAcross {
-      0%   { left: -150px; }
-      100% { left: 100%; } 
+    /* Move from Right (100%) to Left (-150px) */
+    @keyframes runLeft {
+      0%   { left: 100%; }
+      100% { left: -150px; } 
     }
 
-    /* Up and Down Bobbing to simulate running steps */
+    /* Bobbing + FLIP image to face Left */
     @keyframes bob {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-10px); }
+      from { transform: scaleX(-1) translateY(0); }
+      to   { transform: scaleX(-1) translateY(-10px); }
     }
     
     @keyframes pulse {
@@ -115,7 +116,7 @@
       transform: translateZ(0); 
     }
 
-    /* --- Character Positions --- */
+    /* --- Desktop Positions --- */
     .c1 { width: 220px; top: 2%; left: 1%; animation: float 6s ease-in-out infinite; }
     .c2 { width: 240px; bottom: 2%; right: 1%; animation: float 7s ease-in-out infinite reverse; }
     .c3 { width: 200px; bottom: 5%; left: 2%; animation: sway 5s ease-in-out infinite; }
@@ -126,10 +127,24 @@
     @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-25px); } 100% { transform: translateY(0px); } }
     @keyframes sway  { 0% { transform: rotate(0deg) translateX(0); } 25% { transform: rotate(5deg) translateX(15px); } 75% { transform: rotate(-5deg) translateX(-15px); } 100% { transform: rotate(0deg) translateX(0); } }
 
+    /* --- MOBILE OPTIMIZATION (Fix Visibility) --- */
     @media (max-width: 800px) {
-      .c1 { width: 120px; top: 1%; left: -10px; }
-      .c2 { width: 140px; bottom: 1%; right: -10px; }
-      .c3, .c4, .c5, .c6 { display: none; } 
+      /* Move chars to Top/Bottom corners so they peek out from behind the card */
+      
+      /* Top Left */
+      .c1 { width: 100px; top: 5px; left: -10px; display: block; z-index: -1; }
+      
+      /* Top Right (Moved from bottom) */
+      .c2 { width: 110px; top: 5px; right: -10px; bottom: auto; display: block; z-index: -1; }
+      
+      /* Bottom Left */
+      .c3 { width: 100px; bottom: 5px; left: -10px; display: block; z-index: -1; }
+      
+      /* Bottom Right (New slot) */
+      .c4 { width: 110px; bottom: 5px; right: -10px; top: auto; display: block; z-index: -1; }
+
+      /* Hide middle ones to avoid covering text */
+      .c5, .c6 { display: none; } 
     }
 
     /* =========================================
@@ -237,11 +252,11 @@
     <div class="loader-track">
       <img src="https://i.postimg.cc/Gm37HZVk/Cheetah_running_Copy.webp" class="running-char" alt="Runner">
     </div>
-    <div class="loading-text">Cubs Sports Fest... 🦁</div>
+    <div class="loading-text">Loading Jungle Fun... 🦁</div>
   </div>
 
   <div class="jungle-scene">
-    <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
+   <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
     <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char c2" alt="Cub 2">
     <img src="https://i.postimg.cc/Gm37HZVF/middle_split_monkey.webp" class="char c3" alt="Cub 3">
     <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char c4" alt="Cub 4">
