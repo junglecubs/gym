@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Cubs Sports Fest — Registration</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,10 +21,19 @@
     /* --- GLOBAL RESET --- */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
+    html {
+      /* iPhone Background Fix: Apply gradient to HTML to cover notches */
+      background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+      min-height: 100%;
+      height: 100%;
+    }
+
     body {
       font-family: 'Nunito', sans-serif;
       line-height: 1.6; 
       min-height: 100vh;
+      /* Ensure body takes full height on mobile browsers */
+      min-height: -webkit-fill-available; 
       display: flex; 
       align-items: center; 
       justify-content: center; 
@@ -32,13 +41,12 @@
       color: #333;
       position: relative;
       overflow-x: hidden; 
-
-      /* BASE GRADIENT BACKGROUND */
-      background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+      /* Transparent body so HTML gradient shows through */
+      background: transparent; 
     }
 
     /* =========================================
-       🏃 RUNNING CHARACTER LOADER (R to L) 🏃
+       🏃 RUNNING CHARACTER LOADER (R to L)
        ========================================= */
     #loader {
       position: fixed;
@@ -52,116 +60,102 @@
     }
     
     .loader-track {
-      width: 100%;
-      height: 150px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 10px;
+      width: 100%; height: 150px; position: relative;
+      overflow: hidden; margin-bottom: 10px;
     }
 
     .running-char {
       width: 120px; 
-      position: absolute;
-      top: 20px;
-      /* Start off-screen RIGHT */
-      left: 100%; 
-      
-      /* Animation: Run Left (5s = Slower) + Bob up/down */
+      position: absolute; top: 20px; left: 100%; 
       animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate;
     }
     
     .loading-text {
-      color: var(--jc-green);
-      font-weight: 800;
-      font-size: 1.4rem;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      animation: pulse 1s infinite;
+      color: var(--jc-green); font-weight: 800;
+      font-size: 1.4rem; letter-spacing: 1px;
+      text-transform: uppercase; animation: pulse 1s infinite;
     }
 
-    /* Move from Right (100%) to Left (-150px) */
-    @keyframes runLeft {
-      0%   { left: 100%; }
-      100% { left: -150px; } 
-    }
-
-    /* Bobbing + FLIP image to face Left */
-    @keyframes bob {
-      from { transform: scaleX(-1) translateY(0); }
-      to   { transform: scaleX(-1) translateY(-10px); }
-    }
-    
-    @keyframes pulse {
-      0% { opacity: 0.6; } 100% { opacity: 1; }
-    }
+    @keyframes runLeft { 0% { left: 100%; } 100% { left: -150px; } }
+    @keyframes bob { from { transform: scaleX(-1) translateY(0); } to { transform: scaleX(-1) translateY(-10px); } }
+    @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
 
     /* =========================================
-       🦁 6 ANIMATED CHARACTERS BACKGROUND 🦁
+       🦁 ANIMATED CHARACTERS (FLOATING ON TOP) 🦁
        ========================================= */
     .jungle-scene {
       position: fixed;
       top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1; 
+      width: 100%; height: 100%;
+      /* Z-INDEX 50: Puts them ON TOP of the form */
+      z-index: 50; 
+      /* IMPORTANT: Lets you click THROUGH the images */
       pointer-events: none; 
       overflow: hidden;
     }
 
     .char {
       position: absolute;
-      opacity: 0.95;
-      filter: drop-shadow(0 15px 15px rgba(0,0,0,0.2));
+      opacity: 1; /* Fully visible */
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
       transition: all 0.3s ease;
       transform: translateZ(0); 
     }
 
     /* --- Desktop Positions --- */
-    .c1 { width: 220px; top: 2%; left: 1%; animation: float 6s ease-in-out infinite; }
-    .c2 { width: 240px; bottom: 2%; right: 1%; animation: float 7s ease-in-out infinite reverse; }
-    .c3 { width: 200px; bottom: 5%; left: 2%; animation: sway 5s ease-in-out infinite; }
-    .c4 { width: 230px; top: 5%; right: 2%; animation: float 8s ease-in-out infinite; }
-    .c5 { width: 190px; top: 45%; right: 5%; animation: sway 6s ease-in-out infinite reverse; }
-    .c6 { width: 210px; top: 40%; left: -2%; animation: float 9s ease-in-out infinite; }
+    .c1 { width: 200px; top: 5%; left: 2%; animation: float 6s ease-in-out infinite; }
+    .c2 { width: 220px; bottom: 5%; right: 2%; animation: float 7s ease-in-out infinite reverse; }
+    /* Hide extra chars on desktop to keep it clean, or uncomment if needed */
+    .c3 { width: 180px; bottom: 10%; left: 5%; animation: sway 5s ease-in-out infinite; } 
+    .c4 { display: none; } 
 
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-25px); } 100% { transform: translateY(0px); } }
-    @keyframes sway  { 0% { transform: rotate(0deg) translateX(0); } 25% { transform: rotate(5deg) translateX(15px); } 75% { transform: rotate(-5deg) translateX(-15px); } 100% { transform: rotate(0deg) translateX(0); } }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
+    @keyframes sway  { 0% { transform: rotate(0deg) translateX(0); } 25% { transform: rotate(5deg) translateX(10px); } 75% { transform: rotate(-5deg) translateX(-10px); } 100% { transform: rotate(0deg) translateX(0); } }
 
-    /* --- MOBILE OPTIMIZATION (Fix Visibility) --- */
+    /* --- MOBILE OPTIMIZATION (Floating Over Form) --- */
     @media (max-width: 800px) {
-      /* Move chars to Top/Bottom corners so they peek out from behind the card */
+      /* Keep them fixed to viewport corners so they "float" over the scrolling form */
       
-      /* Top Left */
-      .c1 { width: 100px; top: 5px; left: -10px; display: block; z-index: -1; }
+      /* Top Left - Peeking from top */
+      .c1 { 
+        width: 110px; 
+        top: -10px; 
+        left: -10px; 
+        display: block; 
+        z-index: 100; /* Highest priority */
+      }
       
-      /* Top Right (Moved from bottom) */
-      .c2 { width: 110px; top: 5px; right: -10px; bottom: auto; display: block; z-index: -1; }
+      /* Bottom Right - Peeking from bottom */
+      .c2 { 
+        width: 120px; 
+        bottom: -10px; 
+        right: -10px; 
+        top: auto;
+        display: block; 
+        z-index: 100;
+      }
       
-      /* Bottom Left */
-      .c3 { width: 100px; bottom: 5px; left: -10px; display: block; z-index: -1; }
-      
-      /* Bottom Right (New slot) */
-      .c4 { width: 110px; bottom: 5px; right: -10px; top: auto; display: block; z-index: -1; }
-
-      /* Hide middle ones to avoid covering text */
-      .c5, .c6 { display: none; } 
+      /* Hide others on mobile to prevent blocking text */
+      .c3, .c4 { display: none; } 
     }
 
     /* =========================================
        📄 GLASS FORM CARD
        ========================================= */
     .box {
-      background: rgba(255, 255, 255, 0.90);
-      backdrop-filter: blur(12px);
-      padding: 2.5rem; 
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px); /* Safari support */
+      padding: 2.2rem; 
       border-radius: 24px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.2); 
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25); 
       max-width: 550px; 
       width: 100%;
-      border: 1px solid rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.6);
       animation: floatUp 0.6s ease-out;
       position: relative;
-      z-index: 10;
+      /* Z-INDEX 10: Below the characters */
+      z-index: 10; 
     }
 
     @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -175,6 +169,7 @@
       font-size: 1.8rem; margin-bottom: 0.5rem; 
       font-weight: 800; text-align: center; 
       text-transform: uppercase;
+      line-height: 1.2;
     }
 
     .event-info {
@@ -185,21 +180,43 @@
       font-size: 1rem; font-weight: 600;
     }
 
-    /* --- FORM ELEMENTS --- */
+    /* --- FORM ELEMENTS (iOS FIXES) --- */
     label { font-weight: 700; color: #444; display: block; margin-top: 1.2rem; font-size: 0.95rem; }
     .small-note { font-size: 0.8rem; color: #666; font-weight: 500; font-style: italic; }
 
     input, select {
-      width: 100%; padding: 14px 16px; 
+      width: 100%; 
+      padding: 0 16px; /* Horizontal padding only, height handles vertical */
+      height: 52px;    /* FIXED HEIGHT for perfect alignment */
       border: 2px solid #e1e5e8; border-radius: 12px;
       font-size: 1rem; font-family: 'Nunito', sans-serif;
       transition: all 0.3s ease; background: #fdfdfd;
+      
+      /* iOS RESET */
+      -webkit-appearance: none;
+      appearance: none;
+      border-radius: 12px; /* Re-apply radius for iOS */
     }
+
     input:focus, select:focus {
       outline: none; border-color: var(--jc-green);
       background: #fff; box-shadow: 0 4px 15px rgba(40, 120, 68, 0.1);
     }
-    input[readonly] { background: #f0f0f0; color: #888; border-color: #eee; }
+
+    /* iOS READONLY FIX */
+    input[readonly] { 
+      background-color: #f0f0f0 !important; /* Force Grey */
+      color: #888; 
+      border-color: #eee;
+      opacity: 1; /* Fix iOS fading disabled inputs */
+      -webkit-text-fill-color: #888; /* Fix iOS text color */
+    }
+    
+    /* Date Input Specifics */
+    input[type="date"] {
+      display: block;
+      line-height: 52px; /* Center text vertically */
+    }
 
     /* --- CAR MSG --- */
     #carMsg {
@@ -216,6 +233,8 @@
       font-weight: 800; font-size: 1.2rem; border: none; border-radius: 50px; 
       cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
       text-decoration: none; letter-spacing: 0.5px; text-transform: uppercase;
+      /* iOS Button Reset */
+      -webkit-appearance: none;
     }
     .btn-primary { 
       background: linear-gradient(135deg, var(--jc-green) 0%, var(--jc-green-light) 100%);
@@ -252,16 +271,14 @@
     <div class="loader-track">
       <img src="https://i.postimg.cc/Gm37HZVk/Cheetah_running_Copy.webp" class="running-char" alt="Runner">
     </div>
-    <div class="loading-text">Loading Jungle Fun... 🦁</div>
+    <div class="loading-text">Cubs Sports Fest🦁</div>
   </div>
 
   <div class="jungle-scene">
-   <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
+    <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
     <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char c2" alt="Cub 2">
     <img src="https://i.postimg.cc/Gm37HZVF/middle_split_monkey.webp" class="char c3" alt="Cub 3">
     <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char c4" alt="Cub 4">
-    <img src="https://i.postimg.cc/4NQ24JLQ/Cheetah_on_head.webp" class="char c5" alt="Cub 5">
-    <img src="https://i.postimg.cc/T327pZF9/Cheetah_on_oneleg_(1).webp" class="char c6" alt="Cub 6">
   </div>
 
   <div class="box">
