@@ -22,26 +22,17 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     html {
-      /* iPhone Background Fix: Apply gradient to HTML to cover notches */
       background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
-      min-height: 100%;
-      height: 100%;
+      min-height: 100%; height: 100%;
     }
 
     body {
       font-family: 'Nunito', sans-serif;
       line-height: 1.6; 
       min-height: 100vh;
-      /* Ensure body takes full height on mobile browsers */
       min-height: -webkit-fill-available; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      padding: 20px;
-      color: #333;
-      position: relative;
-      overflow-x: hidden; 
-      /* Transparent body so HTML gradient shows through */
+      display: flex; align-items: center; justify-content: center; 
+      padding: 20px; color: #333; position: relative; overflow-x: hidden; 
       background: transparent; 
     }
 
@@ -49,33 +40,21 @@
        🏃 RUNNING CHARACTER LOADER (R to L)
        ========================================= */
     #loader {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: #ffffff;
-      z-index: 9999; 
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      transition: opacity 0.5s ease;
-      overflow: hidden; 
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #ffffff; z-index: 9999; 
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      transition: opacity 0.5s ease; overflow: hidden; 
     }
     
-    .loader-track {
-      width: 100%; height: 150px; position: relative;
-      overflow: hidden; margin-bottom: 10px;
-    }
-
+    .loader-track { width: 100%; height: 150px; position: relative; overflow: hidden; margin-bottom: 10px; }
     .running-char {
-      width: 120px; 
-      position: absolute; top: 20px; left: 100%; 
+      width: 120px; position: absolute; top: 20px; left: 100%; 
       animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate;
     }
-    
     .loading-text {
-      color: var(--jc-green); font-weight: 800;
-      font-size: 1.4rem; letter-spacing: 1px;
+      color: var(--jc-green); font-weight: 800; font-size: 1.4rem; letter-spacing: 1px;
       text-transform: uppercase; animation: pulse 1s infinite;
     }
-
     @keyframes runLeft { 0% { left: 100%; } 100% { left: -150px; } }
     @keyframes bob { from { transform: scaleX(-1) translateY(0); } to { transform: scaleX(-1) translateY(-10px); } }
     @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
@@ -84,58 +63,40 @@
        🦁 ANIMATED CHARACTERS (FLOATING ON TOP) 🦁
        ========================================= */
     .jungle-scene {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      /* Z-INDEX 50: Puts them ON TOP of the form */
-      z-index: 50; 
-      /* IMPORTANT: Lets you click THROUGH the images */
-      pointer-events: none; 
-      overflow: hidden;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      z-index: 50; pointer-events: none; overflow: hidden;
     }
 
     .char {
-      position: absolute;
-      opacity: 1; /* Fully visible */
+      position: absolute; opacity: 1; 
       filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-      transition: all 0.3s ease;
-      transform: translateZ(0); 
+      transition: all 0.3s ease; transform: translateZ(0); 
     }
 
-    /* --- Desktop Positions --- */
+    /* --- DESKTOP POSITIONS (ALL 4 CORNERS) --- */
+    
+    /* 1. Top Left */
     .c1 { width: 200px; top: 5%; left: 2%; animation: float 6s ease-in-out infinite; }
+    
+    /* 2. Bottom Right */
     .c2 { width: 220px; bottom: 5%; right: 2%; animation: float 7s ease-in-out infinite reverse; }
-    /* Hide extra chars on desktop to keep it clean, or uncomment if needed */
+    
+    /* 3. Bottom Left */
     .c3 { width: 180px; bottom: 10%; left: 5%; animation: sway 5s ease-in-out infinite; } 
-    .c4 { display: none; } 
+    
+    /* 4. Top Right (FIXED: Now Visible) */
+    .c4 { width: 210px; top: 5%; right: 2%; display: block; animation: float 8s ease-in-out infinite; }
 
     @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
     @keyframes sway  { 0% { transform: rotate(0deg) translateX(0); } 25% { transform: rotate(5deg) translateX(10px); } 75% { transform: rotate(-5deg) translateX(-10px); } 100% { transform: rotate(0deg) translateX(0); } }
 
-    /* --- MOBILE OPTIMIZATION (Floating Over Form) --- */
+    /* --- MOBILE POSITIONS --- */
     @media (max-width: 800px) {
-      /* Keep them fixed to viewport corners so they "float" over the scrolling form */
+      /* On mobile, we show 2 characters peeking from corners */
+      .c1 { width: 110px; top: -10px; left: -10px; display: block; z-index: 100; }
+      .c2 { width: 120px; bottom: -10px; right: -10px; top: auto; display: block; z-index: 100; }
       
-      /* Top Left - Peeking from top */
-      .c1 { 
-        width: 110px; 
-        top: -10px; 
-        left: -10px; 
-        display: block; 
-        z-index: 100; /* Highest priority */
-      }
-      
-      /* Bottom Right - Peeking from bottom */
-      .c2 { 
-        width: 120px; 
-        bottom: -10px; 
-        right: -10px; 
-        top: auto;
-        display: block; 
-        z-index: 100;
-      }
-      
-      /* Hide others on mobile to prevent blocking text */
+      /* Hide middle/extra ones on mobile to keep form readable */
       .c3, .c4 { display: none; } 
     }
 
@@ -144,20 +105,13 @@
        ========================================= */
     .box {
       background: rgba(255, 255, 255, 0.92);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px); /* Safari support */
-      padding: 2.2rem; 
-      border-radius: 24px;
+      backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+      padding: 2.2rem; border-radius: 24px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.25); 
-      max-width: 550px; 
-      width: 100%;
+      max-width: 550px; width: 100%;
       border: 1px solid rgba(255,255,255,0.6);
-      animation: floatUp 0.6s ease-out;
-      position: relative;
-      /* Z-INDEX 10: Below the characters */
-      z-index: 10; 
+      animation: floatUp 0.6s ease-out; position: relative; z-index: 10; 
     }
-
     @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
     /* --- HEADER --- */
@@ -165,64 +119,41 @@
     .logo-area img { height: 90px; width: auto; object-fit: contain; }
 
     h1 { 
-      color: var(--jc-green); 
-      font-size: 1.8rem; margin-bottom: 0.5rem; 
-      font-weight: 800; text-align: center; 
-      text-transform: uppercase;
-      line-height: 1.2;
+      color: var(--jc-green); font-size: 1.8rem; margin-bottom: 0.5rem; 
+      font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.2;
     }
 
     .event-info {
-      background: #eef9f2;
-      border-left: 5px solid var(--jc-green);
+      background: #eef9f2; border-left: 5px solid var(--jc-green);
       border-radius: 8px; padding: 15px; margin-bottom: 25px;
-      text-align: center; color: #1e5c33;
-      font-size: 1rem; font-weight: 600;
+      text-align: center; color: #1e5c33; font-size: 1rem; font-weight: 600;
     }
 
-    /* --- FORM ELEMENTS (iOS FIXES) --- */
+    /* --- FORM ELEMENTS --- */
     label { font-weight: 700; color: #444; display: block; margin-top: 1.2rem; font-size: 0.95rem; }
     .small-note { font-size: 0.8rem; color: #666; font-weight: 500; font-style: italic; }
 
     input, select {
-      width: 100%; 
-      padding: 0 16px; /* Horizontal padding only, height handles vertical */
-      height: 52px;    /* FIXED HEIGHT for perfect alignment */
+      width: 100%; padding: 0 16px; height: 52px;
       border: 2px solid #e1e5e8; border-radius: 12px;
       font-size: 1rem; font-family: 'Nunito', sans-serif;
       transition: all 0.3s ease; background: #fdfdfd;
-      
-      /* iOS RESET */
-      -webkit-appearance: none;
-      appearance: none;
-      border-radius: 12px; /* Re-apply radius for iOS */
+      -webkit-appearance: none; appearance: none;
     }
-
     input:focus, select:focus {
       outline: none; border-color: var(--jc-green);
       background: #fff; box-shadow: 0 4px 15px rgba(40, 120, 68, 0.1);
     }
-
-    /* iOS READONLY FIX */
     input[readonly] { 
-      background-color: #f0f0f0 !important; /* Force Grey */
-      color: #888; 
-      border-color: #eee;
-      opacity: 1; /* Fix iOS fading disabled inputs */
-      -webkit-text-fill-color: #888; /* Fix iOS text color */
+      background-color: #f0f0f0 !important; color: #888; border-color: #eee;
+      opacity: 1; -webkit-text-fill-color: #888; 
     }
-    
-    /* Date Input Specifics */
-    input[type="date"] {
-      display: block;
-      line-height: 52px; /* Center text vertically */
-    }
+    input[type="date"] { display: block; line-height: 52px; }
 
     /* --- CAR MSG --- */
     #carMsg {
       font-size: 0.95rem; margin-top: 10px; padding: 8px 12px;
-      border-radius: 8px; font-weight: 700; text-align: center;
-      display: none;
+      border-radius: 8px; font-weight: 700; text-align: center; display: none;
     }
     #carMsg.visible { display: block; animation: popIn 0.3s ease; }
     @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
@@ -233,16 +164,13 @@
       font-weight: 800; font-size: 1.2rem; border: none; border-radius: 50px; 
       cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
       text-decoration: none; letter-spacing: 0.5px; text-transform: uppercase;
-      /* iOS Button Reset */
       -webkit-appearance: none;
     }
     .btn-primary { 
       background: linear-gradient(135deg, var(--jc-green) 0%, var(--jc-green-light) 100%);
       color: #fff; box-shadow: 0 10px 20px rgba(40, 120, 68, 0.3);
     }
-    .btn-primary:hover:not([disabled]) { 
-      transform: translateY(-2px); box-shadow: 0 15px 25px rgba(40, 120, 68, 0.4);
-    }
+    .btn-primary:hover:not([disabled]) { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(40, 120, 68, 0.4); }
     .btn-primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
 
     .btn-secondary {
@@ -251,17 +179,13 @@
     }
 
     /* --- PAYMENT --- */
-    .summary {
-      margin-top: 25px; background: #fffdf5; border: 2px dashed #f0e6c5; 
-      border-radius: 16px; padding: 20px;
-    }
+    .summary { margin-top: 25px; background: #fffdf5; border: 2px dashed #f0e6c5; border-radius: 16px; padding: 20px; }
     .qr-box {
       text-align: center; margin-top: 15px; padding: 15px; background: white;
       border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
     }
     .qr-box img { max-width: 100%; border-radius: 4px; }
     .hidden { display:none !important; }
-
     @media (max-width: 480px) { .box { padding: 1.5rem; } h1 { font-size: 1.5rem; } }
   </style>
 </head>
@@ -271,11 +195,11 @@
     <div class="loader-track">
       <img src="https://i.postimg.cc/Gm37HZVk/Cheetah_running_Copy.webp" class="running-char" alt="Runner">
     </div>
-    <div class="loading-text">Cubs Sports Fest🦁</div>
+    <div class="loading-text">Loading Jungle Fun... 🦁</div>
   </div>
 
   <div class="jungle-scene">
-    <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
+     <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
     <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char c2" alt="Cub 2">
     <img src="https://i.postimg.cc/Gm37HZVF/middle_split_monkey.webp" class="char c3" alt="Cub 3">
     <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char c4" alt="Cub 4">
@@ -298,10 +222,10 @@
     <form id="regForm">
       
       <label>Parent Name 😇</label>
-      <input type="text" name="Parent Name" id="parentName" placeholder="e.g. Rajiv Shah" required>
+      <input type="text" name="Parent Name" id="parentName" placeholder="e.g. Worlds Best Parent" required>
 
       <label>Child Name 📝</label>
-      <input type="text" name="ChildName" id="childName" placeholder="e.g. Kiah" required>
+      <input type="text" name="ChildName" id="childName" placeholder="e.g. Super Cubs" required>
 
       <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
         <div>
