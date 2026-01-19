@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-  <title>Cubs Sports Fest — Morning Registration</title>
+  <title>Cubs Sports Fest — Evening Registration</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
-    /* --- BRAND COLORS & VARS --- */
     :root { --jc-yellow: #f9ca2b; --jc-green: #287844; --jc-green-light: #3b9e58; --jc-red: #c72e31; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); min-height: 100%; height: 100%; }
     body { font-family: 'Nunito', sans-serif; line-height: 1.6; min-height: 100vh; min-height: -webkit-fill-available; display: flex; align-items: center; justify-content: center; padding: 20px; color: #333; position: relative; overflow-x: hidden; background: transparent; }
 
-    /* LOADER */
     #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; overflow: hidden; }
     .loader-track { width: 100%; height: 150px; position: relative; overflow: hidden; margin-bottom: 10px; }
     .running-char { width: 120px; position: absolute; top: 20px; left: 100%; animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate; }
@@ -25,7 +23,6 @@
     @keyframes bob { from { transform: scaleX(-1) translateY(0); } to { transform: scaleX(-1) translateY(-10px); } }
     @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
 
-    /* CHARACTERS */
     .jungle-scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; overflow: hidden; }
     .char { position: absolute; opacity: 1; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); transition: all 0.3s ease; transform: translateZ(0); }
     .c1 { width: 190px; top: 5%; left: 2%; animation: float 6s ease-in-out infinite; }
@@ -41,11 +38,9 @@
       .c3, .c4 { display: none; } 
     }
 
-    /* CARD */
     .box { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 2.2rem; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-width: 550px; width: 100%; border: 1px solid rgba(255,255,255,0.6); animation: floatUp 0.6s ease-out; position: relative; z-index: 10; }
     @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* CONTENT & INPUTS */
     .logo-area { text-align: center; margin-bottom: 1rem; }
     .logo-area img { height: 90px; width: auto; object-fit: contain; }
     h1 { color: var(--jc-green); font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.2; }
@@ -53,18 +48,16 @@
     
     label { font-weight: 700; color: #444; display: block; margin-top: 1.2rem; font-size: 0.95rem; }
     .small-note { font-size: 0.8rem; color: #666; font-weight: 500; font-style: italic; }
-    
     input, select { width: 100%; padding: 0 16px; height: 52px; border: 2px solid #e1e5e8; border-radius: 12px; font-size: 1rem; font-family: 'Nunito', sans-serif; transition: all 0.3s ease; background: #fdfdfd; -webkit-appearance: none; appearance: none; }
     input:focus, select:focus { outline: none; border-color: var(--jc-green); background: #fff; box-shadow: 0 4px 15px rgba(40, 120, 68, 0.1); }
     input[readonly] { background-color: #f0f0f0 !important; color: #888; border-color: #eee; opacity: 1; -webkit-text-fill-color: #888; }
     input[type="date"] { display: block; line-height: 52px; }
 
-    /* --- CHECKBOX FIX --- */
+    /* CHECKBOX FIX */
     input[type="checkbox"] {
       height: 24px; width: 24px;
-      -webkit-appearance: checkbox; appearance: checkbox; /* Force Checkbox UI */
-      accent-color: var(--jc-green);
-      margin-top: 2px;
+      -webkit-appearance: checkbox; appearance: checkbox; 
+      accent-color: var(--jc-green); margin-top: 2px;
     }
 
     #carMsg { font-size: 0.95rem; margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-weight: 700; text-align: center; display: none; }
@@ -110,12 +103,12 @@
     <div class="event-info">
       <div>📅 Sunday, March 08</div>
       <div>📍 V4 Turf, Bhandup</div>
-      <div style="margin-top:4px; color:var(--jc-green); font-weight:800;">⏰ 9:30am to 11:30am (Morning Batch)</div>
+      <div style="margin-top:4px; color:var(--jc-green); font-weight:800;">⏰ 6:00pm to 8:00pm (Evening Batch)</div>
     </div>
 
     <form id="regForm">
       
-      <input type="hidden" name="Batch" value="Morning Batch">
+      <input type="hidden" name="Batch" value="Evening Batch">
 
       <label>Parent Name 😇</label>
       <input type="text" name="Parent Name" id="parentName" placeholder="e.g. Worlds Best Parent" required>
@@ -137,13 +130,12 @@
       <label>Select Your Centre 🏫</label>
       <select name="Centre" id="centre" required>
         <option value="" disabled selected>-- Select Centre --</option>
-        <option value="Matunga">Matunga</option>
-        <option value="Hughes">Hughes</option>
-        <option value="Malad">Malad</option>
-        <option value="Borivali">Borivali</option>
-        <option value="Lalbaug">Lalbaug</option>
-        <option value="Worli">Worli</option>
-        <option value="Bandra">Bandra</option>
+        <option value="Powai">Powai</option>
+        <option value="Mulund">Mulund</option>
+        <option value="Thane">Thane</option>
+        <option value="Thane Estate">Thane Estate</option>
+        <option value="Belapur">Belapur</option>
+        <option value="Vashi">Vashi</option>
       </select>
 
       <label>Mobile Number 📱 (WhatsApp)</label>
@@ -205,10 +197,11 @@
   </div>
 
 <script>
+  /* --- CONFIGURATION --- */
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec'; 
   const UPI_ID = 'junglecubsgym7@oksbi';
   const WHATSAPP_NUMBER = '919326068804';
-  const EVENT_NAME = "Cubs Sports Fest";
+  const EVENT_NAME = "Cubs Sports Fest (Evening)";
   const AMOUNT = "499"; 
 
   window.addEventListener('load', function() {
@@ -271,7 +264,7 @@
     if (needsPayment === 'Yes') {
       summaryWrap.classList.remove('hidden'); paySection.classList.remove('hidden');
       const parent = document.getElementById('parentName').value || 'Parent';
-      const tn = `Sports Fest for ${parent}`;
+      const tn = `Sports Fest (Evening) for ${parent}`;
       const upiLink = `upi://pay?pa=${UPI_ID}&pn=JungleCubsGym&am=${AMOUNT}&cu=INR&tn=${encodeURIComponent(tn)}`;
       upiBtn.href = upiLink; upiBtn.textContent = `Pay ₹${AMOUNT} via UPI App`;
       qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
@@ -309,13 +302,13 @@
     if(status.includes("Early Bird")) shortStatus = "Early Bird";
 
     let msg = "";
-    // ADDED MORNING BATCH TIMING HERE
-    const timingInfo = `\nPlease be on time for your 'Morning 09:30am - 11:30am batch'\nReporting time: 09:10am`;
+    // ADDED EVENING BATCH TIMING HERE
+    const timingInfo = `\nPlease be on time for your 'Evening 06:00pm - 08:00pm batch'\nReporting time: 05:40pm`;
 
     if (paymentNeededEl.value === 'No') {
-      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *Not required (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
+      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest (Evening) Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *Not required (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
     } else {
-      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *${AMOUNT}₹ (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
+      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest (Evening) Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *${AMOUNT}₹ (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
     }
     const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
     window.open(waURL, '_blank');
