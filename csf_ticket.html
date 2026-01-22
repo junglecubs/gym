@@ -295,6 +295,11 @@
       <div class="label">Child Name</div>
       <div class="value large-value" id="childName">...</div>
 
+      <!-- Added Parent Details -->
+      <div class="parent-details">
+        <span id="parentName">Parent</span> • <span id="mobile">98...</span>
+      </div>
+
       <div class="label">Session</div>
       <div class="value" id="batch">...</div>
 
@@ -316,16 +321,20 @@
     // 1. Get URL Parameters
     const params = new URLSearchParams(window.location.search);
     const childName = params.get('name') || 'Super Cub';
+    const parentName = params.get('parent') || 'Parent';
+    const mobile = params.get('mobile') || '';
     const batch = params.get('batch') || 'Morning Batch';
     const rowId = params.get('id') || '000';
 
     // 2. Update UI
     document.getElementById('childName').textContent = childName;
+    document.getElementById('parentName').textContent = parentName;
+    document.getElementById('mobile').textContent = mobile;
     document.getElementById('batch').textContent = batch;
 
     // 3. Generate QR Code containing Human Readable Text
     // This allows the admin to verify just by scanning with a normal camera
-    const qrText = `✅ VALID TICKET\n------------------\nName: ${childName}\nBatch: ${batch}\nID: ${rowId}\nStatus: Verified`;
+    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nID: ${rowId}\nStatus: Verified`;
 
     // Using QuickChart API
     document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&dark=287844&ecLevel=M`;
