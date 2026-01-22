@@ -169,14 +169,14 @@
     }
 
     /* --- FLOATING CHARACTERS --- */
-    /* z-index: -1 to be safe relative to ticket */
+    /* z-index: 20 to be IN FRONT of ticket (ticket is 10) */
     .jungle-scene {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: -1;
+      z-index: 20;
       pointer-events: none;
       overflow: hidden;
     }
@@ -184,36 +184,36 @@
     .char {
       position: absolute;
       opacity: 1;
-      filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+      filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
       transition: all 0.3s ease;
       transform: translateZ(0);
     }
 
-    /* Reduced sizes */
+    /* Increased sizes by ~20% */
     .c1 {
-      width: 120px;
+      width: 145px;
       top: 2%;
       left: 2%;
       animation: float 6s ease-in-out infinite;
     }
 
     .c2 {
-      width: 140px;
-      bottom: 2%;
+      width: 170px;
+      bottom: 5%;
       right: 2%;
       animation: float 7s ease-in-out infinite reverse;
     }
 
     .c3 {
-      width: 110px;
-      bottom: 5%;
-      left: 2%;
+      width: 135px;
+      bottom: 12%;
+      left: -2%;
       animation: sway 5s ease-in-out infinite;
     }
 
     .c4 {
-      width: 130px;
-      top: 2%;
+      width: 155px;
+      top: 5%;
       right: 2%;
       display: block;
       animation: float 8s ease-in-out infinite;
@@ -253,23 +253,63 @@
 
     @media (max-width: 600px) {
       .c1 {
-        width: 90px;
+        width: 110px;
         top: 10px;
         left: -5px;
-        opacity: 0.8;
+        opacity: 1;
       }
 
       .c2 {
-        width: 100px;
+        width: 120px;
         bottom: 10px;
         right: -5px;
-        opacity: 0.8;
+        opacity: 1;
       }
 
       .c3,
       .c4 {
         display: none;
       }
+    }
+  </style>
+
+  <style>
+    /* Modern Pop Style */
+    .ticket-container {
+      position: relative;
+      z-index: 10;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      border: 4px solid white;
+      box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.07),
+        0 2px 4px rgba(0, 0, 0, 0.07),
+        0 4px 8px rgba(0, 0, 0, 0.07),
+        0 8px 16px rgba(0, 0, 0, 0.07),
+        0 16px 32px rgba(0, 0, 0, 0.07),
+        0 32px 64px rgba(0, 0, 0, 0.07);
+    }
+
+    /* Child Name Large */
+    .large-value {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--jc-green) 0%, #3b9e58 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 5px;
+    }
+
+    /* Parent Details Styling */
+    .parent-details {
+      font-size: 0.9rem;
+      color: #555;
+      font-weight: 700;
+      margin-bottom: 20px;
+      background: #f4fdf6;
+      padding: 8px 15px;
+      border-radius: 12px;
+      display: inline-block;
+      border: 1px dashed #ccebd4;
     }
   </style>
 </head>
