@@ -1,89 +1,461 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
   <title>Cubs Sports Fest — Morning Registration</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <style>
     /* --- BRAND COLORS & VARS --- */
-    :root { --jc-yellow: #f9ca2b; --jc-green: #287844; --jc-green-light: #3b9e58; --jc-red: #c72e31; }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%); min-height: 100%; height: 100%; }
-    body { font-family: 'Nunito', sans-serif; line-height: 1.6; min-height: 100vh; min-height: -webkit-fill-available; display: flex; align-items: center; justify-content: center; padding: 20px; color: #333; position: relative; overflow-x: hidden; background: transparent; }
+    :root {
+      --jc-yellow: #f9ca2b;
+      --jc-green: #287844;
+      --jc-green-light: #3b9e58;
+      --jc-red: #c72e31;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+      min-height: 100%;
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      line-height: 1.6;
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      color: #333;
+      position: relative;
+      overflow-x: hidden;
+      background: transparent;
+    }
 
     /* LOADER */
-    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease; overflow: hidden; }
-    .loader-track { width: 100%; height: 150px; position: relative; overflow: hidden; margin-bottom: 10px; }
-    .running-char { width: 120px; position: absolute; top: 20px; left: 100%; animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate; }
-    .loading-text { color: var(--jc-green); font-weight: 800; font-size: 1.4rem; letter-spacing: 1px; text-transform: uppercase; animation: pulse 1s infinite; }
-    @keyframes runLeft { 0% { left: 100%; } 100% { left: -150px; } }
-    @keyframes bob { from { transform: scaleX(-1) translateY(0); } to { transform: scaleX(-1) translateY(-10px); } }
-    @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffffff;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.5s ease;
+      overflow: hidden;
+    }
+
+    .loader-track {
+      width: 100%;
+      height: 150px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .running-char {
+      width: 120px;
+      position: absolute;
+      top: 20px;
+      left: 100%;
+      animation: runLeft 5s linear infinite, bob 0.4s ease-in-out infinite alternate;
+    }
+
+    .loading-text {
+      color: var(--jc-green);
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes runLeft {
+      0% {
+        left: 100%;
+      }
+
+      100% {
+        left: -150px;
+      }
+    }
+
+    @keyframes bob {
+      from {
+        transform: scaleX(-1) translateY(0);
+      }
+
+      to {
+        transform: scaleX(-1) translateY(-10px);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.6;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
 
     /* CHARACTERS */
-    .jungle-scene { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; overflow: hidden; }
-    .char { position: absolute; opacity: 1; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3)); transition: all 0.3s ease; transform: translateZ(0); }
-    .c1 { width: 190px; top: 5%; left: 2%; animation: float 6s ease-in-out infinite; }
-    .c2 { width: 220px; bottom: 5%; right: 2%; animation: float 7s ease-in-out infinite reverse; }
-    .c3 { width: 180px; bottom: 10%; left: 5%; animation: sway 5s ease-in-out infinite; } 
-    .c4 { width: 210px; top: 5%; right: 2%; display: block; animation: float 8s ease-in-out infinite; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-20px); } 100% { transform: translateY(0px); } }
-    @keyframes sway  { 0% { transform: rotate(0deg) translateX(0); } 25% { transform: rotate(5deg) translateX(10px); } 75% { transform: rotate(-5deg) translateX(-10px); } 100% { transform: rotate(0deg) translateX(0); } }
+    .jungle-scene {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 50;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .char {
+      position: absolute;
+      opacity: 1;
+      filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+      transition: all 0.3s ease;
+      transform: translateZ(0);
+    }
+
+    .c1 {
+      width: 190px;
+      top: 5%;
+      left: 2%;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .c2 {
+      width: 220px;
+      bottom: 5%;
+      right: 2%;
+      animation: float 7s ease-in-out infinite reverse;
+    }
+
+    .c3 {
+      width: 180px;
+      bottom: 10%;
+      left: 5%;
+      animation: sway 5s ease-in-out infinite;
+    }
+
+    .c4 {
+      width: 210px;
+      top: 5%;
+      right: 2%;
+      display: block;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes sway {
+      0% {
+        transform: rotate(0deg) translateX(0);
+      }
+
+      25% {
+        transform: rotate(5deg) translateX(10px);
+      }
+
+      75% {
+        transform: rotate(-5deg) translateX(-10px);
+      }
+
+      100% {
+        transform: rotate(0deg) translateX(0);
+      }
+    }
 
     @media (max-width: 800px) {
-      .c1 { width: 190px; top: -5px; left: -10px; display: block; z-index: 100; }
-      .c2 { width: 130px; bottom: -5px; right: -10px; top: auto; display: block; z-index: 100; }
-      .c3, .c4 { display: none; } 
+      .c1 {
+        width: 190px;
+        top: -5px;
+        left: -10px;
+        display: block;
+        z-index: 100;
+      }
+
+      .c2 {
+        width: 130px;
+        bottom: -5px;
+        right: -10px;
+        top: auto;
+        display: block;
+        z-index: 100;
+      }
+
+      .c3,
+      .c4 {
+        display: none;
+      }
     }
 
     /* CARD */
-    .box { background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 2.2rem; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); max-width: 550px; width: 100%; border: 1px solid rgba(255,255,255,0.6); animation: floatUp 0.6s ease-out; position: relative; z-index: 10; }
-    @keyframes floatUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .box {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      padding: 2.2rem;
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+      max-width: 550px;
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      animation: floatUp 0.6s ease-out;
+      position: relative;
+      z-index: 10;
+    }
+
+    @keyframes floatUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
     /* CONTENT & INPUTS */
-    .logo-area { text-align: center; margin-bottom: 1rem; }
-    .logo-area img { height: 90px; width: auto; object-fit: contain; }
-    h1 { color: var(--jc-green); font-size: 1.8rem; margin-bottom: 0.5rem; font-weight: 800; text-align: center; text-transform: uppercase; line-height: 1.2; }
-    .event-info { background: #eef9f2; border-left: 5px solid var(--jc-green); border-radius: 8px; padding: 15px; margin-bottom: 25px; text-align: center; color: #1e5c33; font-size: 1rem; font-weight: 600; }
-    
-    label { font-weight: 700; color: #444; display: block; margin-top: 1.2rem; font-size: 0.95rem; }
-    .small-note { font-size: 0.8rem; color: #666; font-weight: 500; font-style: italic; }
-    
-    input, select { width: 100%; padding: 0 16px; height: 52px; border: 2px solid #e1e5e8; border-radius: 12px; font-size: 1rem; font-family: 'Nunito', sans-serif; transition: all 0.3s ease; background: #fdfdfd; -webkit-appearance: none; appearance: none; }
-    input:focus, select:focus { outline: none; border-color: var(--jc-green); background: #fff; box-shadow: 0 4px 15px rgba(40, 120, 68, 0.1); }
-    input[readonly] { background-color: #f0f0f0 !important; color: #888; border-color: #eee; opacity: 1; -webkit-text-fill-color: #888; }
-    input[type="date"] { display: block; line-height: 52px; }
+    .logo-area {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .logo-area img {
+      height: 90px;
+      width: auto;
+      object-fit: contain;
+    }
+
+    h1 {
+      color: var(--jc-green);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    .event-info {
+      background: #eef9f2;
+      border-left: 5px solid var(--jc-green);
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 25px;
+      text-align: center;
+      color: #1e5c33;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    label {
+      font-weight: 700;
+      color: #444;
+      display: block;
+      margin-top: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .small-note {
+      font-size: 0.8rem;
+      color: #666;
+      font-weight: 500;
+      font-style: italic;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 0 16px;
+      height: 52px;
+      border: 2px solid #e1e5e8;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: 'Nunito', sans-serif;
+      transition: all 0.3s ease;
+      background: #fdfdfd;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--jc-green);
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(40, 120, 68, 0.1);
+    }
+
+    input[readonly] {
+      background-color: #f0f0f0 !important;
+      color: #888;
+      border-color: #eee;
+      opacity: 1;
+      -webkit-text-fill-color: #888;
+    }
+
+    input[type="date"] {
+      display: block;
+      line-height: 52px;
+    }
 
     /* --- CHECKBOX FIX --- */
     input[type="checkbox"] {
-      height: 24px; width: 24px;
-      -webkit-appearance: checkbox; appearance: checkbox; /* Force Checkbox UI */
+      height: 24px;
+      width: 24px;
+      -webkit-appearance: checkbox;
+      appearance: checkbox;
+      /* Force Checkbox UI */
       accent-color: var(--jc-green);
       margin-top: 2px;
     }
 
-    #carMsg { font-size: 0.95rem; margin-top: 10px; padding: 8px 12px; border-radius: 8px; font-weight: 700; text-align: center; display: none; }
-    #carMsg.visible { display: block; animation: popIn 0.3s ease; }
-    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    #carMsg {
+      font-size: 0.95rem;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      text-align: center;
+      display: none;
+    }
 
-    .btn { display: block; width: 100%; text-align: center; padding: 16px; margin-top: 30px; font-weight: 800; font-size: 1.2rem; border: none; border-radius: 50px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; text-decoration: none; letter-spacing: 0.5px; text-transform: uppercase; -webkit-appearance: none; }
-    .btn-primary { background: linear-gradient(135deg, var(--jc-green) 0%, var(--jc-green-light) 100%); color: #fff; box-shadow: 0 10px 20px rgba(40, 120, 68, 0.3); }
-    .btn-primary:hover:not([disabled]) { transform: translateY(-2px); box-shadow: 0 15px 25px rgba(40, 120, 68, 0.4); }
-    .btn-primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
-    .btn-secondary { background: #fff; border: 2px solid var(--jc-yellow); color: #333; margin-top: 15px; font-size: 1rem; font-weight: 700; }
+    #carMsg.visible {
+      display: block;
+      animation: popIn 0.3s ease;
+    }
 
-    .summary { margin-top: 25px; background: #fffdf5; border: 2px dashed #f0e6c5; border-radius: 16px; padding: 20px; }
-    .qr-box { text-align: center; margin-top: 15px; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-    .qr-box img { max-width: 100%; border-radius: 4px; }
-    .hidden { display:none !important; }
-    @media (max-width: 480px) { .box { padding: 1.5rem; } h1 { font-size: 1.5rem; } }
+    @keyframes popIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      text-align: center;
+      padding: 16px;
+      margin-top: 30px;
+      font-weight: 800;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-decoration: none;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      -webkit-appearance: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--jc-green) 0%, var(--jc-green-light) 100%);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(40, 120, 68, 0.3);
+    }
+
+    .btn-primary:hover:not([disabled]) {
+      transform: translateY(-2px);
+      box-shadow: 0 15px 25px rgba(40, 120, 68, 0.4);
+    }
+
+    .btn-primary:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 2px solid var(--jc-yellow);
+      color: #333;
+      margin-top: 15px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .summary {
+      margin-top: 25px;
+      background: #fffdf5;
+      border: 2px dashed #f0e6c5;
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .qr-box {
+      text-align: center;
+      margin-top: 15px;
+      padding: 15px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .qr-box img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 480px) {
+      .box {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
   </style>
 </head>
+
 <body>
 
   <div id="loader">
@@ -102,7 +474,7 @@
 
   <div class="box">
     <div class="logo-area">
-       <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym">
+      <img src="https://junglecubsgyms.com/imgw/logo_light.png" alt="Jungle Cubs Gym">
     </div>
 
     <h1>Cubs Sports Fest 🏅</h1>
@@ -114,7 +486,7 @@
     </div>
 
     <form id="regForm">
-      
+
       <input type="hidden" name="Batch" value="Morning Batch">
 
       <label>Parent Name 😇</label>
@@ -155,7 +527,7 @@
         <option value="Outsider" disabled>Outsider - Event is exclusive for In-House Parents</option>
       </select>
 
-      <label>Do you plan to get your private car 🚗 to the venue? 
+      <label>Do you plan to get your private car 🚗 to the venue?
         <span class="small-note">(Asking for Parking Reasons!)</span>
       </label>
       <select name="CarParking" id="carSelect" required>
@@ -170,11 +542,12 @@
         <select name="Fees Paid" id="feesPaid" required>
           <option value="" disabled selected>-- Select Option --</option>
           <option value="Complimentary Event">Complimentary Event 🎉 - (Included in Fee Package)</option>
-          <option value="Early Bird Price">Early Bird Price 😎 - Pay ₹499</option>
+          <option value="Early Bird Price">Early Bird Price 😎 - Pay ₹499 (One Child & @ Parents)</option>
           <option value="Full Price" disabled>After 15 February: Full Price 💰 - Pay ₹599 </option>
         </select>
         <span class="small-note" id="feeNote">
-          (We will check our records to confirm your complimentary event and you will be asked to make the payment if the records indicate otherwise)
+          (We will check our records to confirm your complimentary event and you will be asked to make the payment if
+          the records indicate otherwise)
         </span>
       </div>
 
@@ -184,18 +557,20 @@
 
       <div id="summaryWrap" class="summary hidden">
         <div id="paymentMsg" style="margin-bottom:10px; font-weight:600;"></div>
-        
+
         <div id="paySection" class="hidden">
           <a id="upiBtn" href="#" class="btn btn-secondary" target="_blank">Pay ₹499 via UPI App</a>
-          
+
           <div class="qr-box">
             <p style="font-weight:bold; color:var(--jc-green); margin-bottom:5px;">Scan to Pay ₹499</p>
             <img id="qrImg" src="" alt="QR Code">
           </div>
 
-          <label style="display:flex; gap:12px; align-items:start; background:#fff; padding:12px; border-radius:8px; margin-top:20px; border:1px solid #ddd; cursor:pointer;">
+          <label
+            style="display:flex; gap:12px; align-items:start; background:#fff; padding:12px; border-radius:8px; margin-top:20px; border:1px solid #ddd; cursor:pointer;">
             <input type="checkbox" id="paymentConfirmed" style="width:24px; height:24px; flex-shrink:0;">
-            <span style="font-size:0.9rem; line-height:1.4;">I have made the payment and will share the screenshot on WhatsApp.</span>
+            <span style="font-size:0.9rem; line-height:1.4;">I have made the payment and will share the screenshot on
+              WhatsApp.</span>
           </label>
         </div>
       </div>
@@ -204,127 +579,128 @@
     </form>
   </div>
 
-<script>
-  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec'; 
-  const UPI_ID = 'junglecubsgym7@oksbi';
-  const WHATSAPP_NUMBER = '919326068804';
-  const EVENT_NAME = "Cubs Sports Fest";
-  const AMOUNT = "499"; 
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec';
+    const UPI_ID = 'junglecubsgym7@oksbi';
+    const WHATSAPP_NUMBER = '919326068804';
+    const EVENT_NAME = "Cubs Sports Fest";
+    const AMOUNT = "499";
 
-  window.addEventListener('load', function() {
-    const loader = document.getElementById('loader');
-    loader.style.opacity = '0';
-    setTimeout(() => { loader.style.display = 'none'; }, 500);
-  });
+    window.addEventListener('load', function () {
+      const loader = document.getElementById('loader');
+      loader.style.opacity = '0';
+      setTimeout(() => { loader.style.display = 'none'; }, 500);
+    });
 
-  const form = document.getElementById('regForm');
-  const dobEl = document.getElementById('childDOB');
-  const ageEl = document.getElementById('childAge');
-  const feesPaidEl = document.getElementById('feesPaid');
-  const paymentNeededEl = document.getElementById('paymentNeeded');
-  const summaryWrap = document.getElementById('summaryWrap');
-  const paySection = document.getElementById('paySection');
-  const upiBtn = document.getElementById('upiBtn');
-  const qrImg = document.getElementById('qrImg');
-  const paymentConfirmed = document.getElementById('paymentConfirmed');
-  const txnRef = document.getElementById('txnRef');
-  const submitBtn = document.getElementById('submitBtn');
-  const carSelect = document.getElementById('carSelect');
-  const carMsg = document.getElementById('carMsg');
+    const form = document.getElementById('regForm');
+    const dobEl = document.getElementById('childDOB');
+    const ageEl = document.getElementById('childAge');
+    const feesPaidEl = document.getElementById('feesPaid');
+    const paymentNeededEl = document.getElementById('paymentNeeded');
+    const summaryWrap = document.getElementById('summaryWrap');
+    const paySection = document.getElementById('paySection');
+    const upiBtn = document.getElementById('upiBtn');
+    const qrImg = document.getElementById('qrImg');
+    const paymentConfirmed = document.getElementById('paymentConfirmed');
+    const txnRef = document.getElementById('txnRef');
+    const submitBtn = document.getElementById('submitBtn');
+    const carSelect = document.getElementById('carSelect');
+    const carMsg = document.getElementById('carMsg');
 
-  dobEl.addEventListener('change', function() {
-    if(!this.value) return;
-    const dob = new Date(this.value); const today = new Date();
-    let years = today.getFullYear() - dob.getFullYear();
-    let months = today.getMonth() - dob.getMonth();
-    if (months < 0 || (months === 0 && today.getDate() < dob.getDate())) { years--; months += 12; }
-    if (today.getDate() < dob.getDate()) months--;
-    if (months < 0) { months += 12; }
-    ageEl.value = `${years} yrs ${months} mths`;
-  });
+    dobEl.addEventListener('change', function () {
+      if (!this.value) return;
+      const dob = new Date(this.value); const today = new Date();
+      let years = today.getFullYear() - dob.getFullYear();
+      let months = today.getMonth() - dob.getMonth();
+      if (months < 0 || (months === 0 && today.getDate() < dob.getDate())) { years--; months += 12; }
+      if (today.getDate() < dob.getDate()) months--;
+      if (months < 0) { months += 12; }
+      ageEl.value = `${years} yrs ${months} mths`;
+    });
 
-  document.getElementById('mobile').addEventListener('input', function(e) {
-    this.value = this.value.replace(/\D/g,'').slice(0,10);
-  });
+    document.getElementById('mobile').addEventListener('input', function (e) {
+      this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
 
-  carSelect.addEventListener('change', function() {
-    carMsg.className = "visible"; 
-    if (this.value === 'No') {
-      carMsg.innerText = "Appreciate it! May we suggest a Car-Pool/Uber? 🚕";
-      carMsg.style.color = "#155724"; carMsg.style.backgroundColor = "#d4edda"; 
-    } else if (this.value === 'Yes') {
-      carMsg.innerText = "Please be mindful of the limited parking space at the venue! 🤔";
-      carMsg.style.color = "#721c24"; carMsg.style.backgroundColor = "#f8d7da";
-    } else { carMsg.innerText = ""; carMsg.className = ""; }
-  });
+    carSelect.addEventListener('change', function () {
+      carMsg.className = "visible";
+      if (this.value === 'No') {
+        carMsg.innerText = "Appreciate it! May we suggest a Car-Pool/Uber? 🚕";
+        carMsg.style.color = "#155724"; carMsg.style.backgroundColor = "#d4edda";
+      } else if (this.value === 'Yes') {
+        carMsg.innerText = "Please be mindful of the limited parking space at the venue! 🤔";
+        carMsg.style.color = "#721c24"; carMsg.style.backgroundColor = "#f8d7da";
+      } else { carMsg.innerText = ""; carMsg.className = ""; }
+    });
 
-  function updateUI() {
-    const feeOption = feesPaidEl.value;
-    let needsPayment = 'Pending';
-    if (feeOption === 'Complimentary Event') {
-      needsPayment = 'No';
-      alert("Our team will check records and revert with your Complimentary confirmation. Please continue registration and hit send on the Whatsapp messge!");
-    } else if (feeOption === 'Early Bird Price') { needsPayment = 'Yes'; }
+    function updateUI() {
+      const feeOption = feesPaidEl.value;
+      let needsPayment = 'Pending';
+      if (feeOption === 'Complimentary Event') {
+        needsPayment = 'No';
+        alert("Our team will check records and revert with your Complimentary confirmation. Please continue registration and hit send on the Whatsapp messge!");
+      } else if (feeOption === 'Early Bird Price') { needsPayment = 'Yes'; }
 
-    paymentNeededEl.value = needsPayment;
+      paymentNeededEl.value = needsPayment;
 
-    if (needsPayment === 'Yes') {
-      summaryWrap.classList.remove('hidden'); paySection.classList.remove('hidden');
-      const parent = document.getElementById('parentName').value || 'Parent';
-      const tn = `Sports Fest for ${parent}`;
-      const upiLink = `upi://pay?pa=${UPI_ID}&pn=JungleCubsGym&am=${AMOUNT}&cu=INR&tn=${encodeURIComponent(tn)}`;
-      upiBtn.href = upiLink; upiBtn.textContent = `Pay ₹${AMOUNT} via UPI App`;
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
-      document.getElementById('paymentMsg').innerHTML = `<strong>Payment Required:</strong> Please pay <strong>₹${AMOUNT}</strong> to confirm your spot.`;
-    } else if (needsPayment === 'No') {
-      summaryWrap.classList.remove('hidden'); paySection.classList.add('hidden');
-      document.getElementById('paymentMsg').innerHTML = `<strong>Note:</strong> No payment required now. We will verify your complimentary status.`;
-    } else { summaryWrap.classList.add('hidden'); }
-    validateForm();
-  }
-  feesPaidEl.addEventListener('change', updateUI);
-  paymentConfirmed.addEventListener('change', validateForm);
-  form.addEventListener('input', validateForm);
-
-  function validateForm() {
-    const isPaidNeeded = paymentNeededEl.value === 'Yes';
-    const isConfirmed = paymentConfirmed.checked;
-    const isValid = form.checkValidity();
-    if (isValid) {
-      if (isPaidNeeded && !isConfirmed) { submitBtn.disabled = true; } else { submitBtn.disabled = false; }
-    } else { submitBtn.disabled = true; }
-    txnRef.value = (isPaidNeeded && isConfirmed) ? "Screenshot via WhatsApp" : "";
-  }
-
-  submitBtn.addEventListener('click', function() {
-    if (submitBtn.disabled) return;
-    submitBtn.innerText = "Processing... ⏳"; submitBtn.disabled = true;
-
-    const pName = document.getElementById('parentName').value.trim();
-    const cName = document.getElementById('childName').value.trim();
-    const center = document.getElementById('centre').value;
-    const status = feesPaidEl.options[feesPaidEl.selectedIndex].text; 
-    let shortStatus = status;
-    if(status.includes("Complimentary")) shortStatus = "Complimentary Event";
-    if(status.includes("Early Bird")) shortStatus = "Early Bird";
-
-    let msg = "";
-    // ADDED MORNING BATCH TIMING HERE
-    const timingInfo = `\nPlease be on time for your 'Morning 09:30am - 11:30am batch'\nReporting time: 09:10am`;
-
-    if (paymentNeededEl.value === 'No') {
-      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *Not required (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
-    } else {
-      msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *${AMOUNT}₹ (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
+      if (needsPayment === 'Yes') {
+        summaryWrap.classList.remove('hidden'); paySection.classList.remove('hidden');
+        const parent = document.getElementById('parentName').value || 'Parent';
+        const tn = `Sports Fest for ${parent}`;
+        const upiLink = `upi://pay?pa=${UPI_ID}&pn=JungleCubsGym&am=${AMOUNT}&cu=INR&tn=${encodeURIComponent(tn)}`;
+        upiBtn.href = upiLink; upiBtn.textContent = `Pay ₹${AMOUNT} via UPI App`;
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(upiLink)}`;
+        document.getElementById('paymentMsg').innerHTML = `<strong>Payment Required:</strong> Please pay <strong>₹${AMOUNT}</strong> to confirm your spot.`;
+      } else if (needsPayment === 'No') {
+        summaryWrap.classList.remove('hidden'); paySection.classList.add('hidden');
+        document.getElementById('paymentMsg').innerHTML = `<strong>Note:</strong> No payment required now. We will verify your complimentary status.`;
+      } else { summaryWrap.classList.add('hidden'); }
+      validateForm();
     }
-    const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(waURL, '_blank');
+    feesPaidEl.addEventListener('change', updateUI);
+    paymentConfirmed.addEventListener('change', validateForm);
+    form.addEventListener('input', validateForm);
 
-    const formData = new FormData(form);
-    fetch(SCRIPT_URL, { method: 'POST', body: formData })
-      .then(response => { setTimeout(() => { alert("Registration Successful!"); location.reload(); }, 1000); })
-      .catch(error => { console.error('Error!', error.message); location.reload(); });
-  });
-</script>
+    function validateForm() {
+      const isPaidNeeded = paymentNeededEl.value === 'Yes';
+      const isConfirmed = paymentConfirmed.checked;
+      const isValid = form.checkValidity();
+      if (isValid) {
+        if (isPaidNeeded && !isConfirmed) { submitBtn.disabled = true; } else { submitBtn.disabled = false; }
+      } else { submitBtn.disabled = true; }
+      txnRef.value = (isPaidNeeded && isConfirmed) ? "Screenshot via WhatsApp" : "";
+    }
+
+    submitBtn.addEventListener('click', function () {
+      if (submitBtn.disabled) return;
+      submitBtn.innerText = "Processing... ⏳"; submitBtn.disabled = true;
+
+      const pName = document.getElementById('parentName').value.trim();
+      const cName = document.getElementById('childName').value.trim();
+      const center = document.getElementById('centre').value;
+      const status = feesPaidEl.options[feesPaidEl.selectedIndex].text;
+      let shortStatus = status;
+      if (status.includes("Complimentary")) shortStatus = "Complimentary Event";
+      if (status.includes("Early Bird")) shortStatus = "Early Bird";
+
+      let msg = "";
+      // ADDED MORNING BATCH TIMING HERE
+      const timingInfo = `\nPlease be on time for your 'Morning 09:30am - 11:30am batch'\nReporting time: 09:10am`;
+
+      if (paymentNeededEl.value === 'No') {
+        msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *Not required (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
+      } else {
+        msg = `🎖️*Jungle Cubs Gym*🎖️\n*Cubs Sports Fest Registration* 🏅\n\n👤 Parent: *${pName}*\n👶 Child: *${cName}*\n📍 Centre: *${center}*\n🎟 Option selected: ${shortStatus}\n💰 Payment: *${AMOUNT}₹ (Subject to verification)*\n${timingInfo}\n\nThank you ${pName} for registering ${cName} for the Cubs Sports Fest 🏆\nWe are excited to see ${cName} on the turf!\n\n---------------------------------------------\nFollow us on Instagram: \nhttps://instagram.com/junglecubsgym`;
+      }
+      const waURL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      window.open(waURL, '_blank');
+
+      const formData = new FormData(form);
+      fetch(SCRIPT_URL, { method: 'POST', body: formData })
+        .then(response => { setTimeout(() => { alert("Registration Successful!"); location.reload(); }, 1000); })
+        .catch(error => { console.error('Error!', error.message); location.reload(); });
+    });
+  </script>
 </body>
+
 </html>
