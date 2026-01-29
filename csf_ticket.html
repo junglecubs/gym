@@ -54,90 +54,81 @@
       color: #333;
     }
 
-    /* Individual Fields - Positions using percentages for responsiveness */
-    .field {
+    /* CENTER SECTION - Child, Parent, Mobile */
+    .section-center {
       position: absolute;
-      text-align: left;
+      top: 24%;
+      /* Up 2% (was 26%) */
+      left: 55%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 40%;
     }
 
-    .label {
-      font-size: 0.7rem;
-      color: #555;
-      text-transform: uppercase;
-      font-weight: 700;
+    .child-name {
+      font-size: 1.6rem;
+      font-weight: 900;
+      color: #287844;
       margin-bottom: 2px;
+      /* Reduced space */
+      text-transform: uppercase;
+    }
+
+    .parent-details {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #da3e26;
+      /* Using a contrasting color from logo/theme */
+      background: rgba(255, 255, 255, 0.6);
+      padding: 2px 10px;
+      border-radius: 10px;
+      display: inline-block;
+    }
+
+    /* RIGHT SECTION - Venue, Session, QR */
+    .section-right {
+      position: absolute;
+      top: 35%;
+      /* Down 2% (was 33%) */
+      right: -5%;
+      /* Left 3% (was -8%) */
+      width: 25%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .meta-details {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #555;
+      margin-bottom: 5px;
+      line-height: 1.2;
+    }
+
+    .meta-highlight {
+      color: #287844;
+      font-size: 0.9rem;
+      font-weight: 900;
+      margin-bottom: 5px;
       display: block;
     }
 
-    .value {
-      font-weight: 900;
-      font-size: 1.1rem;
-      line-height: 1.1;
-      color: #287844;
-    }
-
-    /* Adjust these percentage values based on the specific blank spaces in the JPG */
-    /* Assuming a central blank area layout */
-
-    /* Child Name */
-    .f-child {
-      top: 55%;
-      left: 36%;
-      width: 25%;
-    }
-
-    .f-child .value {
-      font-size: 1.4rem;
-      color: #000;
-    }
-
-    /* Parent Mobile */
-    .f-contact {
-      top: 75%;
-      left: 36%;
-    }
-
-    /* Batch / Session */
-    .f-batch {
-      top: 55%;
-      left: 62%;
-    }
-
-    /* ID */
-    .f-id {
-      top: 75%;
-      left: 62%;
-    }
-
-    /* QR Code */
     .qr-code {
-      position: absolute;
-      top: 50%;
-      right: 3%;
-      transform: translateY(-50%);
-      width: 18%;
-      /* Adjust width relative to ticket */
-      height: auto;
-      border: 4px solid white;
+      width: 90px;
+      height: 90px;
+      border: 3px solid white;
       border-radius: 8px;
     }
 
-    /* Download Button */
-    .actions {
-      margin-top: 20px;
-      position: fixed;
-      bottom: 20px;
-      z-index: 100;
-    }
-
-    .btn {
-      background: #287844;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: bold;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    /* Disable old classes not in use */
+    .field,
+    .f-child,
+    .f-contact,
+    .f-batch,
+    .f-id {
+      display: none;
     }
 
     /* --- FLOATING CHARACTERS (Kept but purely decorative outside the ticket) --- */
@@ -199,32 +190,25 @@
 
     <div class="ticket-details">
 
-      <!-- Child Name -->
-      <div class="field f-child">
-        <span class="label">Participant</span>
-        <div class="value" id="childName">Super Cub</div>
+      <!-- Center Section -->
+      <div class="section-center">
+        <div class="child-name" id="childName">Super Cub</div>
+        <div class="parent-details">
+          <div id="parentName">Parent</div>
+          <div id="mobile" style="font-size: 0.85em; margin-top: 2px;">+91 ...</div>
+        </div>
       </div>
 
-      <!-- Contact -->
-      <div class="field f-contact">
-        <span class="label">Contact</span>
-        <div class="value" id="mobile">+91 ...</div>
+      <!-- Right Section -->
+      <div class="section-right">
+        <div class="meta-details">
+          V4 Turf, Bhandup<br>
+          <span class="meta-highlight" id="batch">Morning Batch</span>
+          ID: <span id="rowId">#001</span>
+        </div>
+        <!-- QR Code -->
+        <img id="qrImg" src="" class="qr-code" alt="QR">
       </div>
-
-      <!-- Batch -->
-      <div class="field f-batch">
-        <span class="label">Session</span>
-        <div class="value" id="batch">Morning</div>
-      </div>
-
-      <!-- ID -->
-      <div class="field f-id">
-        <span class="label">Ticket ID</span>
-        <div class="value" id="rowId">#000</div>
-      </div>
-
-      <!-- QR Code -->
-      <img id="qrImg" src="" class="qr-code" alt="QR">
 
     </div>
   </div>
@@ -238,13 +222,14 @@
     // 1. Get URL Parameters
     const params = new URLSearchParams(window.location.search);
     const childName = params.get('name') || 'Super Cub';
-    const parentName = params.get('parent') || 'Parent';
+    const parentName = params.get('parent') || 'Parent Name';
     const mobile = params.get('mobile') || '9876543210';
     const batch = params.get('batch') || 'Morning Batch';
     const rowId = params.get('id') || '001';
 
     // 2. Update UI
     document.getElementById('childName').textContent = childName;
+    document.getElementById('parentName').textContent = parentName;
     document.getElementById('mobile').textContent = mobile;
     document.getElementById('batch').textContent = batch;
     document.getElementById('rowId').textContent = '#' + rowId;
