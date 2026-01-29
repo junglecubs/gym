@@ -12,8 +12,6 @@
 
     :root {
       --ticket-width: 800px;
-      /* Adjust based on actual image aspect ratio */
-      --ticket-height: 268px;
     }
 
     body {
@@ -25,6 +23,7 @@
       min-height: 100vh;
       margin: 0;
       padding: 10px;
+      flex-direction: column;
     }
 
     .ticket-wrapper {
@@ -32,9 +31,8 @@
       width: 100%;
       max-width: var(--ticket-width);
       box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
-      border-radius: 10px;
+      border-radius: 24px;
       overflow: hidden;
-      /* Maintain aspect ratio */
     }
 
     /* The Ticket Image */
@@ -58,11 +56,11 @@
     .section-center {
       position: absolute;
       top: 24%;
-      /* Up 2% (was 26%) */
       left: 55%;
       transform: translateX(-50%);
       text-align: center;
-      width: 40%;
+      width: 44%;
+      /* Slightly wider to prevent wrap */
     }
 
     .child-name {
@@ -70,28 +68,31 @@
       font-weight: 900;
       color: #287844;
       margin-bottom: 2px;
-      /* Reduced space */
       text-transform: uppercase;
+      line-height: 1.1;
     }
 
     .parent-details {
       font-size: 0.9rem;
       font-weight: 700;
-      color: #da3e26;
-      /* Using a contrasting color from logo/theme */
-      background: rgba(255, 255, 255, 0.6);
-      padding: 2px 10px;
+      color: #111111;
+      /* Proper dark color */
+      background: rgba(255, 255, 255, 0.25);
+      /* Very transparent */
+      padding: 4px 12px;
       border-radius: 10px;
       display: inline-block;
+      line-height: 1.3;
+      backdrop-filter: blur(1px);
+      /* Reduced blur slightly */
     }
 
-    /* RIGHT SECTION - Venue, Session, QR */
+    /* RIGHT SECTION - Time, Batch, QR */
     .section-right {
       position: absolute;
-      top: 35%;
-      /* Down 2% (was 33%) */
+      top: 34%;
+      /* Up 1% (was 35%) */
       right: -5%;
-      /* Left 3% (was -8%) */
       width: 25%;
       text-align: center;
       display: flex;
@@ -100,38 +101,73 @@
     }
 
     .meta-details {
-      font-size: 0.7rem;
-      font-weight: 800;
-      color: #555;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
       line-height: 1.2;
+      color: #287844;
     }
 
-    .meta-highlight {
-      color: #287844;
-      font-size: 0.9rem;
+    .batch-name {
+      font-size: 1.1rem;
       font-weight: 900;
-      margin-bottom: 5px;
+      display: block;
+      margin-bottom: 6px;
+      /* Added spacing per request */
+    }
+
+    .time-val {
+      font-size: 0.65rem;
+      /* Smaller (was 0.85rem) */
+      font-weight: 700;
+      display: block;
+      color: #333;
+      /* Darker for better visibility */
+      white-space: nowrap;
+      /* Prevent wrapping */
+    }
+
+    .row-id {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #888;
+      margin-top: 2px;
       display: block;
     }
 
     .qr-code {
-      width: 90px;
-      height: 90px;
+      width: 85px;
+      height: 85px;
       border: 3px solid white;
       border-radius: 8px;
     }
 
-    /* Disable old classes not in use */
-    .field,
-    .f-child,
-    .f-contact,
-    .f-batch,
-    .f-id {
-      display: none;
+    /* Download Button */
+    .actions {
+      margin-top: 25px;
+      text-align: center;
     }
 
-    /* --- FLOATING CHARACTERS (Kept but purely decorative outside the ticket) --- */
+    .btn-download {
+      background: #287844;
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(40, 120, 68, 0.3);
+      transition: transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn-download:active {
+      transform: scale(0.95);
+    }
+
+    /* --- FLOATING CHARACTERS (Decorative) --- */
     .jungle-scene {
       position: fixed;
       top: 0;
@@ -139,7 +175,6 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      /* Behind ticket */
       pointer-events: none;
       overflow: hidden;
     }
@@ -151,7 +186,6 @@
       animation: float 6s ease-in-out infinite;
     }
 
-    /* Positions for monkeys around the screen */
     .c1 {
       top: 10%;
       left: 5%;
@@ -174,7 +208,58 @@
         transform: translateY(-15px);
       }
     }
+
+    /* --- RESPONSIVE FIXES --- */
+    @media (max-width: 600px) {
+
+      /* Scale text down on mobile */
+      html {
+        font-size: 12px;
+      }
+
+      .child-name {
+        font-size: 1.8rem;
+        /* Relative to new base, so ~21px */
+      }
+
+      .ticket-wrapper {
+        border-radius: 12px;
+      }
+
+      .btn-download {
+        font-size: 1.2rem;
+        padding: 10px 25px;
+      }
+
+      .qr-code {
+        width: 60px;
+        height: 60px;
+        border-width: 2px;
+      }
+
+      /* Adjust floaters for mobile */
+      .char {
+        width: 80px;
+      }
+
+      .c1 {
+        top: 5%;
+        left: -5%;
+      }
+
+      .c2 {
+        bottom: 5%;
+        right: -5%;
+      }
+    }
+
+    @media (max-width: 380px) {
+      html {
+        font-size: 10px;
+      }
+    }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
 
 <body>
@@ -184,7 +269,7 @@
     <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char c2" alt="Cub 2">
   </div>
 
-  <div class="ticket-wrapper">
+  <div class="ticket-wrapper" id="ticketArea">
     <!-- background image -->
     <img src="CSF TICKET FORMAT.jpg" alt="Ticket Background" class="ticket-bg">
 
@@ -195,16 +280,16 @@
         <div class="child-name" id="childName">Super Cub</div>
         <div class="parent-details">
           <div id="parentName">Parent</div>
-          <div id="mobile" style="font-size: 0.85em; margin-top: 2px;">+91 ...</div>
+          <div id="mobile" style="font-size: 0.9em; margin-top: 2px;">+91 9876543210</div>
         </div>
       </div>
 
       <!-- Right Section -->
       <div class="section-right">
         <div class="meta-details">
-          V4 Turf, Bhandup<br>
-          <span class="meta-highlight" id="batch">Morning Batch</span>
-          ID: <span id="rowId">#001</span>
+          <span class="batch-name" id="batch">Morning</span>
+          <span class="time-val" id="time">08:00 AM</span>
+          <span class="row-id" id="rowId">#001</span>
         </div>
         <!-- QR Code -->
         <img id="qrImg" src="" class="qr-code" alt="QR">
@@ -213,10 +298,11 @@
     </div>
   </div>
 
-  <!-- Helper text for testing positioning -->
-  <!-- <div style="position:fixed; top:10px; left:10px; background:white; padding:5px; font-size:10px; opacity:0.7;">
-     Use DevTools to adjust .f-child, .f-batch etc. top/left %
-  </div> -->
+  <div class="actions">
+    <button class="btn-download" onclick="downloadTicket()">
+      📥 Download Ticket
+    </button>
+  </div>
 
   <script>
     // 1. Get URL Parameters
@@ -224,21 +310,57 @@
     const childName = params.get('name') || 'Super Cub';
     const parentName = params.get('parent') || 'Parent Name';
     const mobile = params.get('mobile') || '9876543210';
-    const batch = params.get('batch') || 'Morning Batch';
+    let batch = params.get('batch') || 'Morning';
     const rowId = params.get('id') || '001';
+
+    // Cleanup Batch Name (Remove 'Batch' if present to save space)
+    batch = batch.replace(/Batch/i, '').trim();
+
+    // Deduce Time based on Batch
+    let timeDisplay = "Time: TBA";
+    if (batch.toLowerCase().includes('morning')) {
+      timeDisplay = "08:15 AM - 11:15 AM";
+    } else if (batch.toLowerCase().includes('afternoon') || batch.toLowerCase().includes('mid')) {
+      timeDisplay = "11:45 AM - 02:45 PM";
+    } else if (batch.toLowerCase().includes('evening')) {
+      timeDisplay = "03:15 PM - 06:15 PM";
+    }
 
     // 2. Update UI
     document.getElementById('childName').textContent = childName;
     document.getElementById('parentName').textContent = parentName;
     document.getElementById('mobile').textContent = mobile;
     document.getElementById('batch').textContent = batch;
-    document.getElementById('rowId').textContent = '#' + rowId;
+    document.getElementById('time').textContent = timeDisplay;
+    document.getElementById('rowId').textContent = 'ID: #' + rowId;
 
-    // 3. Generate QR Code containing Human Readable Text
-    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nID: ${rowId}\nGenerated: ${new Date().toLocaleDateString()}`;
-
-    // Using QuickChart API
+    // 3. Generate QR Code
+    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nID: ${rowId}`;
     document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&dark=000&ecLevel=M&margin=1`;
+
+    // 4. Download Function
+    function downloadTicket() {
+      const ticketElement = document.getElementById('ticketArea');
+      const btn = document.querySelector('.btn-download');
+
+      btn.textContent = "Generating...";
+
+      html2canvas(ticketElement, {
+        scale: 2, // High resolution
+        useCORS: true, // Allow loading remote images
+        backgroundColor: null
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `CSF_Ticket_${childName.replace(/\s+/g, '_')}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        btn.textContent = "📥 Download Ticket";
+      }).catch(err => {
+        console.error(err);
+        alert("Oops! Could not generate image. Please try taking a screenshot.");
+        btn.textContent = "📥 Download Ticket";
+      });
+    }
 
   </script>
 </body>
