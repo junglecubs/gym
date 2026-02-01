@@ -170,8 +170,9 @@
     }
 
     .pay-wrap {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      justify-content: center;
+      /* grid-template-columns: 1fr 1fr; removed grid */
       gap: 16px;
       margin-top: 16px;
       align-items: stretch;
@@ -379,10 +380,12 @@
 
         <div id="paySection" class="hidden" style="margin-top:12px;">
           <div style="font-size:0.9rem; margin-bottom:12px; color:#555;">
-            Please press the <strong>Pay</strong> button or scan the <strong>QR code</strong>.
+            Please <strong>scan the QR code</strong> below with any UPI app.
           </div>
 
           <div class="pay-wrap">
+            <!-- Buttons Removed as per request -->
+            <!--
             <div class="pay-col">
               <a id="gpayButton" class="button-style" href="#"
                 style="background:#0F9D58; color:white; margin:0 0 8px 0;" target="_blank">Pay ₹400 with Google Pay</a>
@@ -392,11 +395,12 @@
                 style="margin-top:16px; background:var(--jc-red);" target="_blank">Pay ₹400 via UPI (any app)</a>
               <span class="small-note">Pay via <strong>other UPI apps</strong> with the button above.</span>
             </div>
-            <div class="qr-box">
-              <div style="font-weight:700; margin-bottom:8px; color:var(--jc-green);">Pay to Mobile Number</div>
-              <div style="font-size: 1.6rem; font-weight: 800; color: #333; margin: 4px 0;">7248915767</div>
-              <div style="font-size: 1.1rem; color: #555; margin-bottom: 8px;">Sheetal Fotedar</div>
-              <div class="hint">Use any UPI app to pay to this number</div>
+            -->
+            <div class="qr-box" style="margin: 0 auto; max-width: 300px;">
+              <div style="font-weight:700; margin-bottom:8px; color:var(--jc-green);">Jungle Cubs Gym UPI QR</div>
+              <img id="qrImg" src="SheetalFotedarUPIQR.jpg" alt="UPI QR for ₹400"
+                style="width:200px; height:200px; object-fit:contain;" />
+              <div class="hint">Scan to pay ₹400</div>
             </div>
           </div>
           <div id="paymentConfirmBlock" class="payment-confirm">
@@ -636,9 +640,9 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
           if (paymentConfirmedEl) paymentConfirmedEl.checked = false;
           paySection.classList.add("hidden");
 
-          upiButton.removeAttribute("data-upi");
-          upiButton.href = "#";
-          if (gpayButton) gpayButton.removeAttribute("data-upi");
+          // upiButton.removeAttribute("data-upi");
+          // upiButton.href = "#";
+          // if (gpayButton) gpayButton.removeAttribute("data-upi");
         }
 
         // Sync hidden transaction ref with payment confirmation checkbox
