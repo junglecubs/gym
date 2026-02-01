@@ -452,9 +452,9 @@
       const paymentText = document.getElementById("paymentText");
       const personalMsg = document.getElementById("personalMsg");
       const paySection = document.getElementById("paySection");
-      const upiButton = document.getElementById("upiButton");
-      const gpayButton = document.getElementById("gpayButton");
-      // const qrImg = document.getElementById("qrImg"); // Removed
+      // const upiButton = document.getElementById("upiButton"); // REMOVED
+      // const gpayButton = document.getElementById("gpayButton"); // REMOVED
+      // const qrImg = document.getElementById("qrImg"); // Removed reference (hardcoded in HTML)
       const txnRefHidden = document.getElementById("transactionRefHidden");
       const registerBtn = document.getElementById("registerSendBtn");
       const paymentConfirmedEl = document.getElementById("paymentConfirmed");
@@ -627,22 +627,15 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
           paymentConfirmBlock.style.display = "block";
           const upi = buildUpiLink(400, parentNameEl.value, childNameEl.value);
 
-          // Store UPI for handlers
-          upiButton.href = upi;
-          upiButton.dataset.upi = upi;
-          if (gpayButton) gpayButton.dataset.upi = upi;
-
-          // qrImg.src = "SheetalFotedarUPIQR.jpg";
-          // qrImg.alt = "UPI QR for ₹400";
+          // Store UPI for handlers - CLEANED UP
+          // upiButton and gpayButton are removed from DOM, so no logical operations needed here
+          // that would crash the script.
+          // Just unhide the section.
           paySection.classList.remove("hidden");
         } else {
           paymentConfirmBlock.style.display = "none";
           if (paymentConfirmedEl) paymentConfirmedEl.checked = false;
           paySection.classList.add("hidden");
-
-          // upiButton.removeAttribute("data-upi");
-          // upiButton.href = "#";
-          // if (gpayButton) gpayButton.removeAttribute("data-upi");
         }
 
         // Sync hidden transaction ref with payment confirmation checkbox
@@ -664,64 +657,11 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
         document.querySelectorAll('input, select').forEach(el => el.addEventListener(evt, updateUI));
       });
 
-      // Generic UPI button: use intent on Android, direct UPI on others
-      if (upiButton) {
-        upiButton.addEventListener("click", function (e) {
-          const upi = this.dataset.upi;
-          if (!upi) return;
+      // Generic UPI button: REMOVED logic
+      // if (upiButton) { ... }
 
-          e.preventDefault();
-
-          const ua = navigator.userAgent || "";
-          const isAndroid = /Android/i.test(ua);
-
-          if (isAndroid) {
-            const withoutScheme = upi.replace(/^upi:\/\//, "");
-            const intentUrl = "intent://" + withoutScheme + "#Intent;scheme=upi;end";
-            const win = window.open(intentUrl, "_blank");
-            if (!win) window.location.href = intentUrl;
-          } else {
-            const win = window.open(upi, "_blank");
-            if (!win) window.location.href = upi;
-          }
-        });
-      }
-
-      // Google Pay–specific button (proper params so GPay shows 400 & Jungle Cubs)
-      if (gpayButton) {
-        gpayButton.addEventListener("click", function (e) {
-          e.preventDefault();
-
-          const parent = parentNameEl.value || "parent";
-          const child = childNameEl.value || "child";
-
-          const upiParams =
-            "pa=" + encodeURIComponent(BUSINESS_UPI) +
-            "&pn=" + encodeURIComponent(BUSINESS_NAME) +
-            "&am=400&cu=INR" +
-            "&tn=" + encodeURIComponent("Beach Event fee for " + child);
-
-          const ua = navigator.userAgent || "";
-          const isAndroid = /Android/i.test(ua);
-          const isIOS = /iPhone|iPad|iPod/i.test(ua);
-
-          if (isAndroid) {
-            const intentUrl =
-              "intent://pay?" + upiParams +
-              "#Intent;scheme=upi;package=com.google.android.apps.nbu.paisa.user;end";
-            const w = window.open(intentUrl, "_blank");
-            if (!w) window.location.href = intentUrl;
-          } else if (isIOS) {
-            const iosUrl = "gpay://upi/pay?" + upiParams;
-            const w = window.open(iosUrl, "_blank");
-            if (!w) window.location.href = iosUrl;
-          } else {
-            const upi = "upi://pay?" + upiParams;
-            const w = window.open(upi, "_blank");
-            if (!w) window.location.href = upi;
-          }
-        });
-      }
+      // Google Pay–specific button: REMOVED logic
+      // if (gpayButton) { ... }
 
       // --- MAIN UPDATE: BUTTON CLICK HANDLER ---
       registerBtn.addEventListener('click', () => {
