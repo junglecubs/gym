@@ -393,9 +393,10 @@
               <span class="small-note">Pay via <strong>other UPI apps</strong> with the button above.</span>
             </div>
             <div class="qr-box">
-              <div style="font-weight:700; margin-bottom:8px; color:var(--jc-green);">Jungle Cubs Gym UPI QR</div>
-              <img id="qrImg" src="" alt="UPI QR" style="width:200px; height:200px; object-fit:contain;" />
-              <div class="hint">Scan to pay ₹400</div>
+              <div style="font-weight:700; margin-bottom:8px; color:var(--jc-green);">Pay to Mobile Number</div>
+              <div style="font-size: 1.6rem; font-weight: 800; color: #333; margin: 4px 0;">7248915767</div>
+              <div style="font-size: 1.1rem; color: #555; margin-bottom: 8px;">Sheetal Fotedar</div>
+              <div class="hint">Use any UPI app to pay to this number</div>
             </div>
           </div>
           <div id="paymentConfirmBlock" class="payment-confirm">
@@ -422,10 +423,10 @@
       // ----- CONFIG -----
       const ENDPOINT_URL = "https://script.google.com/macros/s/AKfycbzaQRz1stCl565mhUkZwY--HOClSKn4N37hPJLWGKZbUlcNUf9uKEBFBgV3xdI5JuwoqA/exec";
 
-      // --- FIX: Added '@' symbol to the UPI ID ---
-      const BUSINESS_UPI = "sheetalfotedar@oksbi";
+      // --- FIX: Updated to Phone Number VPA ---
+      const BUSINESS_UPI = "7248915767@ptyes";
 
-      const BUSINESS_NAME = "Jungle Cubs Gym";
+      const BUSINESS_NAME = "Jungle Cubs Gym"; // Or Sheetal Fotedar if preferred, keeping business name for Context
       const WHATSAPP_TARGET = "919326068804";
 
       // ----- ELEMENTS -----
@@ -449,7 +450,7 @@
       const paySection = document.getElementById("paySection");
       const upiButton = document.getElementById("upiButton");
       const gpayButton = document.getElementById("gpayButton");
-      const qrImg = document.getElementById("qrImg");
+      // const qrImg = document.getElementById("qrImg"); // Removed
       const txnRefHidden = document.getElementById("transactionRefHidden");
       const registerBtn = document.getElementById("registerSendBtn");
       const paymentConfirmedEl = document.getElementById("paymentConfirmed");
@@ -627,8 +628,8 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
           upiButton.dataset.upi = upi;
           if (gpayButton) gpayButton.dataset.upi = upi;
 
-          qrImg.src = "SheetalFotedarUPIQR.jpg";
-          qrImg.alt = "UPI QR for ₹400";
+          // qrImg.src = "SheetalFotedarUPIQR.jpg";
+          // qrImg.alt = "UPI QR for ₹400";
           paySection.classList.remove("hidden");
         } else {
           paymentConfirmBlock.style.display = "none";
