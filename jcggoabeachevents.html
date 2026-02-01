@@ -426,7 +426,7 @@
       const BUSINESS_UPI = "sheetalfotedar@oksbi";
 
       const BUSINESS_NAME = "Jungle Cubs Gym";
-      const WHATSAPP_TARGET = "919967130057";
+      const WHATSAPP_TARGET = "919326068804";
 
       // ----- ELEMENTS -----
       const form = document.getElementById("beachForm");
@@ -627,7 +627,7 @@ Hello <strong>${parent}</strong>, kindly pay <strong>₹400</strong> towards the
           upiButton.dataset.upi = upi;
           if (gpayButton) gpayButton.dataset.upi = upi;
 
-          qrImg.src = buildQrUrl(upi);
+          qrImg.src = "SheetalFotedarUPIQR.jpg";
           qrImg.alt = "UPI QR for ₹400";
           paySection.classList.remove("hidden");
         } else {
