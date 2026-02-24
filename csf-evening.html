@@ -476,7 +476,7 @@
     <div class="event-info">
       <div>📅 Sunday, March 08</div>
       <div>📍 V4 Turf, Bhandup</div>
-      <div style="margin-top:4px; color:var(--jc-green); font-weight:800;">⏰ 05:40pm to 07:45pm (Evening Batch)</div>
+      <div style="margin-top:4px; color:var(--jc-green); font-weight:800;">⏰ 04:00pm to 06:00pm (Evening Batch)</div>
     </div>
 
     <form id="regForm">
@@ -534,7 +534,7 @@
           <option value="" disabled selected>-- Select Option --</option>
           <option value="Complimentary Event">Complimentary Event 🎉 - (Included in Fee Package)</option>
           <option value="Early Bird Price">Early Bird Price 😎 - Pay ₹499 (One Child & 2 Parents)</option>
-          <option value="Full Price" disabled>After 15 February: Full Price 💰 - Pay ₹599 </option>
+          <option value="Full Price" disabled>After 27 February: Full Price 💰 - Pay ₹599 </option>
         </select>
         <span class="small-note" id="feeNote">
           (We will check our records to confirm your complimentary event and you will be asked to make the payment if
@@ -630,7 +630,7 @@
       let needsPayment = 'Pending';
       if (feeOption === 'Complimentary Event') {
         needsPayment = 'No';
-        alert("Our team will check records and revert with your Complimentary confirmation. Please continue registration and hit send on the Whatsapp messge!");
+        alert("Our team will check records and revert with your Complimentary confirmation. Please continue registration and hit send on the Whatsapp message!");
       } else if (feeOption === 'Early Bird Price') { needsPayment = 'Yes'; }
 
       paymentNeededEl.value = needsPayment;
