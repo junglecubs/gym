@@ -110,6 +110,45 @@
         .btn.scan-next {
             background: #287844;
         }
+
+        /* --- html5-qrcode UI Overrides to make controls Massive --- */
+        #reader__dashboard_section_csr button {
+            padding: 15px 20px !important;
+            font-size: 18px !important;
+            background-color: #287844 !important;
+            color: #ffffff !important;
+            border: none !important;
+            border-radius: 10px !important;
+            margin: 10px 0 !important;
+            width: 100% !important;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #reader__dashboard_section_csr span {
+            font-size: 18px !important;
+        }
+
+        #reader__camera_selection {
+            padding: 15px !important;
+            font-size: 18px !important;
+            width: 100% !important;
+            border-radius: 10px !important;
+            border: 2px solid #287844 !important;
+            margin: 10px 0 !important;
+            background: #fff;
+        }
+
+        #reader__camera_permission_button {
+            padding: 20px !important;
+            font-size: 20px !important;
+            background-color: #007bff !important;
+            border-radius: 10px !important;
+            color: white !important;
+            width: 100% !important;
+            border: none !important;
+            font-weight: 900 !important;
+        }
     </style>
     <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
@@ -141,14 +180,11 @@
         // Make sure to replace this with your actual Web App URL after deploying
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec";
 
-        let html5QrCode;
+        let html5QrcodeScanner;
         let currentTicketData = null;
 
         // Initialize Scanner on Load
         window.onload = function () {
-            // We use Html5Qrcode instead of Html5QrcodeScanner 
-            // to get direct control over the camera selection and pause/resume logic
-            html5QrCode = new Html5Qrcode("reader");
             startScanner();
         };
 
@@ -156,30 +192,29 @@
             document.getElementById("reader-container").style.display = "block";
             document.getElementById("resultPanel").style.display = "none";
 
-            // If the scanner hasn't literally been started yet:
-            if (!html5QrCode.isScanning) {
-                // Request the rear camera by default ("environment")
-                html5QrCode.start(
-                    { facingMode: "environment" },
+            if (!html5QrcodeScanner) {
+                // Initialize the full scanner UI with memory logic
+                html5QrcodeScanner = new Html5QrcodeScanner(
+                    "reader",
                     {
                         fps: 10,
-                        qrbox: { width: 250, height: 250 }
+                        qrbox: { width: 250, height: 250 },
+                        rememberLastUsedCamera: true
                     },
-                    onScanSuccess,
-                    onScanFailure
-                ).catch((err) => {
-                    alert("Error starting camera: " + err);
-                });
+                    false
+                );
+                html5QrcodeScanner.render(onScanSuccess, onScanFailure);
             } else {
                 // If it was already started and we just paused it, resume!
                 // This prevents asking for permissions again.
-                html5QrCode.resume();
+                html5QrcodeScanner.resume();
             }
         }
 
         function onScanSuccess(decodedText, decodedResult) {
             // Pause scanner so it doesn't scan twice
-            html5QrCode.pause(true);
+            // The argument "true" means "also freeze the video feed"
+            html5QrcodeScanner.pause(true);
             document.getElementById("reader-container").style.display = "none";
             processScannedData(decodedText);
         }
@@ -252,25 +287,37 @@
                 timestamp: new Date().toISOString()
             };
 
-            // We use fetch to send data to Apps Script
+            // We use fetch to send data to Apps Script. 
+            // NOTE: To get the JSON response back safely, Apps Script must support CORS or we use JSONP. 
+            // Because Apps Script sets CORS headers automatically when responding with ContentService, 
+            // we should NOT use 'mode: no-cors', we should use normal POST or send as form data if needed.
+            // A common workaround for Apps Script JSON POSTs is simply standard fetching:
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
-                mode: 'no-cors', // Apps script requires no-cors sometimes for simple POSTs
-                headers: {
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify(payload)
-            }).then(() => {
-                // Because of no-cors, we can't reliably read the JSON response, 
-                // but if it didn't throw a network error, we assume success.
-                document.getElementById("statusIcon").textContent = "🎉";
-                document.getElementById("statusText").textContent = "Checked In Successfully!";
-                btnConfirm.style.display = "none";
-            }).catch(err => {
-                alert("Network Error: Could not connect to tracker. Please check your internet connection.");
-                btnConfirm.textContent = "Try Offline / Again";
-                btnConfirm.disabled = false;
-            });
+            })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === "already_scanned") {
+                        document.getElementById("statusIcon").textContent = "⚠️";
+                        const statusText = document.getElementById("statusText");
+                        statusText.textContent = "Already Scanned!";
+                        statusText.className = "status-text error";
+                    } else if (result.status === "success") {
+                        document.getElementById("statusIcon").textContent = "🎉";
+                        document.getElementById("statusText").textContent = "Checked In Successfully!";
+                    } else {
+                        document.getElementById("statusIcon").textContent = "❌";
+                        document.getElementById("statusText").textContent = "Error: " + result.message;
+                    }
+                    btnConfirm.style.display = "none";
+                })
+                .catch(err => {
+                    // If it fails due to CORS, fallback to a basic catch
+                    alert("Network/CORS Error: Please ensure you deployed Apps Script correctly.");
+                    btnConfirm.textContent = "Try Again";
+                    btnConfirm.disabled = false;
+                });
         }
 
         function resetScanner() {
