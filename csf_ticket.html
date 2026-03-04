@@ -386,24 +386,33 @@
     if (arenas.includes(',') && !arenas.includes('\n')) {
       arenas = arenas.split(',').map(a => a.trim()).join('\n');
     }
-    document.getElementById('arenaList').textContent = arenas;
 
     // 3. Color Coded Strip for First Arena
     const arenaLines = arenas.split('\n');
-    const firstArena = arenaLines.length > 0 ? arenaLines[0].toLowerCase() : "";
+    const firstArenaText = arenaLines.length > 0 ? arenaLines[0] : "";
+    const firstArenaLower = firstArenaText.toLowerCase();
     let stripColor = "transparent";
 
-    if (firstArena.includes("gymnastrada") || firstArena.includes("gy")) {
+    if (firstArenaLower.includes("gymnastrada") || firstArenaLower.includes("gy")) {
       stripColor = "#af2220"; // Red
-    } else if (firstArena.includes("multi-sport")) {
+    } else if (firstArenaLower.includes("multi-sport")) {
       stripColor = "#0079ae"; // Blue
-    } else if (firstArena.includes("cross-fit")) {
+    } else if (firstArenaLower.includes("cross-fit")) {
       stripColor = "#ffcc00"; // Yellow
-    } else if (firstArena.includes("devil") || firstArena.includes("circuit")) {
+    } else if (firstArenaLower.includes("devil") || firstArenaLower.includes("circuit")) {
       stripColor = "#00753c"; // Green
     }
 
     document.getElementById('colorStrip').style.backgroundColor = stripColor;
+
+    // Wrap the first arena in a <span> with the matched color for visual emphasis
+    if (arenaLines.length > 0) {
+      arenaLines[0] = `<span style="color: ${stripColor};">${arenaLines[0]}</span>`;
+      arenas = arenaLines.join('\n');
+    }
+
+    // Because we are adding HTML (the <span> tag), we must use innerHTML instead of textContent
+    document.getElementById('arenaList').innerHTML = arenas;
 
     // 4. Generate QR Code
     const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nArenas: ${arenas.replace(/\n/g, ', ')}\nID: ${rowId}`;
