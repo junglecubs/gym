@@ -141,11 +141,14 @@
         // Make sure to replace this with your actual Web App URL after deploying
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec";
 
-        let html5QrcodeScanner;
+        let html5QrCode;
         let currentTicketData = null;
 
         // Initialize Scanner on Load
         window.onload = function () {
+            // We use Html5Qrcode instead of Html5QrcodeScanner 
+            // to get direct control over the camera selection and pause/resume logic
+            html5QrCode = new Html5Qrcode("reader");
             startScanner();
         };
 
@@ -153,25 +156,36 @@
             document.getElementById("reader-container").style.display = "block";
             document.getElementById("resultPanel").style.display = "none";
 
-            html5QrcodeScanner = new Html5QrcodeScanner(
-                "reader",
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-        /* verbose= */ false
-            );
-
-            html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+            // If the scanner hasn't literally been started yet:
+            if (!html5QrCode.isScanning) {
+                // Request the rear camera by default ("environment")
+                html5QrCode.start(
+                    { facingMode: "environment" },
+                    {
+                        fps: 10,
+                        qrbox: { width: 250, height: 250 }
+                    },
+                    onScanSuccess,
+                    onScanFailure
+                ).catch((err) => {
+                    alert("Error starting camera: " + err);
+                });
+            } else {
+                // If it was already started and we just paused it, resume!
+                // This prevents asking for permissions again.
+                html5QrCode.resume();
+            }
         }
 
         function onScanSuccess(decodedText, decodedResult) {
             // Pause scanner so it doesn't scan twice
-            html5QrcodeScanner.clear().then(() => {
-                document.getElementById("reader-container").style.display = "none";
-                processScannedData(decodedText);
-            });
+            html5QrCode.pause(true);
+            document.getElementById("reader-container").style.display = "none";
+            processScannedData(decodedText);
         }
 
         function onScanFailure(error) {
-            // handle scan failure, usually better to ignore and keep scanning
+            // handle scan failure invisibly
         }
 
         function processScannedData(rawText) {
@@ -260,8 +274,6 @@
         }
 
         function resetScanner() {
-            // Re-initialize the scanner div
-            document.getElementById('reader').innerHTML = '';
             startScanner();
         }
     </script>
