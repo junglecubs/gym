@@ -269,6 +269,11 @@
   <!-- Container that gets scaled via JS -->
   <div id="scale-container">
     <div class="ticket-wrapper" id="ticketArea">
+      <!-- color coding strip -->
+      <div id="colorStrip"
+        style="position: absolute; top: 0; left: 0; width: 25px; height: 100%; z-index: 10; border-top-left-radius: 20px; border-bottom-left-radius: 20px;">
+      </div>
+
       <!-- background image -->
       <img src="CSF TICKET.jpg" alt="Ticket Background" class="ticket-bg">
 
@@ -383,7 +388,24 @@
     }
     document.getElementById('arenaList').textContent = arenas;
 
-    // 3. Generate QR Code
+    // 3. Color Coded Strip for First Arena
+    const arenaLines = arenas.split('\n');
+    const firstArena = arenaLines.length > 0 ? arenaLines[0].toLowerCase() : "";
+    let stripColor = "transparent";
+
+    if (firstArena.includes("gymnastrada") || firstArena.includes("gy")) {
+      stripColor = "#af2220"; // Red
+    } else if (firstArena.includes("multi-sport")) {
+      stripColor = "#0079ae"; // Blue
+    } else if (firstArena.includes("cross-fit")) {
+      stripColor = "#ffcc00"; // Yellow
+    } else if (firstArena.includes("devil") || firstArena.includes("circuit")) {
+      stripColor = "#00753c"; // Green
+    }
+
+    document.getElementById('colorStrip').style.backgroundColor = stripColor;
+
+    // 4. Generate QR Code
     const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nArenas: ${arenas.replace(/\n/g, ', ')}\nID: ${rowId}`;
     document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&dark=000&ecLevel=M&margin=1`;
 
