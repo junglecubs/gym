@@ -419,8 +419,18 @@
     document.getElementById('arenaList').innerHTML = arenas;
 
     // 4. Generate QR Code
-    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nArenas: ${arenas.replace(/\n/g, ', ')}\nID: ${rowId}`;
-    document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&dark=000&ecLevel=M&margin=1`;
+    // We encode the vital data (ID, Child, Mobile, Batch) as a compact JSON 
+    // string so the scanner app can easily parse it without regex.
+    const qrData = JSON.stringify({
+      id: rowId,
+      child: childName,
+      mobile: mobile,
+      batch: batch
+    });
+
+    // We use btoa to base64 encode it so URL characters don't break the QR generation API
+    const qrText = encodeURIComponent(qrData);
+    document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${qrText}&size=300&dark=000&ecLevel=M&margin=1`;
 
     // 4. Download Function - ROBUST OFF-SCREEN STRATEGY
     function downloadTicket() {
