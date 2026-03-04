@@ -98,32 +98,30 @@
     /* ARENAS SECTION */
     .arena-section {
       position: absolute;
-      top: 50%;
-      /* Positioned carefully below parent and above bottom border */
+      top: 57%;
+      /* Ensure it resides definitively below the mobile number block */
       left: 55%;
       transform: translateX(-50%);
       text-align: center;
-      width: 55%;
-      /* Increased width so long names don't wrap to new line prematurely */
+      width: 90%;
+      /* Let it be completely unconstrained horizontally so words do not wrap */
     }
 
     .arena-title {
-      font-size: 15px;
-      /* Same reduced size */
+      font-size: 16px;
       font-weight: 900;
       color: #287844;
       text-transform: uppercase;
-      margin-bottom: 2px;
-      /* Even tighter margin */
+      margin-bottom: 4px;
     }
 
     .arena-list {
-      font-size: 13px;
-      /* Slightly smaller to fit 4 lines easily */
+      font-size: 14px;
       font-weight: 800;
       color: #b01b2e;
-      line-height: 1.2;
-      white-space: pre-line;
+      line-height: 1.25;
+      white-space: pre;
+      /* STRICTLY PRE: only explicit \\n creates new lines. Stops Gymnastrada chopping */
       margin: 0;
     }
 
