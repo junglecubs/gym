@@ -98,8 +98,8 @@
     /* ARENAS SECTION */
     .arena-section {
       position: absolute;
-      top: 55%;
-      /* Placed below center section, matches original design position roughly */
+      top: 48%;
+      /* Moved up slightly to prevent overlap with bottom */
       left: 55%;
       transform: translateX(-50%);
       text-align: center;
@@ -107,21 +107,23 @@
     }
 
     .arena-title {
-      font-size: 18px;
+      font-size: 15px;
+      /* Reduced from 18px */
       font-weight: 900;
       color: #287844;
       text-transform: uppercase;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
+      /* Reduced margin */
     }
 
     .arena-list {
-      font-size: 16px;
+      font-size: 14px;
+      /* Reduced from 16px */
       font-weight: 800;
       color: #b01b2e;
-      /* Deep red matching original */
-      line-height: 1.4;
+      line-height: 1.25;
+      /* Tighter line height to save vertical space */
       white-space: pre-line;
-      /* Allows newlines (\n) to break lines natively */
     }
 
     /* RIGHT SECTION */
