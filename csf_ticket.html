@@ -65,6 +65,7 @@
     .section-center {
       position: absolute;
       top: 24%;
+      /* Placed above arenas */
       left: 55%;
       transform: translateX(-50%);
       text-align: center;
@@ -73,7 +74,6 @@
 
     .child-name {
       font-size: 28px;
-      /* Corrected from 40px */
       font-weight: 900;
       color: #287844;
       margin-bottom: 2px;
@@ -84,7 +84,6 @@
 
     .parent-details {
       font-size: 15px;
-      /* Corrected from 19px */
       font-weight: 700;
       color: #111111;
       background: rgba(255, 255, 255, 0.25);
@@ -94,6 +93,35 @@
       line-height: 1.3;
       backdrop-filter: blur(1px);
       margin-top: 4px;
+    }
+
+    /* ARENAS SECTION */
+    .arena-section {
+      position: absolute;
+      top: 55%;
+      /* Placed below center section, matches original design position roughly */
+      left: 55%;
+      transform: translateX(-50%);
+      text-align: center;
+      width: 44%;
+    }
+
+    .arena-title {
+      font-size: 18px;
+      font-weight: 900;
+      color: #287844;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .arena-list {
+      font-size: 16px;
+      font-weight: 800;
+      color: #b01b2e;
+      /* Deep red matching original */
+      line-height: 1.4;
+      white-space: pre-line;
+      /* Allows newlines (\n) to break lines natively */
     }
 
     /* RIGHT SECTION */
@@ -253,6 +281,17 @@
           </div>
         </div>
 
+        <!-- Arenas Section -->
+        <div class="arena-section">
+          <div class="arena-title">EVENT HIGHLIGHTS</div>
+          <div class="arena-list" id="arenaList">
+            Devil's Circuit
+            Multi-sport Arena
+            Cross-fit Races
+            Gymnastrada
+          </div>
+        </div>
+
         <!-- Right Section -->
         <div class="section-right">
           <div class="meta-details">
@@ -313,6 +352,7 @@
     const mobile = params.get('mobile') || '9876543210';
     let batch = params.get('batch') || 'Morning';
     const rowId = params.get('id') || '001';
+    let arenas = params.get('arenas') || "Devil's Circuit, Multi-sport Arena, Cross-fit Races, Gymnastrada";
 
     // Cleanup Batch Name
     batch = batch.replace(/Batch/i, '').trim();
@@ -324,7 +364,7 @@
     } else if (batch.toLowerCase().includes('afternoon') || batch.toLowerCase().includes('mid')) {
       timeDisplay = "04:00 PM - 06:00 PM";
     } else if (batch.toLowerCase().includes('evening')) {
-      timeDisplay = "06:45 PM - 08:45 PM";
+      timeDisplay = "04:00 PM - 06:00 PM";
     }
 
     // 2. Update UI
@@ -335,8 +375,14 @@
     document.getElementById('time').textContent = timeDisplay;
     document.getElementById('rowId').textContent = 'ID: #' + rowId;
 
+    // Formatting arenas list. If passed as comma-separated without newlines, separate it onto new lines.
+    if (arenas.includes(',') && !arenas.includes('\n')) {
+      arenas = arenas.split(',').map(a => a.trim()).join('\n');
+    }
+    document.getElementById('arenaList').textContent = arenas;
+
     // 3. Generate QR Code
-    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nID: ${rowId}`;
+    const qrText = `✅ VALID TICKET\n------------------\nChild: ${childName}\nParent: ${parentName}\nMobile: ${mobile}\nBatch: ${batch}\nTime: ${timeDisplay}\nArenas: ${arenas.replace(/\n/g, ', ')}\nID: ${rowId}`;
     document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${encodeURIComponent(qrText)}&size=300&dark=000&ecLevel=M&margin=1`;
 
     // 4. Download Function - ROBUST OFF-SCREEN STRATEGY
