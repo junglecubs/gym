@@ -159,6 +159,11 @@
         🦁 CSF Check-in Scanner
     </div>
 
+    <div id="attendeeCount"
+        style="text-align: center; margin-top: 10px; font-size: 18px; font-weight: bold; color: #287844; display: none;">
+        Total Attendees: <span id="countValue">0</span>
+    </div>
+
     <div id="reader-container">
         <div id="reader"></div>
     </div>
@@ -310,6 +315,13 @@
                         document.getElementById("statusIcon").textContent = "❌";
                         document.getElementById("statusText").textContent = "Error: " + result.message;
                     }
+
+                    // Update the attendee count if provided
+                    if (result.total_attendees !== undefined) {
+                        document.getElementById("attendeeCount").style.display = "block";
+                        document.getElementById("countValue").textContent = result.total_attendees;
+                    }
+
                     btnConfirm.style.display = "none";
                 })
                 .catch(err => {
