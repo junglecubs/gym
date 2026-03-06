@@ -188,6 +188,7 @@
         let html5QrcodeScanner;
         let syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
         let isSyncing = false;
+        let autoResetTimeout = null;
 
         // Start the background sync loop every 3 seconds
         setInterval(processSyncQueue, 3000);
@@ -268,7 +269,7 @@
                         statusText.className = "status-text error";
 
                         // Auto-resume after short delay for user to read it
-                        setTimeout(resetScanner, 2000);
+                        autoResetTimeout = setTimeout(resetScanner, 3000);
                     } else {
                         // New scan! Optimistic check-in.
                         scannedIds.push(data.id);
@@ -282,8 +283,8 @@
                         statusText.textContent = "Checked In!";
                         statusText.className = "status-text success";
 
-                        // INSTANT turnaround: resume scanner in 1.2 seconds!
-                        setTimeout(resetScanner, 1200);
+                        // Auto-resume after 3 seconds, or user can tap 'Scan Next Ticket'
+                        autoResetTimeout = setTimeout(resetScanner, 3000);
                     }
 
                 } else {
@@ -298,7 +299,7 @@
                 infoBox.innerHTML = "This QR code doesn't belong to the Cubs Sports Fest system or is from an outdated ticket.";
 
                 // Keep error up longer
-                setTimeout(resetScanner, 3000);
+                autoResetTimeout = setTimeout(resetScanner, 3000);
             }
         }
 
@@ -377,6 +378,10 @@
         }
 
         function resetScanner() {
+            if (autoResetTimeout) {
+                clearTimeout(autoResetTimeout);
+                autoResetTimeout = null;
+            }
             startScanner();
         }
     </script>
