@@ -186,11 +186,16 @@
         const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyQucEMo_wCS6tvqwbb-lEKb95WYcsGcysbyULe-Gbe0UbBCLrPTskUC_tMsp7tm-OkAQ/exec";
 
         let html5QrcodeScanner;
-        let currentTicketData = null;
+        let syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+        let isSyncing = false;
+
+        // Start the background sync loop every 3 seconds
+        setInterval(processSyncQueue, 3000);
 
         // Initialize Scanner on Load
         window.onload = function () {
             startScanner();
+            updatePendingCount();
         };
 
         function startScanner() {
@@ -236,7 +241,7 @@
             const btnConfirm = document.getElementById("btnConfirm");
 
             panel.style.display = "block";
-            currentTicketData = null;
+            btnConfirm.style.display = "none"; // Hide confirm button, we do instant check-ins now!
 
             try {
                 // We updated the ticket HTML to generate JSON. 
@@ -245,23 +250,42 @@
                 const data = JSON.parse(decoded);
 
                 if (data.id && data.child) {
-                    currentTicketData = data;
 
-                    statusIcon.textContent = "✅";
-                    statusIcon.className = "status-icon success";
-                    statusText.textContent = "Valid Ticket Format";
-                    statusText.className = "status-text success";
+                    const scannedIds = JSON.parse(localStorage.getItem('scannedTicketIds') || '[]');
 
                     infoBox.innerHTML = `
-            <strong>ID:</strong> #${data.id}<br>
-            <strong>Child:</strong> ${data.child}<br>
-            <strong>Mobile:</strong> ${data.mobile}<br>
-            <strong>Batch:</strong> ${data.batch}
-          `;
+                        <strong>ID:</strong> #${data.id}<br>
+                        <strong>Child:</strong> ${data.child}<br>
+                        <strong>Mobile:</strong> ${data.mobile}<br>
+                        <strong>Batch:</strong> ${data.batch}
+                    `;
 
-                    btnConfirm.style.display = "block";
-                    btnConfirm.textContent = "Confirm Check-in";
-                    btnConfirm.disabled = false;
+                    if (scannedIds.includes(data.id)) {
+                        // Already scanned!
+                        statusIcon.textContent = "⚠️";
+                        statusIcon.className = "status-icon error";
+                        statusText.textContent = "Already Scanned!";
+                        statusText.className = "status-text error";
+
+                        // Auto-resume after short delay for user to read it
+                        setTimeout(resetScanner, 2000);
+                    } else {
+                        // New scan! Optimistic check-in.
+                        scannedIds.push(data.id);
+                        localStorage.setItem('scannedTicketIds', JSON.stringify(scannedIds));
+
+                        // Queue for background sync to Google Sheets
+                        queueForSync(data);
+
+                        statusIcon.textContent = "🎉";
+                        statusIcon.className = "status-icon success";
+                        statusText.textContent = "Checked In!";
+                        statusText.className = "status-text success";
+
+                        // INSTANT turnaround: resume scanner in 1.2 seconds!
+                        setTimeout(resetScanner, 1200);
+                    }
+
                 } else {
                     throw new Error("Missing data fields");
                 }
@@ -272,64 +296,84 @@
                 statusText.textContent = "Invalid QR Code";
                 statusText.className = "status-text error";
                 infoBox.innerHTML = "This QR code doesn't belong to the Cubs Sports Fest system or is from an outdated ticket.";
-                btnConfirm.style.display = "none";
+
+                // Keep error up longer
+                setTimeout(resetScanner, 3000);
             }
         }
 
-        function confirmCheckin() {
-            if (!currentTicketData) return;
-
-            const btnConfirm = document.getElementById("btnConfirm");
-            btnConfirm.textContent = "Sending...";
-            btnConfirm.disabled = true;
-
+        function queueForSync(ticketData) {
             const payload = {
                 action: 'checkin',
-                id: currentTicketData.id,
-                child: currentTicketData.child,
-                mobile: currentTicketData.mobile,
-                batch: currentTicketData.batch,
+                id: ticketData.id,
+                child: ticketData.child,
+                mobile: ticketData.mobile,
+                batch: ticketData.batch,
                 timestamp: new Date().toISOString()
             };
+            syncQueue.push(payload);
+            localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+            updatePendingCount();
 
-            // We use fetch to send data to Apps Script. 
-            // NOTE: To get the JSON response back safely, Apps Script must support CORS or we use JSONP. 
-            // Because Apps Script sets CORS headers automatically when responding with ContentService, 
-            // we should NOT use 'mode: no-cors', we should use normal POST or send as form data if needed.
-            // A common workaround for Apps Script JSON POSTs is simply standard fetching:
+            // Try syncing immediately
+            processSyncQueue();
+        }
+
+        function processSyncQueue() {
+            if (isSyncing || syncQueue.length === 0) return;
+
+            isSyncing = true;
+            // Peek at the first item
+            const payload = syncQueue[0];
+
             fetch(APPS_SCRIPT_URL, {
                 method: 'POST',
                 body: JSON.stringify(payload)
             })
                 .then(response => response.json())
                 .then(result => {
-                    if (result.status === "already_scanned") {
-                        document.getElementById("statusIcon").textContent = "⚠️";
-                        const statusText = document.getElementById("statusText");
-                        statusText.textContent = "Already Scanned!";
-                        statusText.className = "status-text error";
-                    } else if (result.status === "success") {
-                        document.getElementById("statusIcon").textContent = "🎉";
-                        document.getElementById("statusText").textContent = "Checked In Successfully!";
-                    } else {
-                        document.getElementById("statusIcon").textContent = "❌";
-                        document.getElementById("statusText").textContent = "Error: " + result.message;
-                    }
+                    // Shift it out, it synced successfully (or was caught as a server-side duplicate)
+                    syncQueue.shift();
+                    localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
 
-                    // Update the attendee count if provided
+                    // Update the global attendee count if provided
                     if (result.total_attendees !== undefined) {
                         document.getElementById("attendeeCount").style.display = "block";
                         document.getElementById("countValue").textContent = result.total_attendees;
                     }
-
-                    btnConfirm.style.display = "none";
                 })
                 .catch(err => {
-                    // If it fails due to CORS, fallback to a basic catch
-                    alert("Network/CORS Error: Please ensure you deployed Apps Script correctly.");
-                    btnConfirm.textContent = "Try Again";
-                    btnConfirm.disabled = false;
+                    console.error("Background sync failed, will retry: ", err);
+                    // Leave in queue to try again later
+                })
+                .finally(() => {
+                    isSyncing = false;
+                    updatePendingCount();
+
+                    // If there are more items, process them quickly rather than waiting 3 seconds
+                    if (syncQueue.length > 0) {
+                        setTimeout(processSyncQueue, 1000);
+                    }
                 });
+        }
+
+        function updatePendingCount() {
+            let pendingDiv = document.getElementById("pendingSyncs");
+            if (!pendingDiv && syncQueue.length > 0) {
+                pendingDiv = document.createElement("div");
+                pendingDiv.id = "pendingSyncs";
+                pendingDiv.style.cssText = "position: fixed; bottom: 10px; right: 10px; background: #ffc107; color: #000; padding: 5px 15px; border-radius: 20px; font-size: 14px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 1000;";
+                document.body.appendChild(pendingDiv);
+            }
+
+            if (pendingDiv) {
+                if (syncQueue.length > 0) {
+                    pendingDiv.style.display = "block";
+                    pendingDiv.textContent = syncQueue.length + " Syncing...";
+                } else {
+                    pendingDiv.style.display = "none";
+                }
+            }
         }
 
         function resetScanner() {
