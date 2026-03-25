@@ -596,10 +596,20 @@
                         <p style="font-size: 0.95rem; color: var(--text-main);">Please make the payment using the button
                             below or manually to UPI ID: <strong>junglecubsgym7@oksbi</strong></p>
 
-                        <a href="#" id="upi-pay-btn" class="btn-primary"
-                            style="text-decoration: none; padding: 0.8rem; border-radius: 8px; font-size: 1rem; max-width: 250px; margin: 0 auto; background: #fff; color: var(--primary); border: 2px solid var(--primary);">
-                            💸 Pay using UPI App
-                        </a>
+                        <div style="display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin: 0.5rem 0;">
+                            <a href="#" id="gpay-btn" style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #1a73e8; border: 1px solid #1a73e8; display: flex; align-items: center; gap: 0.3rem;">
+                                Google Pay
+                            </a>
+                            <a href="#" id="phonepe-btn" style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #5f259f; border: 1px solid #5f259f; display: flex; align-items: center; gap: 0.3rem;">
+                                PhonePe
+                            </a>
+                            <a href="#" id="paytm-btn" style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #00baf2; border: 1px solid #00baf2; display: flex; align-items: center; gap: 0.3rem;">
+                                Paytm
+                            </a>
+                            <a href="#" id="upi-pay-btn" style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: var(--primary); border: 1px solid var(--primary); display: flex; align-items: center; gap: 0.3rem;">
+                                Other App
+                            </a>
+                        </div>
 
                         <div class="input-group" style="margin-top: 0.5rem; padding-bottom: 0.5rem;">
                             <label>Upload Payment Screenshot *</label>
@@ -967,9 +977,12 @@
                 hiddenTotalFee.value = total;
                 feeBox.style.display = 'flex';
 
-                // Update UPI link
-                const upiLink = `upi://pay?pa=junglecubsgym7@oksbi&pn=Jungle%20Cubs%20Gym&am=${total}&cu=INR`;
-                document.getElementById('upi-pay-btn').href = upiLink;
+                // Update UPI links
+                const upiQuery = `pa=junglecubsgym7@oksbi&pn=Jungle%20Cubs%20Gym&am=${total}&cu=INR`;
+                document.getElementById('gpay-btn').href = `gpay://upi/pay?${upiQuery}`;
+                document.getElementById('phonepe-btn').href = `phonepe://pay?${upiQuery}`;
+                document.getElementById('paytm-btn').href = `paytmmp://pay?${upiQuery}`;
+                document.getElementById('upi-pay-btn').href = `upi://pay?${upiQuery}`;
 
                 // Make payment fields required
                 document.getElementById('paymentScreenshot').required = true;
