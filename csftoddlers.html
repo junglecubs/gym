@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cubs Sports Toddlers Fest Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- BRAND COLORS & VARS --- */
+        :root {
+            --primary: #2d6a4f;
+            --primary-light: #40916c;
+            --secondary: #d8f3dc;
+            --accent: #f4a261;
+            --bg-color: #081c15;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            
+            --jc-yellow: #f9ca2b;
+            --jc-green: #287844;
+            --jc-green-light: #3b9e58;
+            --jc-red: #c72e31;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, rgba(8, 28, 21, 0.9) 0%, rgba(45, 106, 79, 0.9) 100%), url('https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            color: var(--text-main);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* --- JUNGLE CHARACTERS --- */
+        .jungle-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .char {
+            position: absolute;
+            opacity: 0.8;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+            transition: all 0.3s ease;
+            transform: translateZ(0);
+        }
+
+        .c1 { width: 140px; top: 5%; left: 2%; animation: float 6s ease-in-out infinite; }
+        .c2 { width: 160px; bottom: 5%; right: 2%; animation: float 7s ease-in-out infinite reverse; }
+        .c3 { width: 130px; bottom: 10%; left: 5%; animation: sway 5s ease-in-out infinite; }
+        .c4 { width: 150px; top: 5%; right: 2%; animation: float 8s ease-in-out infinite; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(0deg) translateX(0); }
+            25% { transform: rotate(5deg) translateX(10px); }
+            75% { transform: rotate(-5deg) translateX(-10px); }
+        }
+
+        @media (max-width: 800px) {
+            .char { opacity: 0.6; }
+            .c1 { width: 100px; top: -10px; left: -10px; }
+            .c2 { width: 90px; bottom: -10px; right: -10px; }
+            .c3, .c4 { display: none; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 0.5rem;
+        }
+
+        .description {
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* Initial Step: Search */
+        #search-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.2rem;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.8);
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.1);
+        }
+
+        input[readonly] {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        button.btn-primary {
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            max-width: 400px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 14px rgba(45, 106, 79, 0.3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button.btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(45, 106, 79, 0.4);
+        }
+
+        button.btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Full Form Area */
+        #registration-form {
+            display: none;
+            /* hidden by default */
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            color: var(--primary);
+            font-weight: 700;
+            margin-top: 2rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(45, 106, 79, 0.1);
+            padding-bottom: 0.5rem;
+            grid-column: 1 / -1;
+        }
+
+        /* Radio & Checkbox Groups */
+        .radio-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .radio-card {
+            flex: 1;
+            min-width: 120px;
+            background: rgba(255, 255, 255, 0.6);
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .radio-card input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .radio-card span {
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .radio-card:has(input[type="radio"]:checked) {
+            border-color: var(--primary);
+            background: rgba(45, 106, 79, 0.05);
+            box-shadow: 0 0 0 1px var(--primary);
+        }
+
+        .radio-card:has(input[type="radio"]:checked) span {
+            color: var(--primary);
+        }
+
+        /* Loader */
+        .loader {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Success Message */
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem 0;
+            animation: slideUp 0.5s ease;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+        }
+
+        .status-badge.outsider {
+            background-color: #fef08a;
+            color: #854d0e;
+        }
+
+        .status-badge.inhouse {
+            background-color: #bbf7d0;
+            color: #166534;
+        }
+
+        .status-badge.complimentary {
+            background-color: #c7d2fe;
+            color: #3730a3;
+            margin-left: 0.5rem;
+        }
+
+        .fee-note {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            animation: fadeInModal 0.3s forwards;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            animation: slideUpModal 0.3s forwards;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        @keyframes fadeInModal {
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUpModal {
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="main-container">
+
+        <div class="jungle-scene">
+            <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char c1" alt="Cub 1">
+            <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char c2" alt="Cub 2">
+            <img src="https://i.postimg.cc/Gm37HZVF/middle_split_monkey.webp" class="char c3" alt="Cub 3">
+            <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char c4" alt="Cub 4">
+        </div>
+
+        <div class="header">
+            <img src="CubsSportsFestLogo.png" alt="Cubs Sports Toddlers Fest Logo"
+                style="max-height: 120px; object-fit: contain; margin-bottom: 1rem;">
+            <div class="subtitle">Jungle Cubs Gym Presents</div>
+            <h1 class="title">Cubs Sports Toddlers Fest 🏆</h1>
+            <p class="description">
+                <strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br>
+                <strong>Date:</strong> 📅 25-04-2026<br><br>
+                ✨ Register for our upcoming event. Let's start by looking up your details.
+            </p>
+        </div>
+
+        <!-- SEARCH SECTION -->
+        <div id="search-section">
+            <div class="input-group">
+                <label for="searchMobile">Enter Father's or Mother's Mobile Number 📱</label>
+                <input type="tel" id="searchMobile" placeholder="e.g. 9876543210" pattern="[0-9]{10}" maxlength="10"
+                    minlength="10" title="Please enter exactly 10 digits" required>
+            </div>
+            <button class="btn-primary" id="btnVerify" onclick="verifyMobile()">
+                <span>Verify & Continue 🚀</span>
+                <div class="loader" id="verify-loader"></div>
+            </button>
+            <p id="search-error" style="color: #ef4444; font-size: 0.9rem; margin-top: 0.5rem; display: none;">Could not
+                find a match. Please proceed as a new guest.</p>
+        </div>
+
+        <!-- REGISTRATION FORM -->
+        <form id="registration-form" onsubmit="submitForm(event)">
+
+            <div
+                style="margin-bottom: 2rem; padding: 1rem; background: rgba(0,0,0,0.03); border-radius: 12px; display:flex; justify-content: space-between; align-items:center;">
+                <div>
+                    <strong>Membership Status 🏷️:</strong>
+                    <div id="membership-badge" class="status-badge outsider">Outsider</div>
+                    <div id="complimentary-badge" class="status-badge complimentary" style="display:none;">Complimentary
+                        Child 🎉</div>
+                </div>
+                <button type="button"
+                    style="background:transparent; border:none; text-decoration:underline; color:var(--text-muted); cursor:pointer; font-size:0.9rem;"
+                    onclick="resetSearch()">🔄 Change Number</button>
+            </div>
+
+            <div class="form-grid">
+
+                <h3 class="section-title">Child's Details 👦👧</h3>
+
+                <div class="input-group">
+                    <label>Child (Full Name) * 👶</label>
+                    <input type="text" name="Child (Full Name)" id="childName" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Child DOB * 📅</label>
+                    <input type="date" name="Child DOB" id="childDob" onchange="calculateAge()" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Child Age (Auto-calculated) 📆</label>
+                    <input type="text" name="Child Age" id="childAge" readonly placeholder="-">
+                </div>
+
+                <h3 class="section-title">Parents' Details 👪</h3>
+
+                <div class="input-group">
+                    <label>Mother's Full Name * 👩</label>
+                    <input type="text" name="Mothers Full Name" id="motherName" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Mother's Mobile Number * 📱</label>
+                    <input type="tel" name="Mothers Mobile Number" id="motherMobile" pattern="[0-9]{10}" maxlength="10"
+                        minlength="10" title="Please enter exactly 10 digits" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Father's Full Name * 👨</label>
+                    <input type="text" name="Fathers Full Name" id="fatherName" required>
+                </div>
+
+                <div class="input-group">
+                    <label>Father's Mobile Number * 📱</label>
+                    <input type="tel" name="Fathers Mobile Number" id="fatherMobile" pattern="[0-9]{10}" maxlength="10"
+                        minlength="10" title="Please enter exactly 10 digits" required>
+                </div>
+
+                <h3 class="section-title">Event Preferences 🎊</h3>
+
+                <div class="input-group full-width">
+                    <label>Select your Centre * 🏫</label>
+                    <select name="Select your Centre" id="centre" required>
+                        <option value="" disabled selected>Select from below</option>
+                        <option value="Matunga">Matunga</option>
+                        <option value="Wadala">Wadala</option>
+                        <option value="Chembur">Chembur</option>
+                        <option value="Ghatkopar">Ghatkopar</option>
+                        <option value="Mulund">Mulund</option>
+                        <option value="Powai">Powai</option>
+                        <option value="Thane">Thane</option>
+                        <option value="Thane Estate">Thane Estate</option>
+                        <option value="Hughes">Hughes</option>
+                        <option value="Malad">Malad</option>
+                        <option value="Borivali">Borivali</option>
+                        <option value="Lalbaug">Lalbaug</option>
+                        <option value="Worli">Worli</option>
+                        <option value="Bandra">Bandra</option>
+                        <option value="Belapur">Belapur</option>
+                        <option value="Vashi">Vashi</option>
+                        <option value="Other / Not Applicable">Other / Not Applicable</option>
+                    </select>
+                </div>
+
+                <!-- Hidden inputs for mapping values -->
+                <input type="hidden" name="Membership Status" id="membershipStatus"
+                    value="Outsider (Not a Jungle Cubs Gym Member)">
+                <input type="hidden" name="Mobile Search" id="mobileSearchVal">
+
+                <input type="hidden" name="Event Fee Option" value="Fixed per Child">
+                
+                <div class="input-group full-width">
+                    <!-- Fee Notice for In-House -->
+                    <div id="fee-notice" class="fee-note full-width" style="display: none; padding: 1rem; background: rgba(45, 106, 79, 0.05); border-radius: 8px; border-left: 4px solid var(--primary);">
+                        ✨ Great news! Since you are an In-House Parent, this event is Complimentary for you.
+                    </div>
+                </div>
+
+                <div class="input-group full-width">
+                    <label>Preferred Time Slot * ⏰</label>
+                    <div class="radio-group" style="margin-top:0.5rem;">
+                        <label class="radio-card">
+                            <input type="radio" name="Preferred Time Slot" value="Slot 1: 4:00pm to 5:15pm" required>
+                            <span>Slot 1: 4:00pm to 5:15pm</span>
+                        </label>
+                        <label class="radio-card">
+                            <input type="radio" name="Preferred Time Slot" value="Slot 2: 5:30 to 6:45pm">
+                            <span>Slot 2: 5:30 to 6:45pm</span>
+                        </label>
+                    </div>
+                </div>
+
+                <h3 class="section-title">Additional Info 🏠</h3>
+
+                <div class="input-group full-width">
+                    <label>Residential Address * 📍</label>
+                    <textarea name="Residential address" id="residentialAddress" rows="2" required></textarea>
+                </div>
+
+                <div id="payment-summary-box" class="input-group full-width"
+                    style="margin-top: 1rem; display: none; background: rgba(45, 106, 79, 0.05); padding: 1.5rem; border-radius: 12px; border: 2px dashed var(--primary); flex-direction: column; gap: 1rem;">
+
+                    <!-- Fee Calculation -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                        <div>
+                            <h4 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.2rem;">Total
+                                Registration Fee</h4>
+                            <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Based on stay &
+                                participants</p>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="total-fee-display">₹0
+                        </div>
+                    </div>
+
+                    <!-- UPI Payment Section -->
+                    <div id="upi-payment-section"
+                        style="border-top: 1px solid rgba(45, 106, 79, 0.2); padding-top: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+                        <p style="font-size: 0.95rem; color: var(--text-main);">Please make the payment using the button
+                            below or manually to UPI ID: <strong>junglecubsgym7@oksbi</strong></p>
+
+                        <div
+                            style="display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; margin: 0.5rem 0;">
+                            <a href="#" id="gpay-btn"
+                                style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #1a73e8; border: 1px solid #1a73e8; display: flex; align-items: center; gap: 0.3rem;">
+                                Google Pay
+                            </a>
+                            <a href="#" id="phonepe-btn"
+                                style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #5f259f; border: 1px solid #5f259f; display: flex; align-items: center; gap: 0.3rem;">
+                                PhonePe
+                            </a>
+                            <a href="#" id="paytm-btn"
+                                style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: #00baf2; border: 1px solid #00baf2; display: flex; align-items: center; gap: 0.3rem;">
+                                Paytm
+                            </a>
+                            <a href="#" id="upi-pay-btn"
+                                style="padding: 0.6rem 1rem; border-radius: 8px; font-size: 0.9rem; font-weight: 600; text-decoration: none; background: #fff; color: var(--primary); border: 1px solid var(--primary); display: flex; align-items: center; gap: 0.3rem;">
+                                Other App
+                            </a>
+                        </div>
+
+                        <div class="input-group" style="margin-top: 0.5rem; padding-bottom: 0.5rem;">
+                            <label>Upload Payment Screenshot *</label>
+                            <input type="file" id="paymentScreenshot" accept="image/*" style="padding: 0.8rem;">
+                            <input type="hidden" name="paymentScreenshotData" id="paymentScreenshotData">
+                            <input type="hidden" name="paymentScreenshotMimeType" id="paymentScreenshotMimeType">
+                            <input type="hidden" name="paymentScreenshotName" id="paymentScreenshotName">
+                        </div>
+
+                        <label
+                            style="display:flex; align-items:flex-start; gap:0.5rem; font-weight: 500; cursor: pointer; user-select: none;">
+                            <input type="checkbox" name="Payment Confirmation" value="Yes" id="paymentConfirmCheck"
+                                style="width: 1.2rem; height: 1.2rem; cursor: pointer; flex-shrink: 0; margin-top: 0.2rem;">
+                            <span style="font-size: 0.95rem; line-height: 1.4;">I confirm that I have made the payment
+                                of <strong id="payment-confirm-amt">₹0</strong> to Jungle Cubs Gym as shown in the
+                                uploaded screenshot.</span>
+                        </label>
+                    </div>
+
+                </div>
+                <!-- Hidden input if we ever want to save it -->
+                <input type="hidden" name="Total Fee" id="hiddenTotalFee" value="">
+
+                <div class="input-group full-width" style="margin-top: 1rem;">
+                    <label
+                        style="display:flex; align-items:center; gap:0.5rem; font-weight: 500; cursor: pointer; user-select: none;">
+                        <input type="checkbox" required name="Terms Accepted" value="Yes"
+                            style="width: 1.2rem; height: 1.2rem; cursor: pointer;">
+                        <span>I accept the <a href="#" id="openTncModal"
+                                style="color:var(--primary); text-decoration:underline;">Terms & Conditions</a>.</span>
+                    </label>
+                </div>
+
+                <div class="input-group full-width" style="margin-top: 1rem;">
+                    <button type="submit" class="btn-primary" id="btnSubmit" style="max-width: 100%; flex-direction: column; gap: 0.2rem; padding: 0.8rem;">
+                        <span style="font-size: 1.1rem;">Complete Registration</span>
+                        <span style="font-size: 0.85rem; font-weight: 400; opacity: 0.9;">and Send us a WhatsApp Message</span>
+                        <div class="loader" id="submit-loader"></div>
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        <!-- SUCCESS MESSAGE -->
+        <div id="success-message">
+            <div class="success-icon">✓</div>
+            <h2 class="title" style="font-size: 2rem;">Registration Received!</h2>
+            <p class="description" style="margin-top: 1rem;">Thank you for registering for Cubs Sports Toddlers Fest. We
+                will be in
+                touch with payment and event details shortly.</p>
+        </div>
+
+    </div>
+
+    <!-- T&C Modal -->
+    <div id="tncModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="font-size: 1.5rem; color: var(--primary); margin-bottom: 1rem;">Terms & Conditions</h2>
+            <div class="modal-body">
+                <p>I understand that the event organized by <strong>Cubs Sports Toddlers Fest</strong> and
+                    <strong>Jungle Cubs Gym</strong> involves certain inherent risks, including but not limited to
+                    physical exertion and outdoor/indoor event hazards.
+                </p>
+                <p>I acknowledge and agree that Jungle Cubs Gym, Cubs Sports Toddlers Fest, their founders, staff,
+                    organizers, and
+                    affiliates shall not be held liable or responsible for any personal injuries, illnesses, accidents,
+                    property damage, or loss of personal belongings sustained during the course of the event.</p>
+                <p>I certify that my child and any attending family members are physically fit and capable of
+                    participating in this event. We agree to strictly adhere to all safety guidelines,
+                    rules, and instructions provided by the guides and event staff at all times.</p>
+                <p>By accepting these terms, I voluntarily assume all risks associated with participation and fully
+                    release Jungle Cubs Gym and Cubs Sports Toddlers Fest from any legal or financial liability.</p>
+            </div>
+            <button type="button" class="btn-primary" id="closeTncModal"
+                style="margin-top:1.5rem; max-width:100%; width:100%;">I Understand & Close</button>
+        </div>
+    </div>
+
+    <script>
+        // REPLACE THIS URL WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec';
+
+        function calculateAge() {
+            const dobInput = document.getElementById('childDob').value;
+            if (!dobInput) return;
+
+            const dob = new Date(dobInput);
+            const today = new Date();
+            let age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+
+            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+                age--;
+            }
+
+            // If age is under 1, show months
+            if (age === 0) {
+                const months = m < 0 ? 12 + m : m;
+                document.getElementById('childAge').value = months + ' months';
+            } else {
+                document.getElementById('childAge').value = age + ' years';
+            }
+        }
+
+        async function verifyMobile() {
+            const searchInput = document.getElementById('searchMobile').value;
+            if (!searchInput || searchInput.length < 8) {
+                alert("Please enter a valid mobile number.");
+                return;
+            }
+
+            // UI updating
+            const btn = document.getElementById('btnVerify');
+            const loader = document.getElementById('verify-loader');
+            const btnText = btn.querySelector('span');
+            const errorMsg = document.getElementById('search-error');
+
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            btn.disabled = true;
+            errorMsg.style.display = 'none';
+
+            // Set the hidden field
+            document.getElementById('mobileSearchVal').value = searchInput;
+
+            try {
+                // If url is still placeholder, skip fetch and just show form (for design preview)
+                if (SCRIPT_URL === 'YOUR_WEB_APP_URL_HERE') {
+                    console.warn("Using placeholder script URL. Showing blank form.");
+                    setTimeout(() => showForm(false, null), 800);
+                    return;
+                }
+
+                const response = await fetch(`${SCRIPT_URL}?mobile=${encodeURIComponent(searchInput)}`);
+                const result = await response.json();
+
+                if (result.found) {
+                    showForm(true, result.data);
+                } else {
+                    showForm(false, null);
+                }
+            } catch (err) {
+                console.error("Fetch error, showing blank form", err);
+                showForm(false, null);
+                errorMsg.style.display = 'block';
+                errorMsg.innerText = "Error connecting to server. Proceeding with a blank form.";
+            } finally {
+                btnText.style.display = 'block';
+                loader.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        function showForm(isFound, data) {
+            document.getElementById('search-section').style.display = 'none';
+            document.getElementById('registration-form').style.display = 'block';
+
+            const badge = document.getElementById('membership-badge');
+            const compBadge = document.getElementById('complimentary-badge');
+            const membershipInput = document.getElementById('membershipStatus');
+            const feeNotice = document.getElementById('fee-notice');
+
+            if (isFound) {
+                badge.className = 'status-badge inhouse';
+                badge.innerText = 'In-house Parent';
+                membershipInput.value = 'In-house Parent (Jungle Cubs Gym member)';
+
+                // Auto-fill heuristic mapping
+                // Assuming data contains exactly matched keys if possible
+                if (data) {
+                    for (const [key, val] of Object.entries(data)) {
+                        const k = key.toLowerCase();
+                        if (!val) continue;
+
+                        if (k.includes('child') && k.includes('name')) document.getElementById('childName').value = val;
+                        else if (k.includes('dob')) {
+                            try {
+                                const d = new Date(val);
+                                if (!isNaN(d.getTime())) {
+                                    const year = d.getFullYear();
+                                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                                    const day = String(d.getDate()).padStart(2, '0');
+                                    document.getElementById('childDob').value = `${year}-${month}-${day}`;
+                                    calculateAge();
+                                }
+                            } catch (e) { }
+                        }
+                        else if (k.includes('mother') && k.includes('name')) document.getElementById('motherName').value = val;
+                        else if (k.includes('mother') && (k.includes('mob') || k.includes('no'))) document.getElementById('motherMobile').value = val;
+                        else if (k.includes('father') && k.includes('name')) document.getElementById('fatherName').value = val;
+                        else if (k.includes('father') && (k.includes('mob') || k.includes('no'))) document.getElementById('fatherMobile').value = val;
+                        else if (k.includes('centre') || k.includes('center')) {
+                            // Try to match dropdown
+                            const select = document.getElementById('centre');
+                            for (let i = 0; i < select.options.length; i++) {
+                                const optVal = select.options[i].value.toLowerCase();
+                                const sheetVal = String(val).toLowerCase().trim();
+                                if (optVal && sheetVal && (optVal.includes(sheetVal) || sheetVal.includes(optVal))) {
+                                    select.selectedIndex = i;
+                                    break;
+                                }
+                            }
+                        }
+                        else if (k.includes('address') || k.includes('resident')) {
+                            const addrEl = document.getElementById('residentialAddress');
+                            if (addrEl) addrEl.value = val;
+                        }
+                    }
+
+                    // Check for complimentary flag
+                    if (data["_isComplimentary"]) {
+                        compBadge.style.display = 'inline-block';
+                        feeNotice.style.display = 'block';
+                    }
+                }
+            } else {
+                badge.className = 'status-badge outsider';
+                badge.innerText = 'Outsider';
+                membershipInput.value = 'Outsider (Not a Jungle Cubs Gym Member)';
+                compBadge.style.display = 'none';
+                feeNotice.style.display = 'none';
+
+                // Pre-select "Other / Not Applicable" for outsiders
+                const select = document.getElementById('centre');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].value === 'Other / Not Applicable') {
+                        select.selectedIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            calculateFee();
+        }
+
+        function resetSearch() {
+            document.getElementById('search-section').style.display = 'flex';
+            document.getElementById('registration-form').style.display = 'none';
+            document.getElementById('registration-form').reset();
+            calculateFee();
+        }
+
+        // REPLACE THIS NUMBER WITH YOUR JUNGLE CUBS GYM WHATSAPP NUMBER
+        const JCG_WHATSAPP_NUMBER = '919819859302';
+
+        async function submitForm(e) {
+            e.preventDefault();
+
+            const btn = document.getElementById('btnSubmit');
+            const loader = document.getElementById('submit-loader');
+            const btnText = btn.querySelector('span');
+
+            btnText.style.display = 'none';
+            loader.style.display = 'block';
+            btn.disabled = true;
+
+            const form = document.getElementById('registration-form');
+            const formData = new FormData(form);
+            const dataObj = Object.fromEntries(formData.entries());
+
+            try {
+                let screenshotUrl = '';
+                try {
+                    const res = await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(dataObj),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' }
+                    });
+                    const result = await res.json();
+                    screenshotUrl = result.screenshotUrl || '';
+                } catch (err) {
+                    console.warn('Standard fetch rejected (CORS?), falling back to no-cors POST', err);
+                    await fetch(SCRIPT_URL, {
+                        method: 'POST',
+                        body: JSON.stringify(dataObj),
+                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                        mode: 'no-cors'
+                    });
+                }
+
+                showSuccess(dataObj, screenshotUrl);
+            } catch (err) {
+                console.error('Error submitting form', err);
+                alert("There was an error submitting your registration. Please try again.");
+            } finally {
+                btnText.style.display = 'block';
+                loader.style.display = 'none';
+                btn.disabled = false;
+            }
+        }
+
+        function showSuccess(dataObj, driveUrl = '') {
+            document.getElementById('registration-form').style.display = 'none';
+            document.getElementById('search-section').style.display = 'none';
+            document.querySelector('.header').style.display = 'none';
+
+            // Determine which parent's details to use
+            let parentStr = "";
+            let mobileStr = "";
+            const searchMobile = dataObj['Mobile Search'] || "";
+            if (searchMobile && searchMobile === dataObj['Fathers Mobile Number']) {
+                parentStr = dataObj['Fathers Full Name'] || "";
+                mobileStr = dataObj['Fathers Mobile Number'] || "";
+            } else if (searchMobile && searchMobile === dataObj['Mothers Mobile Number']) {
+                parentStr = dataObj['Mothers Full Name'] || "";
+                mobileStr = dataObj['Mothers Mobile Number'] || "";
+            } else {
+                parentStr = dataObj['Mothers Full Name'] || dataObj['Fathers Full Name'] || "";
+                mobileStr = searchMobile || dataObj['Mothers Mobile Number'] || dataObj['Fathers Mobile Number'] || "";
+            }
+
+            const childName = dataObj['Child (Full Name)'] || "";
+
+            let waText = `🏆 *New Cubs Sports Toddlers Fest Registration!*\nHi Jungle Cubs Gym Team, we have just submitted our registration form:\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Toddlers Fest\nDate: 25 April 2026\n*Time Slot:* ${dataObj['Preferred Time Slot']}\n`;
+
+            const totalFee = dataObj['Total Fee'];
+            if (totalFee && totalFee > 0) {
+                waText += `\n*Total Amount Paid:* ₹${totalFee}`;
+                if (driveUrl) {
+                    waText += `\n*Payment Proof:* ${driveUrl}`;
+                }
+                waText += `\n`;
+            }
+
+            waText += `\nLooking forward to an eventful day with my little cub! 🐾`;
+            waText += `\n\nRegards,\n${parentStr}\n${mobileStr}`;
+
+            const waLink = `https://wa.me/${JCG_WHATSAPP_NUMBER}?text=${encodeURIComponent(waText)}`;
+
+            const successDiv = document.getElementById('success-message');
+            successDiv.innerHTML = `
+                <div class="success-icon">✓</div>
+                <h2 class="title" style="font-size: 2rem;">Registration Saved!</h2>
+                <p class="description" style="margin-top: 1rem; margin-bottom: 2rem;">Your data has been securely saved to our system.</p>
+                <div style="background: rgba(45, 106, 79, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(45, 106, 79, 0.2); margin-bottom: 2rem;">
+                    <p class="description" style="font-weight: 600; color: var(--text-main); margin-bottom: 1.5rem;">To complete the process, please click below to send us a Pre-filled confirmation message via WhatsApp.</p>
+                    <a href="${waLink}" id="waRedirectBtn" class="btn-primary" style="text-decoration: none; width: fit-content; margin: 0 auto; padding: 1rem 2rem;">Yes, Send Confirmation via WhatsApp</a>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem; font-style: italic;">(Note: Registration will not be complete without this final whatsapp message)</p>
+                </div>
+            `;
+
+            successDiv.style.display = 'block';
+        }
+        // --- Payment Logic ---
+        function calculateFee() {
+            const isComplimentary = document.getElementById('complimentary-badge').style.display !== 'none';
+            const total = isComplimentary ? 0 : 499;
+
+            const feeBox = document.getElementById('payment-summary-box');
+            const feeDisplay = document.getElementById('total-fee-display');
+            const hiddenTotalFee = document.getElementById('hiddenTotalFee');
+
+            if (total > 0) {
+                feeDisplay.innerText = `₹${total}`;
+                document.getElementById('payment-confirm-amt').innerText = `₹${total}`;
+                hiddenTotalFee.value = total;
+                feeBox.style.display = 'flex';
+
+                // Update UPI links
+                const upiQuery = `pa=junglecubsgym7@oksbi&pn=Jungle%20Cubs%20Gym&am=${total}&cu=INR`;
+                document.getElementById('gpay-btn').href = `gpay://upi/pay?${upiQuery}`;
+                document.getElementById('phonepe-btn').href = `phonepe://pay?${upiQuery}`;
+                document.getElementById('paytm-btn').href = `paytmmp://pay?${upiQuery}`;
+                document.getElementById('upi-pay-btn').href = `upi://pay?${upiQuery}`;
+
+                // Make payment fields required
+                document.getElementById('paymentScreenshot').required = true;
+                document.getElementById('paymentConfirmCheck').required = true;
+            } else {
+                feeBox.style.display = 'none';
+                hiddenTotalFee.value = '0';
+                document.getElementById('paymentScreenshot').required = false;
+                document.getElementById('paymentConfirmCheck').required = false;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateFee();
+        });
+
+        // File to Base64 Conversion
+        document.getElementById('paymentScreenshot').addEventListener('change', function (e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (evt) {
+                    const base64String = evt.target.result.split(',')[1];
+                    document.getElementById('paymentScreenshotData').value = base64String;
+                    document.getElementById('paymentScreenshotMimeType').value = file.type;
+                    document.getElementById('paymentScreenshotName').value = file.name;
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('paymentScreenshotData').value = '';
+                document.getElementById('paymentScreenshotMimeType').value = '';
+                document.getElementById('paymentScreenshotName').value = '';
+            }
+        });
+
+        // --- Modal Logic ---
+        document.getElementById('openTncModal').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('tncModal').style.display = 'flex';
+        });
+
+        document.getElementById('closeTncModal').addEventListener('click', function () {
+            document.getElementById('tncModal').style.display = 'none';
+        });
+
+        // Close when clicking outside the modal content
+        window.addEventListener('click', function (e) {
+            const modal = document.getElementById('tncModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
