@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cubs Sports Toddlers Fest Registration</title>
+    <title>Cubs Sports Fest Toddlers Edition Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- BRAND COLORS & VARS --- */
@@ -194,19 +194,28 @@
 
         input[type="text"],
         input[type="tel"],
+        input[type="email"],
         input[type="date"],
-        input[type="number"],
-        select,
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            padding: 1rem 1.2rem;
-            border: 2px solid #e2e8f0;
+            max-width: 100%;
+            padding: 0 16px;
+            height: 52px;
+            border: 2px solid #e1e5e8;
             border-radius: 12px;
             font-size: 1rem;
-            color: var(--text-main);
-            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Outfit', sans-serif;
             transition: all 0.3s ease;
-            outline: none;
+            background: #fdfdfd;
+            box-sizing: border-box;
+        }
+
+        input[type="date"] {
+            min-height: 52px;
+            appearance: none;
+            -webkit-appearance: none;
+            box-sizing: border-box;
         }
 
         input:focus,
@@ -485,7 +494,7 @@
             <img src="CubsSportsFestLogo.png" alt="Cubs Sports Toddlers Fest Logo"
                 style="max-height: 120px; object-fit: contain; margin-bottom: 1rem;">
             <div class="subtitle">Jungle Cubs Gym Presents</div>
-            <h1 class="title">Cubs Sports Toddlers Fest 🏆</h1>
+            <h1 class="title">Cubs Sports Fest Toddlers Edition 🏆</h1>
             <p class="description">
                 <strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br>
                 <strong>Date:</strong> 📅 25-04-2026<br><br>
@@ -981,7 +990,7 @@
 
             const childName = dataObj['Child (Full Name)'] || "";
 
-            let waText = `🏆 *New Cubs Sports Toddlers Fest Registration!*\nHi Jungle Cubs Gym Team, we have just submitted our registration form:\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Toddlers Fest\nDate: 25 April 2026\n*Time Slot:* ${dataObj['Preferred Time Slot']}\n`;
+            let waText = `🏆 *New Cubs Sports Fest Toddlers Edition Registration!*\nHi Jungle Cubs Gym Team, we have just submitted our registration form:\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Fest Toddlers Edition\nDate: 25 April 2026\n*Time Slot:* ${dataObj['Preferred Time Slot']}\n`;
 
             const totalFee = dataObj['Total Fee'];
             if (totalFee && totalFee > 0) {
@@ -1001,7 +1010,7 @@
             successDiv.innerHTML = `
                 <div class="success-icon">✓</div>
                 <h2 class="title" style="font-size: 2rem;">Registration Saved!</h2>
-                <p class="description" style="margin-top: 1rem; margin-bottom: 2rem;">Your data has been securely saved to our system.</p>
+                <p class="description" style="margin-top: 1rem; margin-bottom: 2rem;">Your data has been securely saved to our system for <strong>Cubs Sports Fest Toddlers Edition</strong>.</p>
                 <div style="background: rgba(45, 106, 79, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(45, 106, 79, 0.2); margin-bottom: 2rem;">
                     <p class="description" style="font-weight: 600; color: var(--text-main); margin-bottom: 1.5rem;">To complete the process, please click below to send us a Pre-filled confirmation message via WhatsApp.</p>
                     <a href="${waLink}" id="waRedirectBtn" class="btn-primary" style="text-decoration: none; width: fit-content; margin: 0 auto; padding: 1rem 2rem;">Yes, Send Confirmation via WhatsApp</a>
