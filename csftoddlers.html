@@ -85,11 +85,43 @@
             75% { transform: rotate(-5deg) translateX(-10px); }
         }
 
-        @media (max-width: 800px) {
-            .char { opacity: 0.6; }
-            .c1 { width: 100px; top: -10px; left: -10px; }
-            .c2 { width: 90px; bottom: -10px; right: -10px; }
-            .c3, .c4 { display: none; }
+        @media (max-width: 480px) {
+            body {
+                padding: 1rem 0.3rem; /* Very tight padding for mobile */
+            }
+            .container {
+                padding: 1.5rem 0.8rem;
+                border-radius: 12px;
+            }
+            .title {
+                font-size: 1.8rem;
+                word-wrap: break-word;
+            }
+            .header img {
+                max-height: 80px;
+            }
+            .radio-card {
+                min-width: 90px;
+                padding: 0.8rem 0.5rem;
+                font-size: 0.85rem;
+            }
+            #payment-summary-box {
+                padding: 1rem 0.8rem;
+                width: 100%;
+                box-sizing: border-box;
+            }
+            /* Stack fee calculation on mobile */
+            .fee-calc-row {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 0.5rem;
+            }
+            #total-fee-display {
+                font-size: 1.6rem !important;
+            }
+            .char { opacity: 0.3; }
+            .c1 { width: 60px; top: -5px; left: -5px; }
+            .c2 { width: 50px; bottom: -5px; right: -5px; }
         }
 
         .container {
@@ -235,6 +267,7 @@
 
         .full-width {
             grid-column: 1 / -1;
+            max-width: none !important;
         }
 
         @media (max-width: 600px) {
@@ -599,12 +632,11 @@
                     style="margin-top: 1rem; display: none; background: rgba(45, 106, 79, 0.05); padding: 1.5rem; border-radius: 12px; border: 2px dashed var(--primary); flex-direction: column; gap: 1rem;">
 
                     <!-- Fee Calculation -->
-                    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                    <div class="fee-calc-row" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
                         <div>
-                            <h4 style="font-size: 1.2rem; color: var(--text-main); margin-bottom: 0.2rem;">Total
+                            <h4 style="font-size: 1.1rem; color: var(--text-main); margin-bottom: 0.1rem;">Total
                                 Registration Fee</h4>
-                            <p style="font-size: 0.9rem; color: var(--text-muted); margin: 0;">Based on stay &
-                                participants</p>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Based on participants</p>
                         </div>
                         <div style="font-size: 2rem; font-weight: 700; color: var(--primary);" id="total-fee-display">₹0
                         </div>
