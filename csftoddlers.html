@@ -573,7 +573,9 @@
         </div>
 
         <!-- Progress Label -->
-        <div id="breadcrumb-mobile" style="display: none; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Registration Step 1</div>
+        <div id="breadcrumb-mobile"
+            style="display: none; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+            Registration Step 1</div>
 
         <div class="header">
             <img src="CubsSportsFestLogo.png" alt="Cubs Sports Toddlers Fest Logo"
@@ -848,8 +850,8 @@
     <script>
         // REPLACE THIS URL WITH YOUR DEPLOYED GOOGLE APPS SCRIPT WEB APP URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec';
-        const JCG_WHATSAPP_NUMBER = '919819859302';
-        const OUTSIDER_WHATSAPP_NUMBER = '919702133302'; // Please update this to your inquiry number
+        const JCG_WHATSAPP_NUMBER = '919326770400';
+        const OUTSIDER_WHATSAPP_NUMBER = '919326068804'; // Please update this to your inquiry number
 
         let isInterestMode = false;
 
@@ -859,19 +861,30 @@
 
             const dob = new Date(dobInput);
             const today = new Date();
-            let age = today.getFullYear() - dob.getFullYear();
-            const m = today.getMonth() - dob.getMonth();
 
-            if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
-                age--;
+            let years = today.getFullYear() - dob.getFullYear();
+            let months = today.getMonth() - dob.getMonth();
+
+            // Adjust for day of month
+            if (today.getDate() < dob.getDate()) {
+                months--;
             }
 
-            if (age === 0) {
-                const months = m < 0 ? 12 + m : m;
-                document.getElementById('childAge').value = months + ' months';
-            } else {
-                document.getElementById('childAge').value = age + ' years';
+            // Adjust if months are negative
+            if (months < 0) {
+                years--;
+                months += 12;
             }
+
+            let ageStr = "";
+            if (years > 0) {
+                ageStr += years + (years === 1 ? " Year " : " Years ");
+            }
+            if (months > 0 || years === 0) {
+                ageStr += months + (months === 1 ? " Month" : " Months");
+            }
+
+            document.getElementById('childAge').value = ageStr.trim();
         }
 
         function resetSearch() {
@@ -880,11 +893,11 @@
             document.getElementById('registration-form').reset();
             const bc = document.getElementById('breadcrumb-mobile');
             if (bc) bc.innerText = "Registration Step 1";
-            
+
             // Restore default required status
             document.getElementById('residentialAddress').required = true;
             document.querySelector('input[name="Preferred Time Slot"]').required = true;
-            
+
             calculateFee();
         }
 
@@ -958,11 +971,11 @@
             // Reset UI state
             isInterestMode = false;
             document.querySelectorAll('.registration-only').forEach(el => el.style.display = 'block');
-            
+
             // Set required status for in-house
             document.getElementById('residentialAddress').required = true;
             document.querySelector('input[name="Preferred Time Slot"]').required = true;
-            
+
             description.innerHTML = `<strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br><strong>Date:</strong> 📅 25-04-2026<br><br>✨ Register for our upcoming event. Let's start by looking up your details.`;
             submitBtnText.innerText = "Complete Registration";
             submitBtnSubText.innerText = "and Send us a WhatsApp Message";
@@ -1028,7 +1041,7 @@
                 description.innerHTML = `<strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br><strong>Date:</strong> 📅 25-04-2026<br><br>✨ We are currently accepting registrations for our <strong>In-House Parents</strong> only. However, we'd love to have you join us once we open to the public! Please leave your details below and we'll notify you first.`;
 
                 document.querySelectorAll('.registration-only').forEach(el => el.style.display = 'none');
-                
+
                 // Remove required status for outsiders to prevent submission block
                 document.getElementById('residentialAddress').required = false;
                 document.querySelector('input[name="Preferred Time Slot"]').required = false;
@@ -1054,7 +1067,7 @@
                 const count = (slotCounts && slotCounts[val]) || 0;
                 const card = radio.closest('.radio-card');
                 const labelSpan = card.querySelector('span');
-                
+
                 // Clear any existing "FULL" badges
                 const existingBadge = card.querySelector('.badge-full');
                 if (existingBadge) existingBadge.remove();
@@ -1063,7 +1076,7 @@
                     radio.disabled = true;
                     radio.checked = false;
                     card.classList.add('full');
-                    
+
                     const fullBadge = document.createElement('span');
                     fullBadge.className = 'badge-full';
                     fullBadge.innerText = 'FULL';
@@ -1106,7 +1119,7 @@
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' }
                 });
                 const result = await response.json();
-                
+
                 if (result.result === 'error') {
                     alert(result.error || "There was an error saving your data.");
                     return;
