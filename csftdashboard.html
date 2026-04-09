@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Dashboard | Cubs Sports Toddlers Fest</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --primary-light: #40916c;
+            --secondary: #d8f3dc;
+            --accent: #f4a261;
+            --bg-color: #081c15;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --white: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --gold: #f9ca2b;
+            --card-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, rgba(8, 28, 21, 0.95) 0%, rgba(45, 106, 79, 0.95) 100%), url('https://images.unsplash.com/photo-1551632811-561732d1e306?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--white);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dashboard-container {
+            width: 100%;
+            max-width: 1200px;
+            z-index: 10;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .logo {
+            max-height: 100px;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(to right, #ffffff, #d8f3dc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 600;
+        }
+
+        /* Countdown Styles */
+        .countdown-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            text-align: center;
+            color: var(--text-main);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+            animation: fadeIn 1s ease-out;
+        }
+
+        .countdown-item {
+            flex: 1;
+        }
+
+        .countdown-value {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+
+        .countdown-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .countdown-divider {
+            font-size: 2rem;
+            color: var(--secondary);
+            font-weight: 300;
+            opacity: 0.5;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card.primary {
+            border-top: 5px solid var(--primary);
+        }
+
+        .stat-card.accent {
+            border-top: 5px solid var(--accent);
+        }
+
+        .stat-card.gold {
+            border-top: 5px solid var(--gold);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            width: 50px;
+            height: 50px;
+            background: var(--secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        /* Slot View */
+        .slot-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .slot-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            padding: 2rem;
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .slot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .slot-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .slot-badge {
+            background: var(--secondary);
+            color: var(--primary);
+            padding: 0.4rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 10px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slot-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* Centrewise View */
+        .centre-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 2rem;
+            color: var(--text-main);
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .centre-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .centre-item {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+
+        .centre-item:hover {
+            background: var(--white);
+            transform: scale(1.02);
+        }
+
+        .centre-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .centre-count {
+            background: var(--primary);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Refresh Buttons */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .btn-refresh {
+            background: var(--primary);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-refresh:hover {
+            transform: rotate(180deg) scale(1.1);
+            background: var(--primary-light);
+        }
+
+        .btn-refresh.loading i {
+            animation: spin 1s infinite linear;
+        }
+
+        .last-update {
+            position: fixed;
+            bottom: 2.2rem;
+            left: 2rem;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.7);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            z-index: 100;
+        }
+
+        /* Jungle Characters */
+        .jungle-scene {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            pointer-events: none;
+            overflow: hidden;
+            opacity: 0.6;
+        }
+
+        .char {
+            position: absolute;
+            width: 120px;
+            filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .countdown-section { flex-wrap: wrap; gap: 1rem; }
+            .countdown-divider { display: none; }
+            .countdown-value { font-size: 2.5rem; }
+            .slot-section { grid-template-columns: 1fr; }
+            .title { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jungle-scene">
+        <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char" style="top: 10%; left: 5%; animation-delay: 0s;" alt="">
+        <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char" style="bottom: 15%; right: 5%; animation-delay: 1s;" alt="">
+        <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char" style="top: 20%; right: 10%; animation-delay: 2s;" alt="">
+    </div>
+
+    <div class="dashboard-container">
+        <header>
+            <img src="CubsSportsFestLogo.png" alt="Logo" class="logo">
+            <div class="subtitle">Event Management Dashboard</div>
+            <h1 class="title">Cubs Sports Toddlers Fest 🏆</h1>
+        </header>
+
+        <!-- Countdown Timer -->
+        <div class="countdown-section">
+            <div class="countdown-item">
+                <div class="countdown-value" id="days">00</div>
+                <div class="countdown-label">Days</div>
+            </div>
+            <div class="countdown-divider">:</div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="hours">00</div>
+                <div class="countdown-label">Hours</div>
+            </div>
+            <div class="countdown-divider">:</div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="minutes">00</div>
+                <div class="countdown-label">Minutes</div>
+            </div>
+            <div class="countdown-divider">:</div>
+            <div class="countdown-item">
+                <div class="countdown-value" id="seconds">00</div>
+                <div class="countdown-label">Seconds</div>
+            </div>
+        </div>
+
+        <!-- High Level Stats -->
+        <div class="stats-grid">
+            <div class="stat-card primary">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-label">Total Registered</div>
+                <div class="stat-value" id="total-registered">0</div>
+            </div>
+            <div class="stat-card accent">
+                <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                <div class="stat-label">Available Slots</div>
+                <div class="stat-value" id="available-slots">120</div>
+            </div>
+            <div class="stat-card gold">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-label">Total Capacity</div>
+                <div class="stat-value" id="total-capacity">120</div>
+            </div>
+        </div>
+
+        <!-- Slot Detailed Breakdown -->
+        <div class="slot-section">
+            <div class="slot-card">
+                <div class="slot-header">
+                    <div class="slot-name">Slot 1: 4:00 PM - 5:15 PM</div>
+                    <div class="slot-badge" id="slot1-percent">0% Full</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="slot1-bar" style="width: 0%"></div>
+                </div>
+                <div class="slot-info">
+                    <span>Registered: <span id="slot1-count">0</span></span>
+                    <span>Remaining: <span id="slot1-rem">60</span></span>
+                </div>
+            </div>
+
+            <div class="slot-card">
+                <div class="slot-header">
+                    <div class="slot-name">Slot 2: 5:30 PM - 6:45 PM</div>
+                    <div class="slot-badge" id="slot2-percent">0% Full</div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="slot2-bar" style="width: 0%"></div>
+                </div>
+                <div class="slot-info">
+                    <span>Registered: <span id="slot2-count">0</span></span>
+                    <span>Remaining: <span id="slot2-rem">60</span></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Centrewise Breakdown -->
+        <div class="centre-section">
+            <div class="section-header">
+                <h2 class="section-title"><i class="fas fa-map-marker-alt" style="color: var(--accent);"></i> Centrewise Registrations</h2>
+            </div>
+            <div class="centre-grid" id="centre-list">
+                <!-- Will be populated by JS -->
+                <p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Fetching data...</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="last-update" id="last-update">Last Updated: Just now</div>
+
+    <div class="controls">
+        <button class="btn-refresh" id="refresh-btn" onclick="fetchData()" title="Refresh Data">
+            <i class="fas fa-sync-alt"></i>
+        </button>
+    </div>
+
+    <script>
+        // REPLACE WITH YOUR ACTUAL DEPLOYED WEB APP URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec';
+        const SLOT_LIMIT = 60;
+        const EVENT_DATE = new Date("2026-04-25T16:00:00").getTime();
+
+        /**
+         * Countdown Logic
+         */
+        setInterval(function () {
+            const now = new Date().getTime();
+            const distance = EVENT_DATE - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+        }, 1000);
+
+        /**
+         * Data Fetching
+         */
+        async function fetchData() {
+            const btn = document.getElementById('refresh-btn');
+            btn.classList.add('loading');
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=getDashboard`);
+                const data = await response.json();
+                updateUI(data);
+            } catch (error) {
+                console.warn("Could not fetch real data (likely CORS or deployment issue). Showing demo data for preview.");
+                // Provide mock data if fetch fails (common when opening locally)
+                const mockData = {
+                    registered: 45,
+                    available: 75,
+                    totalSlots: 120,
+                    slotCounts: {
+                        "Slot 1: 4:00pm to 5:15pm": 28,
+                        "Slot 2: 5:30 to 6:45pm": 17
+                    },
+                    centreCounts: {
+                        "Matunga": 12,
+                        "Wadala": 8,
+                        "Chembur": 5,
+                        "Ghatkopar": 10,
+                        "Mulund": 10
+                    },
+                    lastUpdate: "Demo Mode - " + new Date().toLocaleTimeString()
+                };
+                updateUI(mockData);
+            } finally {
+                btn.classList.remove('loading');
+            }
+        }
+
+        function updateUI(data) {
+            // Update Stats
+            document.getElementById('total-registered').innerText = data.registered;
+            document.getElementById('available-slots').innerText = data.available;
+            
+            // Update Slots
+            const s1Key = Object.keys(data.slotCounts).find(k => k.includes("Slot 1"));
+            const s2Key = Object.keys(data.slotCounts).find(k => k.includes("Slot 2"));
+            
+            const s1Count = data.slotCounts[s1Key] || 0;
+            const s2Count = data.slotCounts[s2Key] || 0;
+
+            document.getElementById('slot1-count').innerText = s1Count;
+            document.getElementById('slot1-rem').innerText = SLOT_LIMIT - s1Count;
+            const s1Percent = Math.min(100, (s1Count / SLOT_LIMIT) * 100);
+            document.getElementById('slot1-bar').style.width = `${s1Percent}%`;
+            document.getElementById('slot1-percent').innerText = `${Math.round(s1Percent)}% Full`;
+
+            document.getElementById('slot2-count').innerText = s2Count;
+            document.getElementById('slot2-rem').innerText = SLOT_LIMIT - s2Count;
+            const s2Percent = Math.min(100, (s2Count / SLOT_LIMIT) * 100);
+            document.getElementById('slot2-bar').style.width = `${s2Percent}%`;
+            document.getElementById('slot2-percent').innerText = `${Math.round(s2Percent)}% Full`;
+
+            // Update Centres
+            const centreList = document.getElementById('centre-list');
+            centreList.innerHTML = '';
+            
+            const entries = Object.entries(data.centreCounts).sort((a, b) => b[1] - a[1]);
+            
+            if (entries.length === 0) {
+                centreList.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No registrations yet.</p>';
+            }
+
+            entries.forEach(([name, count]) => {
+                const item = document.createElement('div');
+                item.className = 'centre-item';
+                item.innerHTML = `
+                    <span class="centre-name">${name}</span>
+                    <span class="centre-count">${count}</span>
+                `;
+                centreList.appendChild(item);
+            });
+
+            document.getElementById('last-update').innerText = `Last Updated: ${data.lastUpdate}`;
+        }
+
+        // Auto Refresh every 5 minutes
+        setInterval(fetchData, 5 * 60 * 1000);
+
+        // Initial fetch
+        window.onload = fetchData;
+    </script>
+</body>
+
+</html>
