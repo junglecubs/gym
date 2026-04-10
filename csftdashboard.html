@@ -109,6 +109,10 @@
             margin-bottom: 0.2rem;
         }
 
+        #seconds {
+            color: var(--gold);
+        }
+
         .countdown-label {
             font-size: 0.8rem;
             text-transform: uppercase;
@@ -230,6 +234,7 @@
             border-radius: 50px;
             font-size: 0.8rem;
             font-weight: 700;
+            transition: all 0.5s ease;
         }
 
         .progress-container {
@@ -251,8 +256,24 @@
         .slot-info {
             display: flex;
             justify-content: space-between;
+            align-items: flex-end;
             font-size: 0.9rem;
             font-weight: 600;
+        }
+
+        .rem-label {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .rem-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+            color: var(--primary);
+            display: block;
+            margin-top: 5px;
         }
 
         /* Centrewise View */
@@ -380,7 +401,7 @@
 
         .char {
             position: absolute;
-            width: 120px;
+            width: 144px; /* 20% bigger than 120px */
             filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2));
             animation: float 6s ease-in-out infinite;
         }
@@ -389,6 +410,11 @@
         @keyframes float {
             0%, 100% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-3deg) translateX(0); }
+            50% { transform: rotate(3deg) translateX(10px); }
         }
 
         @keyframes spin {
@@ -419,7 +445,7 @@
 
 <body>
     <div class="jungle-scene">
-        <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char" style="top: 10%; left: 5%; animation-delay: 0s;" alt="">
+        <img src="https://i.postimg.cc/P5f3PB9b/Monkey_climbing_cam2.webp" class="char" style="top: -20px; left: 2%; width: 250px; animation: sway 8s ease-in-out infinite; transform-origin: top center;" alt="">
         <img src="https://i.postimg.cc/mgZXt0Jy/Yoga_poses_for_work_monkey.webp" class="char" style="bottom: 15%; right: 5%; animation-delay: 1s;" alt="">
         <img src="https://i.postimg.cc/fRW2J6pj/Monkey_roll_01.webp" class="char" style="top: 20%; right: 10%; animation-delay: 2s;" alt="">
     </div>
@@ -485,7 +511,10 @@
                 </div>
                 <div class="slot-info">
                     <span>Registered: <span id="slot1-count">0</span></span>
-                    <span>Remaining: <span id="slot1-rem">60</span></span>
+                    <div class="rem-label">
+                        <span>Remaining Slots</span>
+                        <span class="rem-value" id="slot1-rem">60</span>
+                    </div>
                 </div>
             </div>
 
@@ -499,7 +528,10 @@
                 </div>
                 <div class="slot-info">
                     <span>Registered: <span id="slot2-count">0</span></span>
-                    <span>Remaining: <span id="slot2-rem">60</span></span>
+                    <div class="rem-label">
+                        <span>Remaining Slots</span>
+                        <span class="rem-value" id="slot2-rem">60</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -585,6 +617,12 @@
             }
         }
 
+        function getStatusColor(percent) {
+            if (percent <= 50) return '#287844'; // Green
+            if (percent <= 75) return '#f9ca2b'; // Gold
+            return '#c72e31'; // Red
+        }
+
         function updateUI(data) {
             // Update Stats
             document.getElementById('total-registered').innerText = data.registered;
@@ -597,17 +635,41 @@
             const s1Count = data.slotCounts[s1Key] || 0;
             const s2Count = data.slotCounts[s2Key] || 0;
 
+            // Slot 1 Logic
             document.getElementById('slot1-count').innerText = s1Count;
             document.getElementById('slot1-rem').innerText = SLOT_LIMIT - s1Count;
             const s1Percent = Math.min(100, (s1Count / SLOT_LIMIT) * 100);
-            document.getElementById('slot1-bar').style.width = `${s1Percent}%`;
-            document.getElementById('slot1-percent').innerText = `${Math.round(s1Percent)}% Full`;
+            const s1Color = getStatusColor(s1Percent);
+            
+            const bar1 = document.getElementById('slot1-bar');
+            bar1.style.width = `${s1Percent}%`;
+            bar1.style.background = s1Color;
 
+            const badge1 = document.getElementById('slot1-percent');
+            badge1.innerText = `${Math.round(s1Percent)}% Full`;
+            badge1.style.background = s1Color;
+            badge1.style.color = (s1Percent > 50 && s1Percent <= 75) ? '#2b2d42' : 'white';
+
+            const remValue1 = document.getElementById('slot1-rem');
+            remValue1.style.color = s1Color;
+
+            // Slot 2 Logic
             document.getElementById('slot2-count').innerText = s2Count;
             document.getElementById('slot2-rem').innerText = SLOT_LIMIT - s2Count;
             const s2Percent = Math.min(100, (s2Count / SLOT_LIMIT) * 100);
-            document.getElementById('slot2-bar').style.width = `${s2Percent}%`;
-            document.getElementById('slot2-percent').innerText = `${Math.round(s2Percent)}% Full`;
+            const s2Color = getStatusColor(s2Percent);
+
+            const bar2 = document.getElementById('slot2-bar');
+            bar2.style.width = `${s2Percent}%`;
+            bar2.style.background = s2Color;
+
+            const badge2 = document.getElementById('slot2-percent');
+            badge2.innerText = `${Math.round(s2Percent)}% Full`;
+            badge2.style.background = s2Color;
+            badge2.style.color = (s2Percent > 50 && s2Percent <= 75) ? '#2b2d42' : 'white';
+
+            const remValue2 = document.getElementById('slot2-rem');
+            remValue2.style.color = s2Color;
 
             // Update Centres
             const centreList = document.getElementById('centre-list');
