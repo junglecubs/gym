@@ -863,7 +863,7 @@
         const JCG_WHATSAPP_NUMBER = '919326770400';
         const OUTSIDER_WHATSAPP_NUMBER = '919326068804'; // Please update this to your inquiry number
 
-        let isInterestMode = false;
+
 
         function calculateAge() {
             const dobInput = document.getElementById('childDob').value;
@@ -978,8 +978,7 @@
             }
             mobileSearchInput.value = document.getElementById('searchMobile').value;
 
-            // Reset UI state
-            isInterestMode = false;
+
             document.querySelectorAll('.registration-only').forEach(el => el.style.display = 'block');
 
             // Set required status for in-house
@@ -992,79 +991,62 @@
             compBadge.style.display = 'none';
             feeNotice.style.display = 'none';
 
-            if (isFound) {
+            if (isFound && data && data["_isComplimentary"]) {
                 badge.className = 'status-badge inhouse';
                 badge.innerText = 'In-house Parent';
                 membershipInput.value = 'In-house Parent (Jungle Cubs Gym member)';
 
-                if (data) {
-                    for (const [key, val] of Object.entries(data)) {
-                        const k = key.toLowerCase();
-                        if (!val) continue;
-
-                        if (k.includes('child') && k.includes('name')) document.getElementById('childName').value = val;
-                        else if (k.includes('dob')) {
-                            try {
-                                const d = new Date(val);
-                                if (!isNaN(d.getTime())) {
-                                    const year = d.getFullYear();
-                                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                                    const day = String(d.getDate()).padStart(2, '0');
-                                    document.getElementById('childDob').value = `${year}-${month}-${day}`;
-                                    calculateAge();
-                                }
-                            } catch (e) { }
-                        }
-                        else if (k.includes('mother') && k.includes('name')) document.getElementById('motherName').value = val;
-                        else if (k.includes('mother') && (k.includes('mob') || k.includes('no'))) document.getElementById('motherMobile').value = val;
-                        else if (k.includes('father') && k.includes('name')) document.getElementById('fatherName').value = val;
-                        else if (k.includes('father') && (k.includes('mob') || k.includes('no'))) document.getElementById('fatherMobile').value = val;
-                        else if (k.includes('centre') || k.includes('center')) {
-                            const select = document.getElementById('centre');
-                            for (let i = 0; i < select.options.length; i++) {
-                                const optVal = select.options[i].value.toLowerCase();
-                                const sheetVal = String(val).toLowerCase().trim();
-                                if (optVal && sheetVal && (optVal.includes(sheetVal) || sheetVal.includes(optVal))) {
-                                    select.selectedIndex = i;
-                                    break;
-                                }
-                            }
-                        }
-                        else if (k.includes('address') || k.includes('resident')) {
-                            const addrEl = document.getElementById('residentialAddress');
-                            if (addrEl) addrEl.value = val;
-                        }
-                    }
-
-                    if (data["_isComplimentary"]) {
-                        compBadge.style.display = 'inline-block';
-                        feeNotice.style.display = 'block';
-                    }
-                }
+                description.innerHTML = `<strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br><strong>Date:</strong> 📅 25-04-2026<br><br>✨ Register for our upcoming event. Let's start by looking up your details.`;
             } else {
-                isInterestMode = true;
                 badge.className = 'status-badge outsider';
                 badge.innerText = 'Outsider';
                 membershipInput.value = 'Outsider (Not a Jungle Cubs Gym Member)';
 
-                // Switch to Interest Capture UI
-                description.innerHTML = `<strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br><strong>Date:</strong> 📅 25-04-2026<br><br>✨ We are currently accepting registrations for our <strong>In-House Parents</strong> only. However, we'd love to have you join us once we open to the public! Please leave your details below and we'll notify you first.`;
+                description.innerHTML = `<strong>Venue:</strong> 📍 Mount Litera International School, BKC, Mumbai.<br><strong>Date:</strong> 📅 25-04-2026<br><br>✨ Welcome! We have now opened registrations for <strong>All Cubs</strong>. Please fill in your details below to register for the festival.`;
+            }
 
-                document.querySelectorAll('.registration-only').forEach(el => el.style.display = 'none');
+            if (isFound && data) {
+                for (const [key, val] of Object.entries(data)) {
+                    const k = key.toLowerCase();
+                    if (!val) continue;
 
-                // Remove required status for outsiders to prevent submission block
-                document.getElementById('residentialAddress').required = false;
-                document.querySelector('input[name="Preferred Time Slot"]').required = false;
-
-                submitBtnText.innerText = "Notify Me When Public Registrations Open";
-                submitBtnSubText.innerText = "We will save your interest and notify you via WhatsApp";
-
-                const select = document.getElementById('centre');
-                for (let i = 0; i < select.options.length; i++) {
-                    if (select.options[i].value === 'Other / Not Applicable') {
-                        select.selectedIndex = i;
-                        break;
+                    if (k.includes('child') && k.includes('name')) document.getElementById('childName').value = val;
+                    else if (k.includes('dob')) {
+                        try {
+                            const d = new Date(val);
+                            if (!isNaN(d.getTime())) {
+                                const year = d.getFullYear();
+                                const month = String(d.getMonth() + 1).padStart(2, '0');
+                                const day = String(d.getDate()).padStart(2, '0');
+                                document.getElementById('childDob').value = `${year}-${month}-${day}`;
+                                calculateAge();
+                            }
+                        } catch (e) { }
                     }
+                    else if (k.includes('mother') && k.includes('name')) document.getElementById('motherName').value = val;
+                    else if (k.includes('mother') && (k.includes('mob') || k.includes('no'))) document.getElementById('motherMobile').value = val;
+                    else if (k.includes('father') && k.includes('name')) document.getElementById('fatherName').value = val;
+                    else if (k.includes('father') && (k.includes('mob') || k.includes('no'))) document.getElementById('fatherMobile').value = val;
+                    else if (k.includes('centre') || k.includes('center')) {
+                        const select = document.getElementById('centre');
+                        for (let i = 0; i < select.options.length; i++) {
+                            const optVal = select.options[i].value.toLowerCase();
+                            const sheetVal = String(val).toLowerCase().trim();
+                            if (optVal && sheetVal && (optVal.includes(sheetVal) || sheetVal.includes(optVal))) {
+                                select.selectedIndex = i;
+                                break;
+                            }
+                        }
+                    }
+                    else if (k.includes('address') || k.includes('resident')) {
+                        const addrEl = document.getElementById('residentialAddress');
+                        if (addrEl) addrEl.value = val;
+                    }
+                }
+
+                if (data["_isComplimentary"]) {
+                    compBadge.style.display = 'inline-block';
+                    feeNotice.style.display = 'block';
                 }
             }
 
@@ -1133,14 +1115,7 @@
             const formData = new FormData(form);
             const dataObj = Object.fromEntries(formData.entries());
 
-            if (isInterestMode) {
-                dataObj['submissionType'] = 'interest';
-                delete dataObj['Residential address'];
-                delete dataObj['Preferred Time Slot'];
-                delete dataObj['Payment Screenshot URL'];
-            } else {
-                dataObj['submissionType'] = 'registration';
-            }
+            dataObj['submissionType'] = 'registration';
 
             try {
                 let screenshotUrl = '';
@@ -1191,17 +1166,12 @@
 
             const childName = dataObj['Child (Full Name)'] || "";
             let waText = "";
-            let targetWhatsApp = JCG_WHATSAPP_NUMBER;
+            const targetWhatsApp = JCG_WHATSAPP_NUMBER;
+            waText = `🏆 *New Cubs Sports Fest Toddlers Edition Registration!*\nHi Jungle Cubs Gym Team, we have just submitted our registration form:\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Fest Toddlers Edition\nDate: 25 April 2026\n*Time Slot:* ${dataObj['Preferred Time Slot']}\n`;
 
-            if (isInterestMode) {
-                targetWhatsApp = OUTSIDER_WHATSAPP_NUMBER;
-                waText = `🏆 *New Cubs Sports Fest Toddlers Edition - Interest Received!*\nHi Jungle Cubs Gym Team, I am interested in joining the festival as an outsider!\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Interested Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Fest Toddlers Edition\nDate: 25 April 2026\n\nPlease notify me once registrations open for the public. Thank you!`;
-            } else {
-                waText = `🏆 *New Cubs Sports Fest Toddlers Edition Registration!*\nHi Jungle Cubs Gym Team, we have just submitted our registration form:\n\n*Child:* ${childName}\n*Parent:* ${parentStr}\n*Mobile:* ${mobileStr}\n*Centre:* ${dataObj['Select your Centre']}\n\nVenue: Mount Litera International School, BKC.\nEvent: Cubs Sports Fest Toddlers Edition\nDate: 25 April 2026\n*Time Slot:* ${dataObj['Preferred Time Slot']}\n`;
-            }
 
             const totalFee = dataObj['Total Fee'];
-            if (!isInterestMode && totalFee && totalFee > 0) {
+            if (totalFee && totalFee > 0) {
                 waText += `\n*Total Amount Paid:* ₹${totalFee}`;
                 if (driveUrl) waText += `\n*Payment Proof:* ${driveUrl}`;
             }
@@ -1214,14 +1184,14 @@
             const successDiv = document.getElementById('success-message');
             successDiv.innerHTML = `
                 <div class="success-icon">✓</div>
-                <h2 class="title" style="font-size: 2rem;">${isInterestMode ? 'Interest Captured!' : 'Registration Saved!'}</h2>
+                <h2 class="title" style="font-size: 2rem;">Registration Saved!</h2>
                 <p class="description" style="margin-top: 1rem; margin-bottom: 2rem;">
-                    ${isInterestMode ? 'We have successfully saved your interest for <strong>Cubs Sports Fest Toddlers Edition</strong>. We will notify you via WhatsApp as soon as we open registrations to the public.' : 'Your data has been securely saved to our system for <strong>Cubs Sports Fest Toddlers Edition</strong>.'}
+                    Your data has been securely saved to our system for <strong>Cubs Sports Fest Toddlers Edition</strong>.
                 </p>
                 <div style="background: rgba(45, 106, 79, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(45, 106, 79, 0.2); margin-bottom: 2rem;">
                     <p class="description" style="font-weight: 600; color: var(--text-main); margin-bottom: 1.5rem;">To complete the process, please click below to send us a Pre-filled confirmation message via WhatsApp.</p>
-                    <a href="${waLink}" id="waRedirectBtn" class="btn-primary" style="text-decoration: none; width: fit-content; margin: 0 auto; padding: 1rem 2rem;">${isInterestMode ? 'Send Interest via WhatsApp' : 'Yes, Send Confirmation via WhatsApp'}</a>
-                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem; font-style: italic;">(${isInterestMode ? 'Note: We will prioritize your notification once this message is received' : 'Note: Registration will not be complete without this final whatsapp message'})</p>
+                    <a href="${waLink}" id="waRedirectBtn" class="btn-primary" style="text-decoration: none; width: fit-content; margin: 0 auto; padding: 1rem 2rem;">Yes, Send Confirmation via WhatsApp</a>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 1rem; font-style: italic;">(Note: Registration will not be complete without this final whatsapp message)</p>
                 </div>
             `;
             successDiv.style.display = 'block';
@@ -1235,7 +1205,7 @@
             const feeDisplay = document.getElementById('total-fee-display');
             const hiddenTotalFee = document.getElementById('hiddenTotalFee');
 
-            if (!isInterestMode && total > 0) {
+            if (total > 0) {
                 feeDisplay.innerText = `₹${total}`;
                 document.getElementById('payment-confirm-amt').innerText = `₹${total}`;
                 hiddenTotalFee.value = total;
