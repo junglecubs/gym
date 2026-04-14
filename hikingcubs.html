@@ -82,6 +82,27 @@
             font-size: 1rem;
         }
 
+        .event-info {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 1.5rem 0;
+            padding: 0.8rem;
+            background: var(--secondary);
+            border-radius: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 600px) {
+            .event-info {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 1rem;
+            }
+        }
+
         /* Initial Step: Search */
         #search-section {
             display: flex;
@@ -394,6 +415,10 @@
                 style="max-height: 120px; object-fit: contain; margin-bottom: 1rem;">
             <div class="subtitle">Jungle Cubs Gym Presents</div>
             <h1 class="title">Hiking Cubs</h1>
+            <div class="event-info">
+                <span>📅 18th & 19th April, 2026</span>
+                <span>📍 Kolad, Maharashtra</span>
+            </div>
             <p class="description">Register for our upcoming adventure. Let's start by looking up your details.</p>
         </div>
 
