@@ -490,12 +490,12 @@
             <div class="stat-card accent">
                 <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
                 <div class="stat-label">Available Slots</div>
-                <div class="stat-value" id="available-slots">120</div>
+                <div class="stat-value" id="available-slots">98</div>
             </div>
             <div class="stat-card gold">
                 <div class="stat-icon"><i class="fas fa-star"></i></div>
                 <div class="stat-label">Total Capacity</div>
-                <div class="stat-value" id="total-capacity">120</div>
+                <div class="stat-value" id="total-capacity">98</div>
             </div>
         </div>
 
@@ -513,7 +513,7 @@
                     <span>Registered: <span id="slot1-count">0</span></span>
                     <div class="rem-label">
                         <span>Remaining Slots</span>
-                        <span class="rem-value" id="slot1-rem">60</span>
+                        <span class="rem-value" id="slot1-rem">45</span>
                     </div>
                 </div>
             </div>
@@ -530,7 +530,7 @@
                     <span>Registered: <span id="slot2-count">0</span></span>
                     <div class="rem-label">
                         <span>Remaining Slots</span>
-                        <span class="rem-value" id="slot2-rem">60</span>
+                        <span class="rem-value" id="slot2-rem">53</span>
                     </div>
                 </div>
             </div>
@@ -559,7 +559,11 @@
     <script>
         // REPLACE WITH YOUR ACTUAL DEPLOYED WEB APP URL
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec';
-        const SLOT_LIMIT = 60;
+        const SLOT_LIMITS = {
+            "Slot 1: 4:00pm to 5:15pm": 45,
+            "Slot 2: 5:30 to 6:45pm": 53
+        };
+        const TOTAL_CAPACITY = 98;
         const EVENT_DATE = new Date("2026-04-25T16:00:00+05:30").getTime();
 
         /**
@@ -636,9 +640,10 @@
             const s2Count = data.slotCounts[s2Key] || 0;
 
             // Slot 1 Logic
+            const s1Limit = SLOT_LIMITS["Slot 1: 4:00pm to 5:15pm"];
             document.getElementById('slot1-count').innerText = s1Count;
-            document.getElementById('slot1-rem').innerText = SLOT_LIMIT - s1Count;
-            const s1Percent = Math.min(100, (s1Count / SLOT_LIMIT) * 100);
+            document.getElementById('slot1-rem').innerText = s1Limit - s1Count;
+            const s1Percent = Math.min(100, (s1Count / s1Limit) * 100);
             const s1Color = getStatusColor(s1Percent);
             
             const bar1 = document.getElementById('slot1-bar');
@@ -654,9 +659,10 @@
             remValue1.style.color = s1Color;
 
             // Slot 2 Logic
+            const s2Limit = SLOT_LIMITS["Slot 2: 5:30 to 6:45pm"];
             document.getElementById('slot2-count').innerText = s2Count;
-            document.getElementById('slot2-rem').innerText = SLOT_LIMIT - s2Count;
-            const s2Percent = Math.min(100, (s2Count / SLOT_LIMIT) * 100);
+            document.getElementById('slot2-rem').innerText = s2Limit - s2Count;
+            const s2Percent = Math.min(100, (s2Count / s2Limit) * 100);
             const s2Color = getStatusColor(s2Percent);
 
             const bar2 = document.getElementById('slot2-bar');
