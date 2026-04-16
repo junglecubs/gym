@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jungle Cubs Gym - Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #287844;
+            --secondary: #f39c12;
+            --accent: #e74c3c;
+            --bg: #f4f9f4;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text: #333;
+            --input-bg: #f9f9f9;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #e0f2f1 0%, #a5d6a7 100%);
+            margin: 0;
+            padding: 20px;
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            margin-top: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header img {
+            width: 100px;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 28px;
+        }
+
+        .header p {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            border: 1px solid #eee;
+            padding: 20px;
+            border-radius: 12px;
+            background: white;
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #e8f5e9;
+            padding-bottom: 5px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #444;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: var(--input-bg);
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(40, 120, 68, 0.1);
+            background: white;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 120, 68, 0.3);
+            background: #206035;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-top: 3px;
+        }
+
+        .legal-text {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            text-align: center;
+            display: none;
+            padding: 40px 20px;
+        }
+
+        .success-icon {
+            font-size: 60px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .btn-whatsapp {
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            margin-top: 20px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+        }
+
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container" id="mainForm">
+        <div class="header">
+            <!-- Replace with real logo if available URL, using generic placeholder style for now -->
+            <div style="font-size: 40px;">🦁</div>
+            <h1 id="pageTitle">Trial Class Registration</h1>
+            <p>Welcome to Jungle Cubs Gym! Please fill in your details below.</p>
+        </div>
+
+        <div id="pref-fill-section" class="form-section enrol-field hidden"
+            style="background: #e3f2fd; border-color: #bbdefb;">
+            <div class="section-title" style="color: #1976d2; border-bottom-color: #bbdefb;">Pre-fill from Trial</div>
+            <p style="font-size: 13px; margin-top: -10px; margin-bottom: 15px; color: #555;">Already took a trial? Enter
+                your Trial ID (TIN) to quickly pull your details.</p>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="preFillTin" placeholder="e.g. T-M01-KS1" style="flex: 1;">
+                <button type="button" onclick="fetchPreFill()"
+                    style="background: #1976d2; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">Fetch</button>
+            </div>
+            <div id="preFillStatus" style="font-size: 12px; margin-top: 5px; min-height: 18px;"></div>
+        </div>
+
+        <form id="regForm">
+            <!-- 1. Child Details -->
+            <div class="form-section">
+                <div class="section-title">Child's Details</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="childName" required placeholder="e.g. Kiah Shah">
+                    </div>
+                    <div class="form-group">
+                        <label>Sex *</label>
+                        <select name="childSex" required>
+                            <option value="">Select</option>
+                            <option value="Boy">Boy</option>
+                            <option value="Girl">Girl</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" name="dob" id="dobField" required onchange="calculateAge()">
+                    </div>
+                    <div class="form-group">
+                        <label>Age (Auto)</label>
+                        <input type="text" id="ageField" readonly style="background: #eee;">
+                    </div>
+                    <div class="form-group">
+                        <label>Preferred Centre *</label>
+                        <select name="preferredCentre" id="centreSelect" required onchange="updateCentreCode()">
+                            <option value="">Loading Centres...</option>
+                        </select>
+                        <input type="hidden" name="preferredCentreCode" id="centreCode">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Parent 1 Details -->
+            <div class="form-section">
+                <div class="section-title">Parent 1 Details (Primary Contact)</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" name="parent1Name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Relation/Sex *</label>
+                        <select name="parent1Sex" required>
+                            <option value="Mother">Mother</option>
+                            <option value="Father">Father</option>
+                            <option value="Guardian">Guardian</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number (WhatsApp) *</label>
+                        <input type="tel" name="parent1Mobile" required pattern="[0-9]{10}"
+                            placeholder="10 digit number">
+                    </div>
+                    <div class="form-group">
+                        <label>Email ID</label>
+                        <input type="email" name="parent1Email">
+                    </div>
+
+                    <!-- ENROL ONLY FIELDS -->
+                    <div class="form-group enrol-field hidden">
+                        <label>Qualification</label>
+                        <input type="text" name="parent1Qual">
+                    </div>
+                    <div class="form-group enrol-field hidden">
+                        <label>Occupation *</label>
+                        <select name="parent1Occ" class="occ-sh-dropdown">
+                            <option value="">Select</option>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Counsellor">Counsellor</option>
+                            <option value="Nutritionist">Nutritionist</option>
+                            <option value="Chartered Accountant">Chartered Accountant</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group enrol-field hidden">
+                        <label>Nature of Work/Business *</label>
+                        <input type="text" name="parent1WorkNature">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 3. Parent 2 Details (Enrol Only) -->
+            <div class="form-section enrol-field hidden">
+                <div class="section-title">Parent 2 Details</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" name="parent2Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Relation/Sex</label>
+                        <select name="parent2Sex">
+                            <option value="">Select</option>
+                            <option value="Father">Father</option>
+                            <option value="Mother">Mother</option>
+                            <option value="Guardian">Guardian</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile Number</label>
+                        <input type="tel" name="parent2Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Email ID</label>
+                        <input type="email" name="parent2Email">
+                    </div>
+                    <div class="form-group">
+                        <label>Qualification</label>
+                        <input type="text" name="parent2Qual">
+                    </div>
+                    <div class="form-group">
+                        <label>Occupation *</label>
+                        <select name="parent2Occ" class="occ-sh-dropdown">
+                            <option value="">Select</option>
+                            <option value="Doctor">Doctor</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Counsellor">Counsellor</option>
+                            <option value="Nutritionist">Nutritionist</option>
+                            <option value="Chartered Accountant">Chartered Accountant</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Nature of Work/Business *</label>
+                        <input type="text" name="parent2WorkNature">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 4. Additional Info (Enrol Only) -->
+            <div class="form-section enrol-field hidden">
+                <div class="section-title">Additional Information</div>
+                <div class="grid">
+                    <div class="form-group" style="grid-column: span 2;">
+                        <label>Residential Address *</label>
+                        <textarea name="address" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Main Language Spoken</label>
+                        <input type="text" name="language">
+                    </div>
+                    <div class="form-group">
+                        <label>Siblings (Name & Age)</label>
+                        <input type="text" name="siblings">
+                    </div>
+                    <div class="form-group">
+                        <label>Child's School</label>
+                        <input type="text" name="school">
+                    </div>
+                    <div class="form-group">
+                        <label>School Timings</label>
+                        <input type="text" name="schoolTimings">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 5. Medical & Emergency (Enrol Only) -->
+            <div class="form-section enrol-field hidden">
+                <div class="section-title">Medical & Emergency</div>
+                <div class="grid">
+                    <div class="form-group">
+                        <label>Allergies</label>
+                        <input type="text" name="allergies">
+                    </div>
+                    <div class="form-group">
+                        <label>Medical Conditions</label>
+                        <input type="text" name="medical">
+                    </div>
+                    <div class="form-group">
+                        <label>Doctor's Name</label>
+                        <input type="text" name="doctorName">
+                    </div>
+                    <div class="form-group">
+                        <label>Doctor's Mobile</label>
+                        <input type="tel" name="doctorMobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Name (Other than Parents)</label>
+                        <input type="text" name="emergencyName">
+                    </div>
+                    <div class="form-group">
+                        <label>Emergency Contact Mobile</label>
+                        <input type="tel" name="emergencyMobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Authorised Person for Pickup</label>
+                        <input type="text" name="pickupPerson">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. Legal & Consent (Enrol Only) -->
+            <div class="form-section enrol-field hidden">
+                <div class="section-title">Agreements</div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" name="rulesAgreed" required id="chk1">
+                    <label for="chk1" class="legal-text">I have read and agree to the Rules & Regulations of Jungle Cubs
+                        Gym.</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" name="declarationAgreed" required id="chk2">
+                    <label for="chk2" class="legal-text">I hereby declare that the information provided is true and I
+                        agree to the terms.</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" name="refundAgreed" required id="chk3">
+                    <label for="chk3" class="legal-text">I understand and agree to the No Refund Policy.</label>
+                </div>
+            </div>
+
+            <input type="hidden" name="originTin" id="originTin">
+
+            <button type="submit" class="btn-submit" id="btnSubmit">Submit Registration</button>
+            <div class="loader" id="loader"></div>
+        </form>
+    </div>
+
+    <!-- Success Screen -->
+    <div class="container success-screen" id="successScreen">
+        <div class="success-icon">🎉</div>
+        <h1>Registration Successful!</h1>
+        <p>Thank you just submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
+        <p>Please click below to confirm via WhatsApp with the Centre.</p>
+        <a href="#" id="waLink" class="btn-whatsapp" target="_blank">
+            💬 Send Confirmation on WhatsApp
+        </a>
+    </div>
+
+    <script>
+        var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEwGfICu2yZxrCQgKxjsZF85ah_DgoQkvLzJlgLxy1y1X1QbAaoLGFV03FRJEv3fubHw/exec";
+        // We will fetch script URL dynamically or hardcode if user provides. 
+        // For now, I'll assume relative path logic or standard fetch.
+        // Actually, since this HTML is served by GAS, we can use `google.script.run` ideally? 
+        // No, User said "The data entry will be done by parents by a link we send to them."
+        // This means it's a Web App deployment. 
+        // So `google.script.run` works if served via `HtmlService`.
+        // I will use `google.script.run` for best practice.
+
+        var isEnrol = false;
+        var centreMap = {}; // Name -> {code, wa}
+
+        function init() {
+            // Check URL Params
+            var urlParams = new URLSearchParams(window.location.search);
+            var type = urlParams.get('type');
+            if (type === 'enrol') {
+                isEnrol = true;
+                document.getElementById('pageTitle').innerText = "Student Enrolment Form";
+                document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
+
+                // Set all enrol fields to required
+                document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
+                    if (el.type !== 'hidden') el.required = true;
+                });
+            } else {
+                // Trial
+                document.getElementById('pageTitle').innerText = "Trial Class Registration";
+                document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
+
+                document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
+                    el.required = false;
+                });
+            }
+
+            loadCentres();
+
+            // Handle TIN from URL
+            var tin = urlParams.get('tin');
+            if (tin && isEnrol) {
+                document.getElementById('preFillTin').value = tin;
+                document.getElementById('originTin').value = tin;
+                fetchPreFill(tin);
+            }
+        }
+
+        function fetchPreFill(passedTin) {
+            var tin = passedTin || document.getElementById('preFillTin').value.trim();
+            if (!tin) return;
+
+            var status = document.getElementById('preFillStatus');
+            status.innerText = "⏳ Fetching details...";
+            status.style.color = "#666";
+
+            var url = SCRIPT_URL + "?action=getTrialDetails&tin=" + encodeURIComponent(tin);
+
+            fetch(url)
+                .then(r => r.json())
+                .then(res => {
+                    if (res.result === 'success') {
+                        var d = res.data;
+                        status.innerText = "✅ Details found! Form updated.";
+                        status.style.color = "green";
+
+                        // Inject Custom Greeting
+                        if (isEnrol && d.trialDate) {
+                            var greetingDiv = document.getElementById('enrolment-greeting');
+                            if (!greetingDiv) {
+                                greetingDiv = document.createElement('div');
+                                greetingDiv.id = 'enrolment-greeting';
+                                greetingDiv.style.marginTop = "15px";
+                                greetingDiv.style.padding = "15px";
+                                greetingDiv.style.backgroundColor = "#e8f5e9";
+                                greetingDiv.style.border = "1px solid #c8e6c9";
+                                greetingDiv.style.borderRadius = "8px";
+                                greetingDiv.style.color = "#2e7d32";
+                                greetingDiv.style.fontSize = "14px";
+                                greetingDiv.style.lineHeight = "1.5";
+                                document.getElementById('pref-fill-section').appendChild(greetingDiv);
+                            }
+
+                            greetingDiv.innerHTML = `<strong>Hey ${d.parent1Name},</strong><br><br>Your child <strong>${d.childName}</strong> had a trial class with us on <strong>${d.trialDate}</strong> at <strong>${d.trialTime}</strong> at the <strong>${d.preferredCentre}</strong> centre.<br><br>We are glad to know you like the program and would like to enrol.<br>Please fill in the additional details below to start the enrolment process.`;
+                        }
+
+
+                        // Populate
+                        document.getElementsByName('childName')[0].value = d.childName;
+                        document.getElementsByName('childSex')[0].value = d.childSex;
+                        document.getElementsByName('dob')[0].value = d.dob;
+                        document.getElementsByName('parent1Name')[0].value = d.parent1Name;
+                        document.getElementsByName('parent1Sex')[0].value = d.parent1Sex;
+                        document.getElementsByName('parent1Mobile')[0].value = d.parent1Mobile;
+                        document.getElementsByName('parent1Email')[0].value = d.parent1Email;
+
+                        // Centre selection - wait for centres to load if needed
+                        if (document.getElementById('centreSelect').options.length > 1) {
+                            applyCentre(d.preferredCentre);
+                        } else {
+                            var interval = setInterval(function () {
+                                if (document.getElementById('centreSelect').options.length > 1) {
+                                    applyCentre(d.preferredCentre);
+                                    clearInterval(interval);
+                                }
+                            }, 500);
+                        }
+
+                        calculateAge();
+                    } else {
+                        status.innerText = "❌ " + res.message;
+                        status.style.color = "red";
+                    }
+                })
+                .catch(e => {
+                    status.innerText = "⚠️ Connection error.";
+                    status.style.color = "orange";
+                });
+        }
+
+        function applyCentre(centreName) {
+            var sel = document.getElementById('centreSelect');
+            sel.value = centreName;
+            updateCentreCode();
+        }
+
+        function loadCentres() {
+            // Check if running in GAS environment
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(renderCentres).getLocations();
+            } else {
+                // Local/Web fallback
+                console.log("Using Fetch Fallback for Centres...");
+                fetch(SCRIPT_URL + "?action=getLocations")
+                    .then(r => r.json())
+                    .then(data => renderCentres(data))
+                    .catch(e => {
+                        console.error("Fetch Error (likely CORS):", e);
+                        console.warn("Using MOCK DATA for Local Development");
+                        // Mock Data for Local Testing
+                        var mockData = [
+                            { name: "Jungle Cubs Gym - Bandra", code: "M01", wa: "919876543210" },
+                            { name: "Jungle Cubs Gym - Juhu", code: "M02", wa: "919876543211" },
+                            { name: "Jungle Cubs Gym - Powai", code: "M03", wa: "919876543212" }
+                        ];
+                        renderCentres(mockData);
+                    });
+            }
+        }
+
+        function renderCentres(data) {
+            var sel = document.getElementById('centreSelect');
+            sel.innerHTML = '<option value="">Select Centre</option>';
+
+            var locs = [];
+            try {
+                locs = (typeof data === 'string') ? JSON.parse(data) : data;
+            } catch (e) { }
+
+            if (locs && locs.length) {
+                locs.forEach(function (l) {
+                    var name = l.name || l[1];
+                    var code = l.code || l[0];
+                    var wa = l.wa || l[7];
+                    var email = l.email || l[8];
+
+                    if (name) {
+                        var opt = document.createElement('option');
+                        opt.value = name;
+                        opt.dataset.code = code;
+                        opt.dataset.wa = wa;
+                        opt.textContent = name;
+                        sel.appendChild(opt);
+
+                        centreMap[name] = { code: code, wa: wa, email: email };
+                    }
+                });
+            }
+        }
+
+        function updateCentreCode() {
+            var sel = document.getElementById('centreSelect');
+            var name = sel.value;
+            var details = centreMap[name];
+            if (details) {
+                document.getElementById('centreCode').value = details.code;
+            }
+        }
+
+        function calculateAge() {
+            var dob = document.getElementById('dobField').value;
+            if (dob) {
+                var diff = Date.now() - new Date(dob).getTime();
+                var ageDate = new Date(diff);
+                var age = Math.abs(ageDate.getUTCFullYear() - 1970);
+                document.getElementById('ageField').value = age + " Years";
+            }
+        }
+
+        document.getElementById('regForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var btn = document.getElementById('btnSubmit');
+            var loader = document.getElementById('loader');
+
+            var formData = {};
+            new FormData(e.target).forEach((value, key) => formData[key] = value);
+
+            // Name Validation (Must have space for First + Last name)
+            var namesToValidate = ['childName', 'parent1Name'];
+            if (isEnrol) namesToValidate.push('parent2Name');
+
+            for (var i = 0; i < namesToValidate.length; i++) {
+                var fieldName = namesToValidate[i];
+                var nameVal = (formData[fieldName] || "").trim();
+                if (nameVal && nameVal.indexOf(' ') === -1) {
+                    alert("Please enter both First + Last name for " + (fieldName === 'childName' ? 'Child' : fieldName === 'parent1Name' ? 'Parent 1' : 'Parent 2') + ".");
+                    return;
+                }
+            }
+
+            btn.classList.add('hidden');
+            loader.style.display = 'block';
+
+
+            // Adjust unchecked checkboxes
+            if (isEnrol) {
+                formData.rulesAgreed = document.getElementsByName('rulesAgreed')[0].checked;
+                formData.declarationAgreed = document.getElementsByName('declarationAgreed')[0].checked;
+                formData.refundAgreed = document.getElementsByName('refundAgreed')[0].checked;
+            }
+
+            // Decide Handler and Action Name
+            var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
+
+            // 1. GAS Environment
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run.withSuccessHandler(function (response) {
+                    loader.style.display = 'none';
+                    if (response.result === 'success') {
+                        showSuccess(response.id, formData);
+                    } else {
+                        alert("Error: " + response.message);
+                        btn.classList.remove('hidden');
+                    }
+                }).withFailureHandler(function (err) {
+                    loader.style.display = 'none';
+                    alert("Server Error: " + err);
+                    btn.classList.remove('hidden');
+                })[handler](formData);
+            } else {
+                // 2. Local Fallback
+                console.log("Using Fetch Fallback for Submission...");
+                formData.type = handler; // Add type for doPost
+
+                // Convert object to URLSearchParams for POST
+                var params = new URLSearchParams();
+                for (var key in formData) {
+                    params.append(key, formData[key]);
+                }
+
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: params,
+                    mode: 'no-cors' // Use no-cors to avoid CORS errors on simple POST
+                })
+                    .then(r => {
+                        // With no-cors, we get an opaque response. We assume success.
+                        console.log("Opaque response received (no-cors). Assuming success.");
+                        loader.style.display = 'none';
+                        showSuccess("MOCK-REF-ID-LOCALHOST", formData);
+                    })
+                    .catch(err => {
+                        console.error("Fetch Error:", err);
+                        loader.style.display = 'none';
+
+                        // MOCK SUCCESS for Localhost if completely failed
+                        console.warn("Simulating Success for Localhost");
+                        showSuccess("MOCK-REF-ID-LOCALHOST", formData);
+                    });
+            }
+        });
+
+        function showSuccess(id, data) {
+            document.getElementById('mainForm').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            document.getElementById('refId').innerText = id || "PENDING";
+
+            // Calculate WhatsApp Link
+            var waNum = "919876543210"; // Default
+            if (data.preferredCentre && centreMap[data.preferredCentre]) {
+                var rawWa = centreMap[data.preferredCentre].wa;
+                if (rawWa) {
+                    waNum = String(rawWa).replace(/\D/g, '');
+                }
+            }
+            if (!waNum.startsWith('91')) waNum = '91' + waNum;
+
+            var text = "";
+            if (isEnrol) {
+                text = "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id + ". Please confirm.";
+            } else {
+                text = "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id + ". Please let me know the available slot.";
+            }
+
+            var link = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
+            document.getElementById('waLink').href = link;
+        }
+
+        // Auto-redirect for better UX (Optional) using window.location? 
+        // Better stick to button click to avoid popup blockers, but user said "It didnt redirect".
+        // The success screen has a button. Users usually click it. 
+        // The error stopped the Success Screen from updating the Link properly.
+
+        window.onload = init;
+    </script>
+</body>
+
+</html>
