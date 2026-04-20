@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="format-detection" content="telephone=no">
+    <title>Cubs Sports Fest Ticket</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --secondary: #d8f3dc;
+            --accent: #f4a261;
+            --text-main: #2b2d42;
+            --text-muted: #8d99ae;
+            --white: #ffffff;
+            --slot1-bg: #bbf7d0;
+            --slot1-text: #166534;
+            --slot2-bg: #c7d2fe;
+            --slot2-text: #3730a3;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Container for scaling on mobile view */
+        #ticket-viewport {
+            width: 100%;
+            max-width: 450px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* The Ticket proper - fixed internal units for consistent export */
+        #ticket-card {
+            width: 400px;
+            background: var(--white);
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e1e8ed;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d6a4f 0%, #1b4332 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .header.yellow {
+            background: linear-gradient(135deg, #fdee30 0%, #facc15 100%);
+            color: #2b2d42;
+        }
+        .header.yellow .presents-text, 
+        .header.yellow .event-title, 
+        .header.yellow .ticket-label {
+            color: #2b2d42;
+        }
+        .header.yellow img {
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+        }
+
+        .header.red {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .header img {
+            max-height: 110px;
+            margin: 15px 0;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .presents-text {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2.2px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .event-title {
+            font-size: 1.55rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 5px;
+        }
+
+        .ticket-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 4.4px;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        .ticket-id {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            opacity: 0.7;
+        }
+
+        .content {
+            padding: 40px 30px;
+            text-align: center;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .name-section {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .child-name {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--text-main);
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .parent-info {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .slot-badge {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin: 10px auto;
+            min-width: 200px;
+        }
+
+        .slot-badge.slot1 {
+            background: var(--slot1-bg);
+            color: var(--slot1-text);
+        }
+
+        .slot-badge.slot2 {
+            background: var(--slot2-bg);
+            color: var(--slot2-text);
+        }
+
+        .location-info {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            border: 1px dashed #e2e8f0;
+        }
+
+        .qr-section {
+            margin-top: auto;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background: #fafafa;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+        }
+
+        .qr-container img {
+            width: 150px;
+            height: 150px;
+            display: block;
+        }
+
+        .scan-instruction {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .actions {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-download {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(45, 106, 79, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(45, 106, 79, 0.3);
+        }
+
+        .btn-download:active {
+            transform: translateY(0);
+        }
+
+        .loading-msg {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-style: italic;
+            display: none;
+        }
+
+        /* Animation for the card */
+        #ticket-card {
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Ticket notches for classic look */
+        .notches {
+            position: absolute;
+            top: 250px; /* Adjust according to header height */
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .notch {
+            width: 20px;
+            height: 40px;
+            background: #f0f4f8; /* Needs to match body bg */
+            border-radius: 20px;
+        }
+
+        .notch-left { margin-left: -10px; }
+        .notch-right { margin-right: -10px; }
+    </style>
+</head>
+
+<body>
+
+    <div id="ticket-viewport">
+        <div id="ticket-card">
+            <div class="ticket-id" id="displayId">#000</div>
+            
+            <div class="header">
+                <div class="presents-text">Jungle Cubs Gym presents</div>
+                <div class="event-title">Cubs Sports Fest<br>Toddlers Edition</div>
+                <img src="CubsSportsFestLogo.png" alt="Logo">
+                <div class="ticket-label">Entry Ticket</div>
+            </div>
+
+            <div class="notches">
+                <div class="notch notch-left"></div>
+                <div class="notch notch-right"></div>
+            </div>
+
+            <div class="content">
+                <div class="name-section">
+                    <div class="child-name" id="displayName">Super Cub</div>
+                    <div class="parent-info">
+                        <span id="displayParent">Parent</span> | <span id="displayMobile">9876543210</span>
+                    </div>
+                </div>
+
+                <div id="slotBadge" class="slot-badge slot1">
+                    <div id="displaySlot">Slot 1</div>
+                    <div id="displayTime" style="font-size: 0.85rem; font-weight: 600; opacity: 0.9;">4:00 PM - 5:15 PM</div>
+                </div>
+
+                <div class="location-info">
+                    📍 <strong>Mount Litera International School</strong><br>
+                    BKC, Mumbai • 25th April, 2026
+                </div>
+            </div>
+
+            <div class="qr-section">
+                <div class="scan-instruction">Scan for entry</div>
+                <div class="qr-container">
+                    <img id="qrImg" src="" alt="QR Code">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn-download" onclick="downloadTicket()">
+            <span>📥 Download Ticket</span>
+        </button>
+        <div class="loading-msg" id="loadingMsg">Generating high-res ticket...</div>
+    </div>
+
+    <script>
+        // 1. URL Parameter Parsing
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name') || 'Super Cub';
+        const parent = params.get('parent') || 'Parent Name';
+        const mobile = params.get('mobile') || '9876543210';
+        const slotRaw = params.get('slot') || 'Slot 1';
+        const id = params.get('id') || '001';
+        const color = params.get('color') || ''; // 'yellow' or 'red'
+
+        // 2. Data Formatting
+        const isSlot2 = slotRaw.toLowerCase().includes('slot 2');
+        const slotName = isSlot2 ? 'Slot 2' : 'Slot 1';
+        const slotTime = isSlot2 ? '5:30 PM - 6:45 PM' : '4:00 PM - 5:15 PM';
+
+        // 3. UI Updates
+        document.getElementById('displayName').textContent = name;
+        document.getElementById('displayParent').textContent = parent;
+        document.getElementById('displayMobile').textContent = mobile;
+        document.getElementById('displaySlot').textContent = slotName;
+        document.getElementById('displayTime').textContent = slotTime;
+        document.getElementById('displayId').textContent = '#' + String(id).padStart(3, '0');
+
+        const badge = document.getElementById('slotBadge');
+        if (isSlot2) {
+            badge.classList.remove('slot1');
+            badge.classList.add('slot2');
+        }
+
+        // Apply theme color
+        if (color === 'yellow' || color === 'red') {
+            document.querySelector('.header').classList.add(color);
+        }
+
+        // 4. QR Code Generation (JSON)
+        const qrData = JSON.stringify({
+            id: id,
+            child: name,
+            mobile: mobile,
+            slot: slotName
+        });
+
+        // We use encodeURIComponent so JSON characters don't break the QR generation API
+        const qrText = encodeURIComponent(qrData);
+        // Using QuickChart QR API (Reliable and supports high scale)
+        document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${qrText}&size=300&dark=000&ecLevel=M&margin=1`;
+
+        // 5. Download Function (High-Res)
+        function downloadTicket() {
+            const btn = document.querySelector('.btn-download');
+            const msg = document.getElementById('loadingMsg');
+            const card = document.getElementById('ticket-card');
+
+            btn.style.opacity = '0.5';
+            btn.disabled = true;
+            msg.style.display = 'block';
+
+            // Wait for QR image to definitely be there
+            setTimeout(() => {
+                html2canvas(card, {
+                    scale: 3, // Very high-res for printing/gallery
+                    useCORS: true,
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `CSFT_Ticket_${name.replace(/\s+/g, '_')}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+
+                    btn.style.opacity = '1';
+                    btn.disabled = false;
+                    msg.style.display = 'none';
+                }).catch(err => {
+                    console.error(err);
+                    alert("Download failed. Please take a screenshot.");
+                    btn.style.opacity = '1';
+                    btn.disabled = false;
+                    msg.style.display = 'none';
+                });
+            }, 500);
+        }
+
+        // 6. Mobile Scaling logic
+        function scaleToFit() {
+            const viewport = document.getElementById('ticket-viewport');
+            const card = document.getElementById('ticket-card');
+            const availableWidth = window.innerWidth - 40;
+            const cardWidth = 400;
+
+            if (availableWidth < cardWidth) {
+                const scale = availableWidth / cardWidth;
+                card.style.transform = `scale(${scale})`;
+                card.style.transformOrigin = 'top center';
+                
+                // Adjust container height to prevent overflow issues
+                viewport.style.height = (card.offsetHeight * scale) + 'px';
+            } else {
+                card.style.transform = 'none';
+                viewport.style.height = 'auto';
+            }
+        }
+
+        window.addEventListener('resize', scaleToFit);
+        window.addEventListener('load', scaleToFit);
+    </script>
+</body>
+
+</html>
