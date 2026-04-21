@@ -293,6 +293,51 @@
 
         .notch-left { margin-left: -10px; }
         .notch-right { margin-right: -10px; }
+
+        /* Save Overlay for Mobile */
+        #save-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: white;
+            text-align: center;
+        }
+
+        #save-overlay img {
+            max-width: 90%;
+            max-height: 70%;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 20px;
+        }
+
+        .overlay-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay-instruction {
+            font-size: 1.1rem;
+            font-weight: 600;
+            max-width: 300px;
+        }
     </style>
 </head>
 
@@ -340,6 +385,16 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Mobile Save Overlay -->
+    <div id="save-overlay">
+        <div class="overlay-close" onclick="closeOverlay()">✕</div>
+        <img id="preview-img" src="" alt="Ticket Preview">
+        <div class="overlay-instruction">
+            👆 <strong>Long-press the image</strong> and select <strong>"Save to Photos"</strong> (or "Download Image") to save it to your gallery.
+        </div>
+        <button class="btn-download" style="margin-top: 20px; background: #444;" onclick="closeOverlay()">Done</button>
     </div>
 
     <div class="actions">
@@ -396,7 +451,7 @@
         // Using QuickChart QR API (Reliable and supports high scale)
         document.getElementById('qrImg').src = `https://quickchart.io/qr?text=${qrText}&size=300&dark=000&ecLevel=M&margin=1`;
 
-        // 5. Download Function (High-Res)
+        // 5. Download Function (Fixed translucent film & Improved iOS save)
         function downloadTicket() {
             const btn = document.querySelector('.btn-download');
             const msg = document.getElementById('loadingMsg');
@@ -406,19 +461,42 @@
             btn.disabled = true;
             msg.style.display = 'block';
 
-            // Wait for QR image to definitely be there
+            // IMPORTANT: Disable animation during capture to fix the "translucent film" issue
+            const originalAnimation = card.style.animation;
+            card.style.animation = 'none';
+            card.style.opacity = '1'; 
+
+            // Wait for QR image and animation stop
             setTimeout(() => {
                 html2canvas(card, {
-                    scale: 3, // Very high-res for printing/gallery
+                    scale: 3, 
                     useCORS: true,
-                    backgroundColor: null,
-                    logging: false
+                    backgroundColor: '#ffffff', // Explicit background to prevent transparency
+                    logging: false,
+                    onclone: (clonedDoc) => {
+                        // Ensure cloned element is visible and not animated
+                        const clonedCard = clonedDoc.getElementById('ticket-card');
+                        clonedCard.style.animation = 'none';
+                        clonedCard.style.opacity = '1';
+                    }
                 }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `CSFT_Ticket_${name.replace(/\s+/g, '_')}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
+                    const dataUrl = canvas.toDataURL('image/png');
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
+                    if (isIOS) {
+                        // Show overlay for iOS "Save to Gallery"
+                        document.getElementById('preview-img').src = dataUrl;
+                        document.getElementById('save-overlay').style.display = 'flex';
+                    } else {
+                        // Direct download for Android/Desktop
+                        const link = document.createElement('a');
+                        link.download = `CSFT_Ticket_${name.replace(/\s+/g, '_')}.png`;
+                        link.href = dataUrl;
+                        link.click();
+                    }
+
+                    // Restore state
+                    card.style.animation = originalAnimation;
                     btn.style.opacity = '1';
                     btn.disabled = false;
                     msg.style.display = 'none';
@@ -428,8 +506,13 @@
                     btn.style.opacity = '1';
                     btn.disabled = false;
                     msg.style.display = 'none';
+                    card.style.animation = originalAnimation;
                 });
             }, 500);
+        }
+
+        function closeOverlay() {
+            document.getElementById('save-overlay').style.display = 'none';
         }
 
         // 6. Mobile Scaling logic
