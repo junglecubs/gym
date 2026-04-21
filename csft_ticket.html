@@ -98,7 +98,7 @@
         .presents-text {
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 2.2px;
+            letter-spacing: 2px;
             font-weight: 600;
             opacity: 0.9;
             margin-bottom: 8px;
@@ -109,12 +109,13 @@
             font-weight: 800;
             line-height: 1.2;
             margin-bottom: 5px;
+            word-spacing: 2px; /* Add word spacing to prevent bunching */
         }
 
         .ticket-label {
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 4.4px;
+            letter-spacing: 4px;
             font-weight: 700;
             opacity: 0.9;
         }
@@ -478,6 +479,15 @@
                         const clonedCard = clonedDoc.getElementById('ticket-card');
                         clonedCard.style.animation = 'none';
                         clonedCard.style.opacity = '1';
+                        
+                        // Fix for text bunching: Force normal letter spacing and standard word breaks in the clone
+                        const allText = clonedCard.querySelectorAll('.presents-text, .event-title, .ticket-label, .child-name, .parent-info, .slot-badge, .location-info');
+                        allText.forEach(el => {
+                            el.style.letterSpacing = 'normal';
+                            el.style.wordSpacing = 'normal';
+                            el.style.whiteSpace = 'nowrap'; // Prevent accidental wrapping
+                            if(el.classList.contains('event-title')) el.style.whiteSpace = 'normal'; // Allow title to wrap if multi-line
+                        });
                     }
                 }).then(canvas => {
                     const dataUrl = canvas.toDataURL('image/png');
