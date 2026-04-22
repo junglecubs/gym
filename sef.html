@@ -741,22 +741,23 @@
 
                 fetch(SCRIPT_URL, {
                     method: "POST",
-                    body: params,
-                    mode: 'no-cors' // Use no-cors to avoid CORS errors on simple POST
+                    body: params
                 })
-                    .then(r => {
-                        // With no-cors, we get an opaque response. We assume success.
-                        console.log("Opaque response received (no-cors). Assuming success.");
+                    .then(r => r.json())
+                    .then(res => {
                         loader.style.display = 'none';
-                        showSuccess("MOCK-REF-ID-LOCALHOST", formData);
+                        if (res.result === 'success') {
+                            showSuccess(res.id || res.newRefId, formData);
+                        } else {
+                            alert("Error: " + res.message);
+                            btn.classList.remove('hidden');
+                        }
                     })
                     .catch(err => {
                         console.error("Fetch Error:", err);
                         loader.style.display = 'none';
-
-                        // MOCK SUCCESS for Localhost if completely failed
-                        console.warn("Simulating Success for Localhost");
-                        showSuccess("MOCK-REF-ID-LOCALHOST", formData);
+                        alert("Submission Error: " + err);
+                        btn.classList.remove('hidden');
                     });
             }
         });
