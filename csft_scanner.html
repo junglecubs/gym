@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CSFT Scanner App</title>
+    <title>🚀 CSFT Pro-Scanner (High Speed)</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <style>
@@ -19,249 +18,82 @@
             --bg: #f0f4f8;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Outfit', sans-serif;
-        }
-
-        body {
-            background-color: var(--bg);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Outfit', sans-serif; }
+        body { background-color: var(--bg); display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
 
         header {
-            width: 100%;
-            background: var(--primary);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            width: 100%; background: var(--primary); color: white; padding: 15px; text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100;
         }
 
-        header h1 {
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .sync-status {
+            font-size: 0.75rem; background: rgba(0,0,0,0.2); padding: 4px 10px; border-radius: 20px;
+            display: inline-block; margin-top: 5px; font-weight: 600;
         }
 
-        .container {
-            width: 90%;
-            max-width: 500px;
-            margin: 20px auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
+        .container { width: 95%; max-width: 500px; margin: 15px auto; display: flex; flex-direction: column; gap: 15px; }
 
-        /* Stats Card */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+        .stat-card { background: white; padding: 12px 5px; border-radius: 12px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-card .label { font-size: 0.65rem; color: #8d99ae; font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+        .stat-card .value { font-size: 1.2rem; font-weight: 900; color: var(--primary); }
 
-        .stat-card {
-            background: white;
-            padding: 15px;
-            border-radius: 16px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
+        #reader { width: 100%; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: none !important; }
 
-        .stat-card .label {
-            font-size: 0.8rem;
-            color: #8d99ae;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .stat-card .value {
-            font-size: 1.5rem;
-            font-weight: 900;
-            color: var(--primary);
-        }
-
-        /* Scanner Box */
-        #reader {
-            width: 100%;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            border: none !important;
-        }
-
-        #reader__dashboard_section_csr button {
-            background: var(--primary) !important;
-            color: white !important;
-            border: none !important;
-            padding: 10px 20px !important;
-            border-radius: 8px !important;
-            font-family: 'Outfit' !important;
-            font-weight: 700 !important;
-            text-transform: uppercase !important;
-            cursor: pointer !important;
-        }
-
-        /* Result Overlay */
+        /* Result Modal - High Speed Layout */
         #result-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            padding: 20px;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
 
         .result-card {
-            background: white;
-            width: 100%;
-            max-width: 400px;
-            border-radius: 24px;
-            overflow: hidden;
-            text-align: center;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: white; width: 85%; max-width: 380px; border-radius: 24px; overflow: hidden; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
         }
 
-        @keyframes popIn {
-            from {
-                transform: scale(0.8);
-                opacity: 0;
-            }
+        .result-header { padding: 25px; color: white; font-weight: 800; font-size: 1.4rem; }
+        .result-header.success { background: var(--success); }
+        .result-header.warning { background: var(--warning); color: #333; }
+        .result-header.error { background: var(--danger); }
 
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
+        .result-body { padding: 25px; display: flex; flex-direction: column; gap: 10px; }
+        .student-name { font-size: 1.7rem; font-weight: 900; color: #2b2d42; text-transform: uppercase; line-height: 1.1; }
+        .student-details { font-size: 1rem; font-weight: 600; color: #8d99ae; }
+
+        .action-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .btn { padding: 16px; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; border: none; text-transform: uppercase; }
+        .btn-confirm { background: var(--primary); color: white; width: 100%; }
+        .btn-close { background: #eee; color: #666; font-size: 0.9rem; }
+
+        /* Fast Search Box */
+        .search-box { display: flex; gap: 8px; background: white; padding: 10px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .search-box input { flex-grow: 1; border: 1px solid #eee; padding: 10px; border-radius: 8px; font-size: 1rem; outline: none; }
+        .search-box button { background: var(--primary); color: white; border: none; padding: 0 15px; border-radius: 8px; font-weight: 700; }
+
+        #loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary);
+            color: white; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        .result-header {
-            padding: 30px;
-            color: white;
-            font-weight: 800;
-            font-size: 1.5rem;
+        .loader {
+            border: 5px solid rgba(255,255,255,0.3); border-top: 5px solid white;
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px;
         }
 
-        .result-header.success {
-            background: var(--success);
-        }
-
-        .result-header.warning {
-            background: var(--warning);
-            color: #333;
-        }
-
-        .result-header.error {
-            background: var(--danger);
-        }
-
-        .result-body {
-            padding: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .student-name {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: #2b2d42;
-            text-transform: uppercase;
-        }
-
-        .student-slot {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #8d99ae;
-        }
-
-        .check-in-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .close-btn {
-            background: #eee;
-            color: #666;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Search Section */
-        .search-box {
-            display: flex;
-            gap: 10px;
-            background: white;
-            padding: 10px;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-        }
-
-        .search-box input {
-            flex-grow: 1;
-            border: 1px solid #eee;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            outline: none;
-        }
-
-        .search-box button {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0 20px;
-            border-radius: 8px;
-            font-weight: 700;
-        }
-
-        .loading-spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-
 <body>
 
+    <div id="loading-overlay">
+        <div class="loader"></div>
+        <h2 id="loading-text">Loading Participant Database...</h2>
+        <p style="margin-top: 10px; opacity: 0.8;">Please wait while we sync the latest data.</p>
+    </div>
+
     <header>
-        <h1>CSFT Scanner App</h1>
+        <h1>CSFT Pro-Scanner</h1>
+        <div class="sync-status" id="syncStatus">☁️ Cloud Sync: Up to date</div>
     </header>
 
     <div class="container">
@@ -271,198 +103,227 @@
                 <div class="value" id="scanCount">0</div>
             </div>
             <div class="stat-card">
-                <div class="label">Status</div>
-                <div class="value" id="scannerStatus">Ready</div>
+                <div class="label">Pending Sync</div>
+                <div class="value" id="pendingCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">DB Size</div>
+                <div class="value" id="dbSize">0</div>
             </div>
         </div>
 
-        <!-- Camera Section -->
         <div id="reader"></div>
 
-        <!-- Manual Search -->
         <div class="search-box">
-            <input type="text" id="manualMobile" placeholder="Enter Mobile Number">
-            <button onclick="searchManual()">Search</button>
-            <div class="loading-spinner" id="searchSpinner"></div>
+            <input type="text" id="manualMobile" placeholder="Manual Mobile Search">
+            <button onclick="searchManual()">Find</button>
         </div>
     </div>
 
-    <!-- Result Modal -->
     <div id="result-modal">
-        <div id="resultContent" class="result-card">
-            <!-- Content dynamically injected -->
-        </div>
+        <div id="resultContent" class="result-card"></div>
     </div>
 
-    <!-- Audio Beeps -->
     <audio id="beepSuccess" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+    <audio id="beepRepeat" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
     <audio id="beepError" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
 
     <script>
-        // CONFIG: Update this with your actual Web App URL after deployment
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec'; // Placeholder
+        // CONFIG: Update with your NEW Web App URL
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec';
 
+        let localDb = [];
+        let syncQueue = JSON.parse(localStorage.getItem('csft_sync_queue') || '[]');
+        let scanCount = parseInt(localStorage.getItem('csft_total_scanned') || '0');
         let html5QrcodeScanner = null;
-        let scanCount = parseInt(localStorage.getItem('csft_scan_count') || '0');
-        document.getElementById('scanCount').textContent = scanCount;
+        let isProcessing = false;
 
-        function onScanSuccess(decodedText, decodedResult) {
-            console.log(`Code scanned = ${decodedText}`, decodedResult);
+        // 1. Initial Data Load (Instant Verify)
+        window.onload = async () => {
+            updateStats();
+            startSyncLoop();
+            await loadParticipantDb();
+            initScanner();
+        };
 
-            // Pause scanner
-            html5QrcodeScanner.pause(true);
-
+        async function loadParticipantDb() {
             try {
-                // The QR contains JSON: {id, child, mobile, slot}
-                const data = JSON.parse(decodedText);
-                verifyAndShow(data.mobile, data.child);
-            } catch (e) {
-                // If not JSON, it might be raw mobile or URL
-                let mobile = decodedText;
-                if (decodedText.includes('mobile=')) {
-                    const urlParams = new URLSearchParams(decodedText.split('?')[1]);
-                    mobile = urlParams.get('mobile');
+                const callbackName = 'db_load_' + Date.now();
+                const data = await fetchJSONP(`${SCRIPT_URL}?action=getAllRegistrations`, callbackName);
+                if (data.success) {
+                    localDb = data.registrations;
+                    document.getElementById('dbSize').textContent = localDb.length;
+                    document.getElementById('loading-overlay').style.display = 'none';
+                    console.log(`Database loaded: ${localDb.length} records`);
                 }
-                verifyAndShow(mobile, "");
+            } catch (err) {
+                document.getElementById('loading-text').textContent = "Connection Error. Retrying in 5s...";
+                setTimeout(loadParticipantDb, 5000);
             }
         }
 
-        async function verifyAndShow(mobile, childName) {
-            document.getElementById('scannerStatus').textContent = "Verifying...";
+        // 2. High-Speed Local Matching
+        function onScanSuccess(decodedText) {
+            if (isProcessing) return;
+            isProcessing = true;
+            html5QrcodeScanner.pause(true);
 
+            let mobile = "";
             try {
-                const response = await fetch(`${SCRIPT_URL}?action=verifyTicket&mobile=${mobile}&child=${encodeURIComponent(childName)}`);
-                const result = await response.json();
+                const data = JSON.parse(decodedText);
+                mobile = data.mobile;
+            } catch (e) {
+                mobile = decodedText.replace(/\D/g, '').slice(-10);
+            }
 
-                if (result.success) {
-                    showResult(result.student);
-                    document.getElementById('beepSuccess').play();
-                } else {
-                    showError(result.message || "Ticket not found!");
-                    document.getElementById('beepError').play();
-                }
-            } catch (err) {
-                showError("Network Error: " + err.toString());
-                document.getElementById('beepError').play();
-            } finally {
-                document.getElementById('scannerStatus').textContent = "Ready";
+            const cleanMobile = mobile.toString().replace(/\D/g, '').slice(-10);
+            const student = localDb.find(s => s.m === cleanMobile);
+
+            if (student) {
+                showResult(student);
+            } else {
+                showError("TICKET NOT FOUND");
             }
         }
 
         function showResult(student) {
             const modal = document.getElementById('result-modal');
             const content = document.getElementById('resultContent');
-
-            let headerClass = "success";
-            let headerText = "REGISTRATION FOUND";
-            let btnHtml = `<button class="check-in-btn" onclick="performCheckIn('${student.sheet}', ${student.row})">CONFIRM CHECK-IN</button>`;
-
-            if (student.checkedIn) {
-                headerClass = "warning";
-                headerText = "ALREADY CHECKED IN";
-                btnHtml = `<div style="margin: 15px 0; color: #856404; font-weight: 700;">In at: ${student.checkinTime}</div>`;
-            }
+            
+            let alreadyIn = student.ci;
+            let headerClass = alreadyIn ? "warning" : "success";
+            let headerTitle = alreadyIn ? "ALREADY CHECKED IN" : "✅ VALID TICKET";
+            let beepId = alreadyIn ? 'beepRepeat' : 'beepSuccess';
+            
+            document.getElementById(beepId).play();
 
             content.innerHTML = `
-                <div class="result-header ${headerClass}">${headerText}</div>
+                <div class="result-header ${headerClass}">${headerTitle}</div>
                 <div class="result-body">
-                    <div class="student-name">${student.name}</div>
-                    <div class="student-slot">${student.slot}</div>
-                    ${btnHtml}
-                    <button class="close-btn" onclick="closeModal()">CANCEL</button>
+                    <div class="student-name">${student.n}</div>
+                    <div class="student-details">${student.s} | #${student.r} | ${student.m}</div>
+                    ${alreadyIn ? `<div style="color: #856404; font-weight: 800; font-size: 0.9rem;">First in at: ${student.cit}</div>` : ''}
+                    <div class="action-btns">
+                        <button class="btn btn-confirm" onclick="instantCheckIn('${student.m}')">CHECK-IN NOW</button>
+                        <button class="btn btn-close" onclick="closeModal()">CANCEL</button>
+                    </div>
                 </div>
             `;
-
             modal.style.display = 'flex';
+        }
+
+        function instantCheckIn(mobile) {
+            const student = localDb.find(s => s.m === mobile);
+            if (student && !student.ci) {
+                student.ci = true;
+                student.cit = new Date().toLocaleTimeString();
+                
+                // Add to Sync Queue
+                const task = {
+                    action: 'checkIn',
+                    sheet: student.sh,
+                    row: student.r,
+                    id: Date.now()
+                };
+                syncQueue.push(task);
+                saveSyncState();
+                
+                scanCount++;
+                updateStats();
+            }
+            closeModal();
         }
 
         function showError(msg) {
+            document.getElementById('beepError').play();
             const modal = document.getElementById('result-modal');
             const content = document.getElementById('resultContent');
-
             content.innerHTML = `
                 <div class="result-header error">ERROR</div>
                 <div class="result-body">
-                    <div style="font-size: 1.2rem; margin-bottom: 20px;">${msg}</div>
-                    <button class="close-btn" onclick="closeModal()">CLOSE</button>
+                    <div class="student-name">${msg}</div>
+                    <p style="margin: 15px 0;">Student mobile not found in the database.</p>
+                    <button class="btn btn-close" onclick="closeModal()">CLOSE</button>
                 </div>
             `;
-
             modal.style.display = 'flex';
         }
 
-        async function performCheckIn(sheetName, rowNum) {
-            const btn = document.querySelector('.check-in-btn');
-            btn.textContent = "CHECKING IN...";
-            btn.disabled = true;
-
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors', // For GAS CORS issues, or use a better proxy
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'checkIn',
-                        sheet: sheetName,
-                        row: rowNum
-                    })
-                });
-
-                // Since 'no-cors' doesn't return body, we assume success or handle differently
-                // Best practice is to use a GET for actions that need response in simple apps, 
-                // but let's try a small hack or just wait 1s
-
-                // If you want robust feedback, use GET for checkin or handle CORS in GAS
-
-                setTimeout(() => {
-                    scanCount++;
-                    localStorage.setItem('csft_scan_count', scanCount);
-                    document.getElementById('scanCount').textContent = scanCount;
-
-                    const content = document.getElementById('resultContent');
-                    content.innerHTML = `
-                        <div class="result-header success">CHECKED IN!</div>
-                        <div class="result-body">
-                            <div style="font-size: 3rem; margin: 10px 0;">✅</div>
-                            <div style="font-weight: 700;">SUCCESSFUL</div>
-                            <button class="check-in-btn" onclick="closeModal()">NEXT SCAN</button>
-                        </div>
-                    `;
-                }, 800);
-
-            } catch (err) {
-                alert("Failed to save check-in. Please try again.");
-                btn.textContent = "CONFIRM CHECK-IN";
-                btn.disabled = false;
-            }
+        // 3. Background Sync Loop
+        let isSyncing = false;
+        async function startSyncLoop() {
+            setInterval(async () => {
+                if (isSyncing || syncQueue.length === 0) return;
+                isSyncing = true;
+                document.getElementById('syncStatus').textContent = `🔄 Syncing... (${syncQueue.length} left)`;
+                
+                const task = syncQueue[0];
+                try {
+                    const callbackName = 'sync_' + task.id;
+                    const res = await fetchJSONP(`${SCRIPT_URL}?action=checkIn&sheet=${encodeURIComponent(task.sheet)}&row=${task.row}`, callbackName);
+                    
+                    if (res.success) {
+                        syncQueue.shift(); // Remove successful sync
+                        saveSyncState();
+                        updateStats();
+                    }
+                } catch (e) {
+                    console.log("Sync failed, will retry...");
+                } finally {
+                    isSyncing = false;
+                    if (syncQueue.length === 0) {
+                        document.getElementById('syncStatus').textContent = "☁️ Cloud Sync: Up to date";
+                    }
+                }
+            }, 3000);
         }
 
-        async function searchManual() {
-            const mobile = document.getElementById('manualMobile').value;
-            if (!mobile || mobile.length < 10) {
-                alert("Please enter a valid 10-digit mobile number.");
-                return;
-            }
+        function saveSyncState() {
+            localStorage.setItem('csft_sync_queue', JSON.stringify(syncQueue));
+            localStorage.setItem('csft_total_scanned', scanCount);
+        }
 
-            document.getElementById('searchSpinner').style.display = 'inline-block';
-            await verifyAndShow(mobile, "");
-            document.getElementById('searchSpinner').style.display = 'none';
+        function updateStats() {
+            document.getElementById('scanCount').textContent = scanCount;
+            document.getElementById('pendingCount').textContent = syncQueue.length;
+        }
+
+        function fetchJSONP(url, callbackName) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const sep = url.includes('?') ? '&' : '?';
+                window[callbackName] = (data) => {
+                    resolve(data);
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                };
+                script.src = `${url}${sep}callback=${callbackName}`;
+                script.onerror = () => {
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    reject();
+                };
+                document.body.appendChild(script);
+            });
+        }
+
+        function searchManual() {
+            const mobile = document.getElementById('manualMobile').value;
+            if (mobile.length >= 10) onScanSuccess(mobile);
         }
 
         function closeModal() {
             document.getElementById('result-modal').style.display = 'none';
-            if (html5QrcodeScanner) html5QrcodeScanner.resume();
+            isProcessing = false;
+            html5QrcodeScanner.resume();
         }
 
-        // Initialize Scanner
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            aspectRatio: 1.0
-        });
-        html5QrcodeScanner.render(onScanSuccess);
-
+        function initScanner() {
+            html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+                fps: 15, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 
+            });
+            html5QrcodeScanner.render(onScanSuccess);
+        }
     </script>
 </body>
-
 </html>
