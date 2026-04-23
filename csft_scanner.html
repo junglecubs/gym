@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -39,7 +40,7 @@
             color: white;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         header h1 {
@@ -70,7 +71,7 @@
             padding: 15px;
             border-radius: 16px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .stat-card .label {
@@ -92,7 +93,7 @@
             background: white;
             border-radius: 24px;
             overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             border: none !important;
         }
 
@@ -115,7 +116,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0, 0, 0, 0.8);
             display: none;
             justify-content: center;
             align-items: center;
@@ -134,8 +135,15 @@
         }
 
         @keyframes popIn {
-            from { transform: scale(0.8); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         .result-header {
@@ -145,9 +153,18 @@
             font-size: 1.5rem;
         }
 
-        .result-header.success { background: var(--success); }
-        .result-header.warning { background: var(--warning); color: #333; }
-        .result-header.error { background: var(--danger); }
+        .result-header.success {
+            background: var(--success);
+        }
+
+        .result-header.warning {
+            background: var(--warning);
+            color: #333;
+        }
+
+        .result-header.error {
+            background: var(--danger);
+        }
 
         .result-body {
             padding: 30px;
@@ -198,7 +215,7 @@
             background: white;
             padding: 10px;
             border-radius: 16px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
 
         .search-box input {
@@ -230,11 +247,17 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
 
     <header>
@@ -277,7 +300,7 @@
 
     <script>
         // CONFIG: Update this with your actual Web App URL after deployment
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQz6P-V3n9k6r7V6rL2N5yPz2y5z2y5z2y5z2/exec'; // Placeholder
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzsF75H2DpID2QQ0MKsXKkkPkdLRuUdHR6F_SlQBL92RNej6mvHebXQ08J5niG_2A/exec'; // Placeholder
 
         let html5QrcodeScanner = null;
         let scanCount = parseInt(localStorage.getItem('csft_scan_count') || '0');
@@ -285,10 +308,10 @@
 
         function onScanSuccess(decodedText, decodedResult) {
             console.log(`Code scanned = ${decodedText}`, decodedResult);
-            
+
             // Pause scanner
             html5QrcodeScanner.pause(true);
-            
+
             try {
                 // The QR contains JSON: {id, child, mobile, slot}
                 const data = JSON.parse(decodedText);
@@ -306,11 +329,11 @@
 
         async function verifyAndShow(mobile, childName) {
             document.getElementById('scannerStatus').textContent = "Verifying...";
-            
+
             try {
                 const response = await fetch(`${SCRIPT_URL}?action=verifyTicket&mobile=${mobile}&child=${encodeURIComponent(childName)}`);
                 const result = await response.json();
-                
+
                 if (result.success) {
                     showResult(result.student);
                     document.getElementById('beepSuccess').play();
@@ -329,11 +352,11 @@
         function showResult(student) {
             const modal = document.getElementById('result-modal');
             const content = document.getElementById('resultContent');
-            
+
             let headerClass = "success";
             let headerText = "REGISTRATION FOUND";
             let btnHtml = `<button class="check-in-btn" onclick="performCheckIn('${student.sheet}', ${student.row})">CONFIRM CHECK-IN</button>`;
-            
+
             if (student.checkedIn) {
                 headerClass = "warning";
                 headerText = "ALREADY CHECKED IN";
@@ -349,14 +372,14 @@
                     <button class="close-btn" onclick="closeModal()">CANCEL</button>
                 </div>
             `;
-            
+
             modal.style.display = 'flex';
         }
 
         function showError(msg) {
             const modal = document.getElementById('result-modal');
             const content = document.getElementById('resultContent');
-            
+
             content.innerHTML = `
                 <div class="result-header error">ERROR</div>
                 <div class="result-body">
@@ -364,7 +387,7 @@
                     <button class="close-btn" onclick="closeModal()">CLOSE</button>
                 </div>
             `;
-            
+
             modal.style.display = 'flex';
         }
 
@@ -384,18 +407,18 @@
                         row: rowNum
                     })
                 });
-                
+
                 // Since 'no-cors' doesn't return body, we assume success or handle differently
                 // Best practice is to use a GET for actions that need response in simple apps, 
                 // but let's try a small hack or just wait 1s
-                
+
                 // If you want robust feedback, use GET for checkin or handle CORS in GAS
-                
+
                 setTimeout(() => {
                     scanCount++;
                     localStorage.setItem('csft_scan_count', scanCount);
                     document.getElementById('scanCount').textContent = scanCount;
-                    
+
                     const content = document.getElementById('resultContent');
                     content.innerHTML = `
                         <div class="result-header success">CHECKED IN!</div>
@@ -420,7 +443,7 @@
                 alert("Please enter a valid 10-digit mobile number.");
                 return;
             }
-            
+
             document.getElementById('searchSpinner').style.display = 'inline-block';
             await verifyAndShow(mobile, "");
             document.getElementById('searchSpinner').style.display = 'none';
@@ -432,8 +455,8 @@
         }
 
         // Initialize Scanner
-        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
-            fps: 10, 
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", {
+            fps: 10,
             qrbox: { width: 250, height: 250 },
             aspectRatio: 1.0
         });
@@ -441,4 +464,5 @@
 
     </script>
 </body>
+
 </html>
