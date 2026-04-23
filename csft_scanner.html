@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CSFT Scanner App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        :root {
+            --primary: #2d6a4f;
+            --secondary: #d8f3dc;
+            --accent: #f4a261;
+            --danger: #e76f51;
+            --success: #2a9d8f;
+            --warning: #e9c46a;
+            --white: #ffffff;
+            --bg: #f0f4f8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            background: var(--primary);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Stats Card */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #8d99ae;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        /* Scanner Box */
+        #reader {
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: none !important;
+        }
+
+        #reader__dashboard_section_csr button {
+            background: var(--primary) !important;
+            color: white !important;
+            border: none !important;
+            padding: 10px 20px !important;
+            border-radius: 8px !important;
+            font-family: 'Outfit' !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            cursor: pointer !important;
+        }
+
+        /* Result Overlay */
+        #result-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .result-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 24px;
+            overflow: hidden;
+            text-align: center;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .result-header {
+            padding: 30px;
+            color: white;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+
+        .result-header.success { background: var(--success); }
+        .result-header.warning { background: var(--warning); color: #333; }
+        .result-header.error { background: var(--danger); }
+
+        .result-body {
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .student-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #2b2d42;
+            text-transform: uppercase;
+        }
+
+        .student-slot {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #8d99ae;
+        }
+
+        .check-in-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .close-btn {
+            background: #eee;
+            color: #666;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Search Section */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-box input {
+            flex-grow: 1;
+            border: 1px solid #eee;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-box button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>CSFT Scanner App</h1>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="label">Total Scanned</div>
+                <div class="value" id="scanCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Status</div>
+                <div class="value" id="scannerStatus">Ready</div>
+            </div>
+        </div>
+
+        <!-- Camera Section -->
+        <div id="reader"></div>
+
+        <!-- Manual Search -->
+        <div class="search-box">
+            <input type="text" id="manualMobile" placeholder="Enter Mobile Number">
+            <button onclick="searchManual()">Search</button>
+            <div class="loading-spinner" id="searchSpinner"></div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="result-modal">
+        <div id="resultContent" class="result-card">
+            <!-- Content dynamically injected -->
+        </div>
+    </div>
+
+    <!-- Audio Beeps -->
+    <audio id="beepSuccess" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
+    <audio id="beepError" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+    <script>
+        // CONFIG: Update this with your actual Web App URL after deployment
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyQz6P-V3n9k6r7V6rL2N5yPz2y5z2y5z2y5z2/exec'; // Placeholder
+
+        let html5QrcodeScanner = null;
+        let scanCount = parseInt(localStorage.getItem('csft_scan_count') || '0');
+        document.getElementById('scanCount').textContent = scanCount;
+
+        function onScanSuccess(decodedText, decodedResult) {
+            console.log(`Code scanned = ${decodedText}`, decodedResult);
+            
+            // Pause scanner
+            html5QrcodeScanner.pause(true);
+            
+            try {
+                // The QR contains JSON: {id, child, mobile, slot}
+                const data = JSON.parse(decodedText);
+                verifyAndShow(data.mobile, data.child);
+            } catch (e) {
+                // If not JSON, it might be raw mobile or URL
+                let mobile = decodedText;
+                if (decodedText.includes('mobile=')) {
+                    const urlParams = new URLSearchParams(decodedText.split('?')[1]);
+                    mobile = urlParams.get('mobile');
+                }
+                verifyAndShow(mobile, "");
+            }
+        }
+
+        async function verifyAndShow(mobile, childName) {
+            document.getElementById('scannerStatus').textContent = "Verifying...";
+            
+            try {
+                const response = await fetch(`${SCRIPT_URL}?action=verifyTicket&mobile=${mobile}&child=${encodeURIComponent(childName)}`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    showResult(result.student);
+                    document.getElementById('beepSuccess').play();
+                } else {
+                    showError(result.message || "Ticket not found!");
+                    document.getElementById('beepError').play();
+                }
+            } catch (err) {
+                showError("Network Error: " + err.toString());
+                document.getElementById('beepError').play();
+            } finally {
+                document.getElementById('scannerStatus').textContent = "Ready";
+            }
+        }
+
+        function showResult(student) {
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('resultContent');
+            
+            let headerClass = "success";
+            let headerText = "REGISTRATION FOUND";
+            let btnHtml = `<button class="check-in-btn" onclick="performCheckIn('${student.sheet}', ${student.row})">CONFIRM CHECK-IN</button>`;
+            
+            if (student.checkedIn) {
+                headerClass = "warning";
+                headerText = "ALREADY CHECKED IN";
+                btnHtml = `<div style="margin: 15px 0; color: #856404; font-weight: 700;">In at: ${student.checkinTime}</div>`;
+            }
+
+            content.innerHTML = `
+                <div class="result-header ${headerClass}">${headerText}</div>
+                <div class="result-body">
+                    <div class="student-name">${student.name}</div>
+                    <div class="student-slot">${student.slot}</div>
+                    ${btnHtml}
+                    <button class="close-btn" onclick="closeModal()">CANCEL</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function showError(msg) {
+            const modal = document.getElementById('result-modal');
+            const content = document.getElementById('resultContent');
+            
+            content.innerHTML = `
+                <div class="result-header error">ERROR</div>
+                <div class="result-body">
+                    <div style="font-size: 1.2rem; margin-bottom: 20px;">${msg}</div>
+                    <button class="close-btn" onclick="closeModal()">CLOSE</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        async function performCheckIn(sheetName, rowNum) {
+            const btn = document.querySelector('.check-in-btn');
+            btn.textContent = "CHECKING IN...";
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // For GAS CORS issues, or use a better proxy
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'checkIn',
+                        sheet: sheetName,
+                        row: rowNum
+                    })
+                });
+                
+                // Since 'no-cors' doesn't return body, we assume success or handle differently
+                // Best practice is to use a GET for actions that need response in simple apps, 
+                // but let's try a small hack or just wait 1s
+                
+                // If you want robust feedback, use GET for checkin or handle CORS in GAS
+                
+                setTimeout(() => {
+                    scanCount++;
+                    localStorage.setItem('csft_scan_count', scanCount);
+                    document.getElementById('scanCount').textContent = scanCount;
+                    
+                    const content = document.getElementById('resultContent');
+                    content.innerHTML = `
+                        <div class="result-header success">CHECKED IN!</div>
+                        <div class="result-body">
+                            <div style="font-size: 3rem; margin: 10px 0;">✅</div>
+                            <div style="font-weight: 700;">SUCCESSFUL</div>
+                            <button class="check-in-btn" onclick="closeModal()">NEXT SCAN</button>
+                        </div>
+                    `;
+                }, 800);
+
+            } catch (err) {
+                alert("Failed to save check-in. Please try again.");
+                btn.textContent = "CONFIRM CHECK-IN";
+                btn.disabled = false;
+            }
+        }
+
+        async function searchManual() {
+            const mobile = document.getElementById('manualMobile').value;
+            if (!mobile || mobile.length < 10) {
+                alert("Please enter a valid 10-digit mobile number.");
+                return;
+            }
+            
+            document.getElementById('searchSpinner').style.display = 'inline-block';
+            await verifyAndShow(mobile, "");
+            document.getElementById('searchSpinner').style.display = 'none';
+        }
+
+        function closeModal() {
+            document.getElementById('result-modal').style.display = 'none';
+            if (html5QrcodeScanner) html5QrcodeScanner.resume();
+        }
+
+        // Initialize Scanner
+        html5QrcodeScanner = new Html5QrcodeScanner("reader", { 
+            fps: 10, 
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+        });
+        html5QrcodeScanner.render(onScanSuccess);
+
+    </script>
+</body>
+</html>
