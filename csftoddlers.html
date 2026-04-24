@@ -594,14 +594,15 @@
             <div class="input-group">
                 <label for="searchMobile">Enter Father's or Mother's Mobile Number 📱</label>
                 <input type="tel" id="searchMobile" placeholder="e.g. 9876543210" pattern="[0-9]{10}" maxlength="10"
-                    minlength="10" title="Please enter exactly 10 digits" required>
+                    minlength="10" title="Please enter exactly 10 digits" required disabled>
             </div>
-            <button class="btn-primary" id="btnVerify" onclick="verifyMobile()">
+            <button class="btn-primary" id="btnVerify" onclick="alert('Registrations are now closed. Thank you!')" disabled>
                 <span>Verify & Continue 🚀</span>
                 <div class="loader" id="verify-loader"></div>
             </button>
             <p id="search-error" style="color: #ef4444; font-size: 0.9rem; margin-top: 0.5rem; display: none;">Could not
                 find a match. Please proceed as a new guest.</p>
+            <p style="color: var(--jc-red); font-weight: 700; margin-top: 1rem; text-align: center;">📢 REGISTRATIONS CLOSED</p>
         </div>
 
         <!-- REGISTRATION FORM -->
@@ -1258,6 +1259,31 @@
         window.addEventListener('click', function (e) {
             const modal = document.getElementById('tncModal');
             if (e.target === modal) modal.style.display = 'none';
+        });
+
+        // 🛑 REGISTRATIONS CLOSED POPUP
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const closedModal = document.createElement('div');
+                closedModal.className = 'modal-overlay';
+                closedModal.style.display = 'flex';
+                closedModal.innerHTML = `
+                    <div class="modal-content" style="text-align: center; border-top: 8px solid var(--jc-red);">
+                        <div class="modal-body">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🏆</div>
+                            <h2 style="color: var(--jc-red); font-weight: 800; font-size: 1.8rem; margin-bottom: 1rem;">Registrations Closed!</h2>
+                            <p style="font-size: 1.1rem; color: var(--text-main); font-weight: 500;">
+                                Thank you for your interest! Registrations for the <strong>Cubs Sports Fest Toddlers Edition</strong> are now closed.
+                            </p>
+                            <p style="color: var(--text-muted); margin-top: 1rem;">
+                                We look forward to seeing you at our future events!
+                            </p>
+                            <button class="btn-primary" style="margin-top: 2rem; background: var(--text-main);" onclick="this.closest('.modal-overlay').style.display='none'">Close View</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(closedModal);
+            }, 500);
         });
     </script>
 </body>
