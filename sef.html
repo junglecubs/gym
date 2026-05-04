@@ -170,6 +170,13 @@
             color: #666;
             line-height: 1.4;
         }
+        
+        .legal-link {
+            color: var(--primary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+        }
 
         /* Success Screen */
         .success-screen {
@@ -218,14 +225,60 @@
                 transform: rotate(360deg);
             }
         }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #888;
+        }
+        
+        #draft-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 11px;
+            display: none;
+            z-index: 999;
+        }
     </style>
 </head>
 
 <body>
 
+    <div id="draft-status">Saving draft...</div>
+
     <div class="container" id="mainForm">
         <div class="header">
-            <!-- Replace with real logo if available URL, using generic placeholder style for now -->
             <div style="font-size: 40px;">🦁</div>
             <h1 id="pageTitle">Trial Class Registration</h1>
             <p>Welcome to Jungle Cubs Gym! Please fill in your details below.</p>
@@ -244,13 +297,13 @@
             <div id="preFillStatus" style="font-size: 12px; margin-top: 5px; min-height: 18px;"></div>
         </div>
 
-        <form id="regForm">
+        <form id="regForm" oninput="queueDraftSave()">
             <!-- 1. Child Details -->
             <div class="form-section">
                 <div class="section-title">Child's Details</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Full Name *</label>
+                        <label>Full Name * (First + Last)</label>
                         <input type="text" name="childName" required placeholder="e.g. Kiah Shah">
                     </div>
                     <div class="form-group">
@@ -284,7 +337,7 @@
                 <div class="section-title">Parent 1 Details (Primary Contact)</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Full Name *</label>
+                        <label>Full Name * (First + Last)</label>
                         <input type="text" name="parent1Name" required>
                     </div>
                     <div class="form-group">
@@ -297,17 +350,17 @@
                     </div>
                     <div class="form-group">
                         <label>Mobile Number (WhatsApp) *</label>
-                        <input type="tel" name="parent1Mobile" required pattern="[0-9]{10}"
-                            placeholder="10 digit number">
+                        <input type="tel" name="parent1Mobile" required pattern="\d{10}" minlength="10" maxlength="10"
+                            placeholder="10 digit number" title="Please enter exactly 10 digits">
                     </div>
                     <div class="form-group">
-                        <label>Email ID</label>
-                        <input type="email" name="parent1Email">
+                        <label>Email ID *</label>
+                        <input type="email" name="parent1Email" required placeholder="e.g. name@email.com">
                     </div>
 
                     <!-- ENROL ONLY FIELDS -->
                     <div class="form-group enrol-field hidden">
-                        <label>Qualification</label>
+                        <label>Qualification *</label>
                         <input type="text" name="parent1Qual">
                     </div>
                     <div class="form-group enrol-field hidden">
@@ -335,11 +388,11 @@
                 <div class="section-title">Parent 2 Details</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Full Name</label>
+                        <label>Full Name * (First + Last)</label>
                         <input type="text" name="parent2Name">
                     </div>
                     <div class="form-group">
-                        <label>Relation/Sex</label>
+                        <label>Relation/Sex *</label>
                         <select name="parent2Sex">
                             <option value="">Select</option>
                             <option value="Father">Father</option>
@@ -348,15 +401,15 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Mobile Number</label>
-                        <input type="tel" name="parent2Mobile">
+                        <label>Mobile Number *</label>
+                        <input type="tel" name="parent2Mobile" pattern="\d{10}" minlength="10" maxlength="10">
                     </div>
                     <div class="form-group">
-                        <label>Email ID</label>
+                        <label>Email ID *</label>
                         <input type="email" name="parent2Email">
                     </div>
                     <div class="form-group">
-                        <label>Qualification</label>
+                        <label>Qualification *</label>
                         <input type="text" name="parent2Qual">
                     </div>
                     <div class="form-group">
@@ -388,19 +441,19 @@
                         <textarea name="address" rows="2"></textarea>
                     </div>
                     <div class="form-group">
-                        <label>Main Language Spoken</label>
+                        <label>Main Language Spoken *</label>
                         <input type="text" name="language">
                     </div>
                     <div class="form-group">
-                        <label>Siblings (Name & Age)</label>
+                        <label>Siblings (Name & Age) *</label>
                         <input type="text" name="siblings">
                     </div>
                     <div class="form-group">
-                        <label>Child's School</label>
+                        <label>Child's School *</label>
                         <input type="text" name="school">
                     </div>
                     <div class="form-group">
-                        <label>School Timings</label>
+                        <label>School Timings *</label>
                         <input type="text" name="schoolTimings">
                     </div>
 
@@ -412,31 +465,31 @@
                 <div class="section-title">Medical & Emergency</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Allergies</label>
+                        <label>Allergies *</label>
                         <input type="text" name="allergies">
                     </div>
                     <div class="form-group">
-                        <label>Medical Conditions</label>
+                        <label>Medical Conditions *</label>
                         <input type="text" name="medical">
                     </div>
                     <div class="form-group">
-                        <label>Doctor's Name</label>
+                        <label>Doctor's Name *</label>
                         <input type="text" name="doctorName">
                     </div>
                     <div class="form-group">
-                        <label>Doctor's Mobile</label>
-                        <input type="tel" name="doctorMobile">
+                        <label>Doctor's Mobile *</label>
+                        <input type="tel" name="doctorMobile" pattern="\d{10}" minlength="10" maxlength="10">
                     </div>
                     <div class="form-group">
-                        <label>Emergency Contact Name (Other than Parents)</label>
+                        <label>Emergency Contact Name * (Other than Parents)</label>
                         <input type="text" name="emergencyName">
                     </div>
                     <div class="form-group">
-                        <label>Emergency Contact Mobile</label>
-                        <input type="tel" name="emergencyMobile">
+                        <label>Emergency Contact Mobile *</label>
+                        <input type="tel" name="emergencyMobile" pattern="\d{10}" minlength="10" maxlength="10">
                     </div>
                     <div class="form-group">
-                        <label>Authorised Person for Pickup</label>
+                        <label>Authorised Person for Pickup *</label>
                         <input type="text" name="pickupPerson">
                     </div>
                 </div>
@@ -448,8 +501,7 @@
 
                 <div class="checkbox-group">
                     <input type="checkbox" name="rulesAgreed" required id="chk1">
-                    <label for="chk1" class="legal-text">I have read and agree to the Rules & Regulations of Jungle Cubs
-                        Gym.</label>
+                    <label for="chk1" class="legal-text">I have read and agree to the <span class="legal-link" onclick="openLegalModal('rules')">Rules & Regulations</span> of Jungle Cubs Gym.</label>
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" name="declarationAgreed" required id="chk2">
@@ -458,7 +510,7 @@
                 </div>
                 <div class="checkbox-group">
                     <input type="checkbox" name="refundAgreed" required id="chk3">
-                    <label for="chk3" class="legal-text">I understand and agree to the No Refund Policy.</label>
+                    <label for="chk3" class="legal-text">I understand and agree to the <span class="legal-link" onclick="openLegalModal('refund')">No Refund Policy</span>.</label>
                 </div>
             </div>
 
@@ -473,28 +525,33 @@
     <div class="container success-screen" id="successScreen">
         <div class="success-icon">🎉</div>
         <h1>Registration Successful!</h1>
-        <p>Thank you just submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
+        <p>Thank you for submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
         <p>Please click below to confirm via WhatsApp with the Centre.</p>
         <a href="#" id="waLink" class="btn-whatsapp" target="_blank">
             💬 Send Confirmation on WhatsApp
         </a>
     </div>
 
+    <!-- Legal Modal -->
+    <div id="legalModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeLegalModal()">&times;</span>
+            <h2 id="modalTitle" style="color: var(--primary);">Legal Document</h2>
+            <div id="modalBody" style="font-size: 13px; line-height: 1.6; color: #555;">
+                <!-- Content injected here -->
+            </div>
+            <button onclick="closeLegalModal()" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; margin-top: 20px; cursor: pointer; width: 100%; font-weight: bold;">I Understand</button>
+        </div>
+    </div>
+
     <script>
         var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEwGfICu2yZxrCQgKxjsZF85ah_DgoQkvLzJlgLxy1y1X1QbAaoLGFV03FRJEv3fubHw/exec";
-        // We will fetch script URL dynamically or hardcode if user provides. 
-        // For now, I'll assume relative path logic or standard fetch.
-        // Actually, since this HTML is served by GAS, we can use `google.script.run` ideally? 
-        // No, User said "The data entry will be done by parents by a link we send to them."
-        // This means it's a Web App deployment. 
-        // So `google.script.run` works if served via `HtmlService`.
-        // I will use `google.script.run` for best practice.
-
+        
         var isEnrol = false;
-        var centreMap = {}; // Name -> {code, wa}
+        var centreMap = {};
+        var draftTimer = null;
 
         function init() {
-            // Check URL Params
             var urlParams = new URLSearchParams(window.location.search);
             var type = urlParams.get('type');
             if (type === 'enrol') {
@@ -507,7 +564,6 @@
                     if (el.type !== 'hidden') el.required = true;
                 });
             } else {
-                // Trial
                 document.getElementById('pageTitle').innerText = "Trial Class Registration";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
 
@@ -518,13 +574,102 @@
 
             loadCentres();
 
-            // Handle TIN from URL
             var tin = urlParams.get('tin');
             if (tin && isEnrol) {
                 document.getElementById('preFillTin').value = tin;
                 document.getElementById('originTin').value = tin;
                 fetchPreFill(tin);
             }
+            
+            // Try to load draft from localStorage
+            loadDraft();
+        }
+
+        // --- 💾 DRAFT & DYNAMIC SAVE LOGIC ---
+        function queueDraftSave() {
+            clearTimeout(draftTimer);
+            document.getElementById('draft-status').style.display = 'block';
+            document.getElementById('draft-status').innerText = 'Saving draft...';
+            
+            draftTimer = setTimeout(saveDraftToServer, 2000); // Wait for 2s pause
+        }
+
+        function saveDraftToServer() {
+            var form = document.getElementById('regForm');
+            var formData = {};
+            new FormData(form).forEach((value, key) => formData[key] = value);
+            
+            // Save to LocalStorage first
+            localStorage.setItem('jcg_form_draft', JSON.stringify(formData));
+            
+            // Only send to server if we have at least a Name or Mobile
+            if (!formData.childName && !formData.parent1Mobile) {
+                document.getElementById('draft-status').style.display = 'none';
+                return;
+            }
+
+            formData.type = 'savePartialForm';
+            
+            // Background fetch (silent)
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: new URLSearchParams(formData)
+            }).then(r => r.json()).then(res => {
+                document.getElementById('draft-status').innerText = '✅ Progress Saved';
+                setTimeout(() => {
+                    document.getElementById('draft-status').style.display = 'none';
+                }, 2000);
+            }).catch(e => {
+                document.getElementById('draft-status').innerText = '⚠️ Offline Mode';
+            });
+        }
+
+        function loadDraft() {
+            var draft = localStorage.getItem('jcg_form_draft');
+            if (draft) {
+                try {
+                    var data = JSON.parse(draft);
+                    var form = document.getElementById('regForm');
+                    Object.keys(data).forEach(key => {
+                        var el = form.elements[key];
+                        if (el && data[key] && !el.value) {
+                            if (el.type === 'checkbox') el.checked = (data[key] === 'true' || data[key] === true);
+                            else el.value = data[key];
+                        }
+                    });
+                    calculateAge();
+                } catch(e) {}
+            }
+        }
+
+        function openLegalModal(type) {
+            var modal = document.getElementById('legalModal');
+            var title = document.getElementById('modalTitle');
+            var body = document.getElementById('modalBody');
+            
+            if (type === 'rules') {
+                title.innerText = "Rules & Regulations";
+                body.innerHTML = `
+                    <p>1. <b>Attendance:</b> Please ensure your child arrives 5 minutes before the session starts.</p>
+                    <p>2. <b>Attire:</b> Comfortable sportswear or gym-wear is mandatory. No jewelry or loose clothing.</p>
+                    <p>3. <b>Safety:</b> Parents must not enter the gym floor during sessions unless specifically invited.</p>
+                    <p>4. <b>Pickup:</b> Children must be picked up promptly after class. Please inform the centre if someone else is picking up.</p>
+                    <p>5. <b>Conduct:</b> Respectful behavior towards coaches and fellow students is expected at all times.</p>
+                `;
+            } else {
+                title.innerText = "No Refund Policy";
+                body.innerHTML = `
+                    <p>1. <b>Finality:</b> All fees paid for registration, enrolment, or sessions are non-refundable under any circumstances.</p>
+                    <p>2. <b>Absence:</b> Fees will not be adjusted or refunded for missed classes due to personal reasons.</p>
+                    <p>3. <b>Transfers:</b> Fees are non-transferable to other students.</p>
+                    <p>4. <b>Medical:</b> In cases of long-term medical issues, a credit note may be issued at the sole discretion of the management, provided a medical certificate is produced.</p>
+                `;
+            }
+            modal.style.display = "block";
+        }
+
+        function closeLegalModal() {
+            document.getElementById('legalModal').style.display = "none";
         }
 
         function fetchPreFill(passedTin) {
@@ -545,27 +690,6 @@
                         status.innerText = "✅ Details found! Form updated.";
                         status.style.color = "green";
 
-                        // Inject Custom Greeting
-                        if (isEnrol && d.trialDate) {
-                            var greetingDiv = document.getElementById('enrolment-greeting');
-                            if (!greetingDiv) {
-                                greetingDiv = document.createElement('div');
-                                greetingDiv.id = 'enrolment-greeting';
-                                greetingDiv.style.marginTop = "15px";
-                                greetingDiv.style.padding = "15px";
-                                greetingDiv.style.backgroundColor = "#e8f5e9";
-                                greetingDiv.style.border = "1px solid #c8e6c9";
-                                greetingDiv.style.borderRadius = "8px";
-                                greetingDiv.style.color = "#2e7d32";
-                                greetingDiv.style.fontSize = "14px";
-                                greetingDiv.style.lineHeight = "1.5";
-                                document.getElementById('pref-fill-section').appendChild(greetingDiv);
-                            }
-
-                            greetingDiv.innerHTML = `<strong>Hey ${d.parent1Name},</strong><br><br>Your child <strong>${d.childName}</strong> had a trial class with us on <strong>${d.trialDate}</strong> at <strong>${d.trialTime}</strong> at the <strong>${d.preferredCentre}</strong> centre.<br><br>We are glad to know you like the program and would like to enrol.<br>Please fill in the additional details below to start the enrolment process.`;
-                        }
-
-
                         // Populate
                         document.getElementsByName('childName')[0].value = d.childName;
                         document.getElementsByName('childSex')[0].value = d.childSex;
@@ -575,7 +699,6 @@
                         document.getElementsByName('parent1Mobile')[0].value = d.parent1Mobile;
                         document.getElementsByName('parent1Email')[0].value = d.parent1Email;
 
-                        // Centre selection - wait for centres to load if needed
                         if (document.getElementById('centreSelect').options.length > 1) {
                             applyCentre(d.preferredCentre);
                         } else {
@@ -606,45 +729,24 @@
         }
 
         function loadCentres() {
-            // Check if running in GAS environment
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(renderCentres).getLocations();
-            } else {
-                // Local/Web fallback
-                console.log("Using Fetch Fallback for Centres...");
-                fetch(SCRIPT_URL + "?action=getLocations")
-                    .then(r => r.json())
-                    .then(data => renderCentres(data))
-                    .catch(e => {
-                        console.error("Fetch Error (likely CORS):", e);
-                        console.warn("Using MOCK DATA for Local Development");
-                        // Mock Data for Local Testing
-                        var mockData = [
-                            { name: "Jungle Cubs Gym - Bandra", code: "M01", wa: "919876543210" },
-                            { name: "Jungle Cubs Gym - Juhu", code: "M02", wa: "919876543211" },
-                            { name: "Jungle Cubs Gym - Powai", code: "M03", wa: "919876543212" }
-                        ];
-                        renderCentres(mockData);
-                    });
-            }
+            fetch(SCRIPT_URL + "?action=getLocations")
+                .then(r => r.json())
+                .then(data => renderCentres(data))
+                .catch(e => {
+                    console.error("Fetch Error:", e);
+                });
         }
 
         function renderCentres(data) {
             var sel = document.getElementById('centreSelect');
             sel.innerHTML = '<option value="">Select Centre</option>';
-
-            var locs = [];
-            try {
-                locs = (typeof data === 'string') ? JSON.parse(data) : data;
-            } catch (e) { }
-
+            var locs = (typeof data === 'string') ? JSON.parse(data) : data;
             if (locs && locs.length) {
                 locs.forEach(function (l) {
                     var name = l.name || l[1];
                     var code = l.code || l[0];
                     var wa = l.wa || l[7];
                     var email = l.email || l[8];
-
                     if (name) {
                         var opt = document.createElement('option');
                         opt.value = name;
@@ -652,7 +754,6 @@
                         opt.dataset.wa = wa;
                         opt.textContent = name;
                         sel.appendChild(opt);
-
                         centreMap[name] = { code: code, wa: wa, email: email };
                     }
                 });
@@ -663,9 +764,7 @@
             var sel = document.getElementById('centreSelect');
             var name = sel.value;
             var details = centreMap[name];
-            if (details) {
-                document.getElementById('centreCode').value = details.code;
-            }
+            if (details) document.getElementById('centreCode').value = details.code;
         }
 
         function calculateAge() {
@@ -682,19 +781,18 @@
             e.preventDefault();
             var btn = document.getElementById('btnSubmit');
             var loader = document.getElementById('loader');
-
             var formData = {};
             new FormData(e.target).forEach((value, key) => formData[key] = value);
 
-            // Name Validation (Must have space for First + Last name)
+            // STRICT NAME VALIDATION (First + Last Name required)
             var namesToValidate = ['childName', 'parent1Name'];
-            if (isEnrol) namesToValidate.push('parent2Name');
+            if (isEnrol && formData.parent2Name) namesToValidate.push('parent2Name');
 
             for (var i = 0; i < namesToValidate.length; i++) {
                 var fieldName = namesToValidate[i];
                 var nameVal = (formData[fieldName] || "").trim();
-                if (nameVal && nameVal.indexOf(' ') === -1) {
-                    alert("Please enter both First + Last name for " + (fieldName === 'childName' ? 'Child' : fieldName === 'parent1Name' ? 'Parent 1' : 'Parent 2') + ".");
+                if (nameVal && nameVal.split(' ').filter(n => n.length > 0).length < 2) {
+                    alert("Please enter both First AND Last name for " + (fieldName === 'childName' ? "your child" : "the parent") + ".");
                     return;
                 }
             }
@@ -702,99 +800,53 @@
             btn.classList.add('hidden');
             loader.style.display = 'block';
 
-
-            // Adjust unchecked checkboxes
-            if (isEnrol) {
-                formData.rulesAgreed = document.getElementsByName('rulesAgreed')[0].checked;
-                formData.declarationAgreed = document.getElementsByName('declarationAgreed')[0].checked;
-                formData.refundAgreed = document.getElementsByName('refundAgreed')[0].checked;
-            }
-
-            // Decide Handler and Action Name
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
+            formData.type = handler;
 
-            // 1. GAS Environment
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                google.script.run.withSuccessHandler(function (response) {
-                    loader.style.display = 'none';
-                    if (response.result === 'success') {
-                        showSuccess(response.id, formData);
-                    } else {
-                        alert("Error: " + response.message);
-                        btn.classList.remove('hidden');
-                    }
-                }).withFailureHandler(function (err) {
-                    loader.style.display = 'none';
-                    alert("Server Error: " + err);
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: new URLSearchParams(formData)
+            })
+            .then(r => r.json())
+            .then(res => {
+                loader.style.display = 'none';
+                if (res.result === 'success') {
+                    localStorage.removeItem('jcg_form_draft'); // Clear draft on success
+                    showSuccess(res.id || res.newRefId, formData);
+                } else {
+                    alert("Error: " + res.message);
                     btn.classList.remove('hidden');
-                })[handler](formData);
-            } else {
-                // 2. Local Fallback
-                console.log("Using Fetch Fallback for Submission...");
-                formData.type = handler; // Add type for doPost
-
-                // Convert object to URLSearchParams for POST
-                var params = new URLSearchParams();
-                for (var key in formData) {
-                    params.append(key, formData[key]);
                 }
-
-                fetch(SCRIPT_URL, {
-                    method: "POST",
-                    body: params
-                })
-                    .then(r => r.json())
-                    .then(res => {
-                        loader.style.display = 'none';
-                        if (res.result === 'success') {
-                            showSuccess(res.id || res.newRefId, formData);
-                        } else {
-                            alert("Error: " + res.message);
-                            btn.classList.remove('hidden');
-                        }
-                    })
-                    .catch(err => {
-                        console.error("Fetch Error:", err);
-                        loader.style.display = 'none';
-                        alert("Submission Error: " + err);
-                        btn.classList.remove('hidden');
-                    });
-            }
+            })
+            .catch(err => {
+                loader.style.display = 'none';
+                alert("Submission Error: " + err);
+                btn.classList.remove('hidden');
+            });
         });
 
         function showSuccess(id, data) {
             document.getElementById('mainForm').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('refId').innerText = id || "PENDING";
-
-            // Calculate WhatsApp Link
-            var waNum = "919876543210"; // Default
+            var waNum = "919876543210";
             if (data.preferredCentre && centreMap[data.preferredCentre]) {
                 var rawWa = centreMap[data.preferredCentre].wa;
-                if (rawWa) {
-                    waNum = String(rawWa).replace(/\D/g, '');
-                }
+                if (rawWa) waNum = String(rawWa).replace(/\D/g, '');
             }
             if (!waNum.startsWith('91')) waNum = '91' + waNum;
-
-            var text = "";
-            if (isEnrol) {
-                text = "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id + ". Please confirm.";
-            } else {
-                text = "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id + ". Please let me know the available slot.";
-            }
-
-            var link = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
-            document.getElementById('waLink').href = link;
+            var text = isEnrol ? 
+                "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id :
+                "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id;
+            document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
         }
-
-        // Auto-redirect for better UX (Optional) using window.location? 
-        // Better stick to button click to avoid popup blockers, but user said "It didnt redirect".
-        // The success screen has a button. Users usually click it. 
-        // The error stopped the Success Screen from updating the Link properly.
 
         window.onload = init;
     </script>
+</body>
+
+</html>
+
 </body>
 
 </html>
