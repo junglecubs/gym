@@ -770,10 +770,26 @@
         function calculateAge() {
             var dob = document.getElementById('dobField').value;
             if (dob) {
-                var diff = Date.now() - new Date(dob).getTime();
-                var ageDate = new Date(diff);
-                var age = Math.abs(ageDate.getUTCFullYear() - 1970);
-                document.getElementById('ageField').value = age + " Years";
+                var now = new Date();
+                var birth = new Date(dob);
+                var years = now.getFullYear() - birth.getFullYear();
+                var months = now.getMonth() - birth.getMonth();
+                
+                if (months < 0 || (months === 0 && now.getDate() < birth.getDate())) {
+                    years--;
+                    months += 12;
+                }
+                
+                if (now.getDate() < birth.getDate()) {
+                    months--;
+                }
+                
+                if (months < 0) {
+                    months = 11;
+                }
+
+                var ageStr = years + " Years, " + months + " Months";
+                document.getElementById('ageField').value = ageStr;
             }
         }
 
