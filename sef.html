@@ -396,15 +396,15 @@
             <p style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
             <div class="upi-apps-grid">
                 <a id="gpayBtn" href="#" class="upi-app-btn">
-                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-google-pay-2038779-1721670.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/google_pay/google_pay-icon.svg'">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-pay-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-google-pay-2038779-1721670.png'">
                     GPay
                 </a>
                 <a id="phonepeBtn" href="#" class="upi-app-btn">
-                    <img src="https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-phonepe-226449.png'">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
                     PhonePe
                 </a>
                 <a id="paytmBtn" href="#" class="upi-app-btn">
-                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-paytm-226448.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/paytm/paytm-icon.svg'">
+                    <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/paytm-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-paytm-226448.png'">
                     Paytm
                 </a>
             </div>
@@ -734,7 +734,7 @@
                                 upiName: "Jungle Cubs Gym",
                                 note: (isReg ? "Reg Fee" : "Trial Fee"),
                                 paymentRequired: true
-                            }, payId, { childName: "Student" });
+                            }, payId, { childName: "Student", isSmartPortal: true, centreCode: payCentre, isRegMode: isReg });
                         } else {
                             alert("Payment details not found for this centre.");
                             document.getElementById('mainForm').style.display = 'block';
@@ -1048,14 +1048,31 @@
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('refId').innerText = id || "PENDING";
             var waNum = "919876543210";
+            
+            // Resolve WA Number
             if (data.preferredCentre && centreMap[data.preferredCentre]) {
                 var rawWa = centreMap[data.preferredCentre].wa;
                 if (rawWa) waNum = String(rawWa).replace(/\D/g, '');
+            } else if (data.centreCode) {
+                for (var name in centreMap) {
+                    if (centreMap[name].code === data.centreCode) {
+                        var rawWa = centreMap[name].wa;
+                        if (rawWa) waNum = String(rawWa).replace(/\D/g, '');
+                        break;
+                    }
+                }
             }
+
             if (!waNum.startsWith('91')) waNum = '91' + waNum;
-            var text = isEnrol ? 
-                "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id :
-                "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id;
+            
+            var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : "Trial Class Request";
+            var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
+            
+            if (data.isSmartPortal) {
+                var feeType = data.isRegMode ? "Registration Fee" : "Trial Fee";
+                text = "Hello! I have paid the " + feeType + " for " + data.childName + ". Ref ID: " + id + ". Please verify my payment proof.";
+            }
+
             document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
         }
 
