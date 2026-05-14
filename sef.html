@@ -400,7 +400,7 @@
                     GPay
                 </a>
                 <a id="phonepeBtn" href="#" class="upi-app-btn">
-                    <img src="https://i.ibb.co/3WqPz3V/phonepe.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
+                    <img src="https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-phonepe-226449.png'">
                     PhonePe
                 </a>
                 <a id="paytmBtn" href="#" class="upi-app-btn">
@@ -750,6 +750,8 @@
                 loadCentres(); 
                 return; 
             }
+            
+            if (type === 'enrol') {
                 isEnrol = true;
                 document.getElementById('pageTitle').innerText = "Student Enrolment Form";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
