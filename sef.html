@@ -279,28 +279,33 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
             z-index: 2000;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            padding: 10px;
+            box-sizing: border-box;
         }
 
         .payment-card {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 20px;
-            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3);
             max-width: 400px;
-            width: 90%;
+            width: 100%;
+            max-height: 95vh;
+            overflow-y: auto;
+            position: relative;
         }
 
         .payment-amount {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
             color: var(--primary);
-            margin: 20px 0;
+            margin: 10px 0;
         }
 
         .payment-status-text {
@@ -309,24 +314,51 @@
             font-weight: 500;
         }
 
-        .btn-copy {
-            background: #f0f0f0;
-            color: #333;
-            border: 1px solid #ddd;
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-size: 14px;
+        .upi-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .upi-app-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
             cursor: pointer;
-            margin-top: 10px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .upi-app-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            object-fit: contain;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-copy {
+            background: #f8f9fa;
+            color: #555;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 13px;
+            cursor: pointer;
             width: 100%;
             font-weight: 600;
+            margin-top: 5px;
         }
         
         .brand-logo {
-            width: 100px;
-            height: 100px;
+            width: 60px;
+            height: 60px;
             object-fit: contain;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
     </style>
 </head>
@@ -336,36 +368,50 @@
     <div id="draft-status">Saving draft...</div>
 
     <div id="paymentOverlay" class="payment-overlay">
-        <div class="payment-card">
-            <img src="https://junglecubs.github.io/gym/junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo">
-            <h2 id="paymentTitle" style="margin-bottom: 5px;">Payment Required</h2>
-            <p id="paymentDesc" style="font-size: 14px; color: #666;">Scan the QR code or click the button below to pay via any UPI app (GPay, PhonePe, Paytm, etc.)</p>
+        <div class="payment-card" style="text-align: center;">
+            <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" onerror="this.src='https://junglecubs.github.io/gym/junglecubslogo512x512pixel.png'">
+            <h2 id="paymentTitle" style="margin-bottom: 5px; font-size: 20px;">Payment Required</h2>
             
-            <div id="qrContainer" style="margin: 20px 0;">
-                <img id="upiQr" src="" alt="UPI QR Code" style="width: 250px; height: 250px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
+            <div id="qrContainer" style="margin: 10px 0;">
+                <img id="upiQr" src="" alt="UPI QR Code" style="width: 180px; height: 180px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
             </div>
 
             <div class="payment-amount" id="displayAmount">₹0</div>
+
+            <p style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
+            <div class="upi-apps-grid">
+                <a id="gpayBtn" href="#" class="upi-app-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Google_Pay_G_Logo.svg/512px-Google_Pay_G_Logo.svg.png" class="upi-app-icon">
+                    GPay
+                </a>
+                <a id="phonepeBtn" href="#" class="upi-app-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" class="upi-app-icon">
+                    PhonePe
+                </a>
+                <a id="paytmBtn" href="#" class="upi-app-btn">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/512px-Paytm_Logo_%28standalone%29.svg.png" class="upi-app-icon">
+                    Paytm
+                </a>
+            </div>
             
-            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 10px;">📱 Pay via UPI App</a>
-            <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID (VPA)</button>
-            <p style="font-size: 11px; color: #999; margin-top: 5px;">If the button doesn't open your app, copy the UPI ID and pay manually.</p>
+            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Other UPI App</a>
+            <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
             
-            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: left; margin-top: 20px;">
-                <div style="margin-bottom: 15px;">
-                    <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Step 1: Enter 12-digit UTR/Ref No. (Optional)</label>
-                    <input type="text" id="utrInput" placeholder="e.g. 412345678901" style="width: 100%; border: 2px solid #eee; padding: 10px; border-radius: 8px;">
+            <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
+                <div style="margin-bottom: 10px;">
+                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Step 1: Enter 12-digit UTR No.</label>
+                    <input type="text" id="utrInput" placeholder="Enter UTR from your app" style="width: 100%; border: 1px solid #ddd; padding: 8px; border-radius: 8px;">
                 </div>
                 
-                <div style="margin-bottom: 15px;">
-                    <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Step 2: Upload Screenshot (Optional)</label>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Step 2: Upload Screenshot</label>
                     <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%;">
                 </div>
 
-                <button class="btn-submit" id="btnSubmitProof" style="margin-top: 10px; background: var(--secondary);">Submit Payment Proof</button>
+                <button class="btn-submit" id="btnSubmitProof" style="margin-top: 5px; background: var(--secondary); width: 100%; padding: 12px; font-size: 15px;">Submit Proof</button>
             </div>
 
-            <p class="payment-status-text" id="paymentStatus">Waiting for transaction details...</p>
+            <p class="payment-status-text" id="paymentStatus" style="font-size: 12px;">Waiting for payment...</p>
         </div>
     </div>
 
@@ -995,14 +1041,21 @@
             
             // Construct UPI URI
             // format: upi://pay?pa=VPA&pn=NAME&am=AMOUNT&tn=NOTE&tr=REFID&cu=INR
-            var upiUri = "upi://pay?pa=" + p.upiId + 
+            var upiParams = "pa=" + p.upiId + 
                          "&pn=" + encodeURIComponent(p.upiName) + 
                          "&am=" + p.amount + 
                          "&tn=" + encodeURIComponent(p.note + " (" + refId + ")") + 
                          "&tr=" + refId + 
                          "&cu=INR";
 
-            // Generate QR via QRServer (More reliable than Google Charts)
+            var upiUri = "upi://pay?" + upiParams;
+
+            // App Specific Links
+            document.getElementById('gpayBtn').href = "tez://upi/pay?" + upiParams;
+            document.getElementById('phonepeBtn').href = "phonepe://pay?" + upiParams;
+            document.getElementById('paytmBtn').href = "paytmmp://cash_wallet?featuretype=cash_wallet&" + upiParams;
+
+            // Generate QR via QRServer
             var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUri);
             document.getElementById('upiQr').src = qrUrl;
             document.getElementById('upiBtn').href = upiUri;
