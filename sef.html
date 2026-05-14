@@ -632,17 +632,18 @@
                 document.getElementById('mainForm').style.display = 'none';
                 document.getElementById('loader').style.display = 'block';
                 
-                fetch(SCRIPT_URL + "?action=getFeeConfig&centreCode=" + payCentre)
+                fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + payCentre)
                     .then(r => r.json())
                     .then(res => {
                         document.getElementById('loader').style.display = 'none';
                         if (res.upi) {
-                            let amt = (payId.startsWith('RG-') || payId.startsWith('JC-')) ? (res.amounts['registration fee'] || 0) : (res.amounts['trial fee'] || res.amounts['trial'] || 0);
+                            let isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
+                            let amt = isReg ? (res.amounts['registration fee'] || 0) : (res.amounts['trial fee'] || res.amounts['trial'] || 0);
                             handleUPIPayment({
                                 amount: amt,
                                 upiId: res.upi,
                                 upiName: "Jungle Cubs Gym",
-                                note: (payId.startsWith('RG-') || payId.startsWith('JC-') ? "Reg Fee" : "Trial Fee"),
+                                note: (isReg ? "Reg Fee" : "Trial Fee"),
                                 paymentRequired: true
                             }, payId, { childName: "Student" });
                         } else {
