@@ -308,6 +308,26 @@
             color: #666;
             font-weight: 500;
         }
+
+        .btn-copy {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            font-weight: 600;
+        }
+        
+        .brand-logo {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 
@@ -317,19 +337,21 @@
 
     <div id="paymentOverlay" class="payment-overlay">
         <div class="payment-card">
-            <div style="font-size: 40px; margin-bottom: 10px;">🇮🇳</div>
-            <h2 id="paymentTitle">Pay via UPI</h2>
-            <p id="paymentDesc">Scan the QR code or click the button below to pay via any UPI app (GPay, PhonePe, Paytm, etc.)</p>
+            <img src="https://junglecubs.github.io/gym/junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo">
+            <h2 id="paymentTitle" style="margin-bottom: 5px;">Payment Required</h2>
+            <p id="paymentDesc" style="font-size: 14px; color: #666;">Scan the QR code or click the button below to pay via any UPI app (GPay, PhonePe, Paytm, etc.)</p>
             
             <div id="qrContainer" style="margin: 20px 0;">
-                <img id="upiQr" src="" alt="UPI QR Code" style="width: 200px; height: 200px; border: 1px solid #eee; padding: 10px; border-radius: 10px;">
+                <img id="upiQr" src="" alt="UPI QR Code" style="width: 250px; height: 250px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
             </div>
 
             <div class="payment-amount" id="displayAmount">₹0</div>
             
-            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 20px;">📱 Pay via UPI App</a>
+            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 10px;">📱 Pay via UPI App</a>
+            <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID (VPA)</button>
+            <p style="font-size: 11px; color: #999; margin-top: 5px;">If the button doesn't open your app, copy the UPI ID and pay manually.</p>
             
-            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: left;">
+            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: left; margin-top: 20px;">
                 <div style="margin-bottom: 15px;">
                     <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Step 1: Enter 12-digit UTR/Ref No. (Optional)</label>
                     <input type="text" id="utrInput" placeholder="e.g. 412345678901" style="width: 100%; border: 2px solid #eee; padding: 10px; border-radius: 8px;">
@@ -638,7 +660,9 @@
                         document.getElementById('loader').style.display = 'none';
                         if (res.upi) {
                             let isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
-                            let amt = isReg ? (res.amounts['registration fee'] || 0) : (res.amounts['trial fee'] || res.amounts['trial'] || 0);
+                            let feeKey = isReg ? 'registrationfee' : 'trialfee';
+                            let amt = res.amounts[feeKey] || (isReg ? res.amounts['registration fee'] : res.amounts['trial fee']) || 0;
+                            
                             handleUPIPayment({
                                 amount: amt,
                                 upiId: res.upi,
@@ -978,10 +1002,16 @@
                          "&tr=" + refId + 
                          "&cu=INR";
 
-            // Generate QR via Google Charts API
-            var qrUrl = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent(upiUri);
+            // Generate QR via QRServer (More reliable than Google Charts)
+            var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUri);
             document.getElementById('upiQr').src = qrUrl;
             document.getElementById('upiBtn').href = upiUri;
+            
+            document.getElementById('copyUpiBtn').onclick = function() {
+                navigator.clipboard.writeText(p.upiId).then(() => {
+                    alert("UPI ID copied: " + p.upiId);
+                });
+            };
 
             document.getElementById('btnSubmitProof').onclick = function() {
                 var utr = document.getElementById('utrInput').value.trim();
