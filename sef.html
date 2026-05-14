@@ -270,12 +270,82 @@
             display: none;
             z-index: 999;
         }
+
+        /* Payment Overlay */
+        .payment-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: 2000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .payment-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .payment-amount {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+
+        .payment-status-text {
+            margin-top: 15px;
+            color: #666;
+            font-weight: 500;
+        }
     </style>
 </head>
 
 <body>
 
     <div id="draft-status">Saving draft...</div>
+
+    <div id="paymentOverlay" class="payment-overlay">
+        <div class="payment-card">
+            <div style="font-size: 40px; margin-bottom: 10px;">🇮🇳</div>
+            <h2 id="paymentTitle">Pay via UPI</h2>
+            <p id="paymentDesc">Scan the QR code or click the button below to pay via any UPI app (GPay, PhonePe, Paytm, etc.)</p>
+            
+            <div id="qrContainer" style="margin: 20px 0;">
+                <img id="upiQr" src="" alt="UPI QR Code" style="width: 200px; height: 200px; border: 1px solid #eee; padding: 10px; border-radius: 10px;">
+            </div>
+
+            <div class="payment-amount" id="displayAmount">₹0</div>
+            
+            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 20px;">📱 Pay via UPI App</a>
+            
+            <div style="border-top: 1px solid #eee; padding-top: 20px; text-align: left;">
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Step 1: Enter 12-digit UTR/Ref No. (Optional)</label>
+                    <input type="text" id="utrInput" placeholder="e.g. 412345678901" style="width: 100%; border: 2px solid #eee; padding: 10px; border-radius: 8px;">
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; font-size: 14px; display: block; margin-bottom: 5px;">Step 2: Upload Screenshot (Optional)</label>
+                    <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%;">
+                </div>
+
+                <button class="btn-submit" id="btnSubmitProof" style="margin-top: 10px; background: var(--secondary);">Submit Payment Proof</button>
+            </div>
+
+            <p class="payment-status-text" id="paymentStatus">Waiting for transaction details...</p>
+        </div>
+    </div>
 
     <div class="container" id="mainForm">
         <div class="header">
@@ -554,6 +624,37 @@
         function init() {
             var urlParams = new URLSearchParams(window.location.search);
             var type = urlParams.get('type');
+            
+            // --- 💳 SMART PAYMENT PORTAL MODE ---
+            var payId = urlParams.get('pay');
+            var payCentre = urlParams.get('centre');
+            if (payId) {
+                document.getElementById('mainForm').style.display = 'none';
+                document.getElementById('loader').style.display = 'block';
+                
+                fetch(SCRIPT_URL + "?action=getFeeConfig&centreCode=" + payCentre)
+                    .then(r => r.json())
+                    .then(res => {
+                        document.getElementById('loader').style.display = 'none';
+                        if (res.upi) {
+                            let amt = (payId.startsWith('RG-') || payId.startsWith('JC-')) ? (res.amounts['registration fee'] || 0) : (res.amounts['trial fee'] || res.amounts['trial'] || 0);
+                            handleUPIPayment({
+                                amount: amt,
+                                upiId: res.upi,
+                                upiName: "Jungle Cubs Gym",
+                                note: (payId.startsWith('RG-') || payId.startsWith('JC-') ? "Reg Fee" : "Trial Fee"),
+                                paymentRequired: true
+                            }, payId, { childName: "Student" });
+                        } else {
+                            alert("Payment details not found for this centre.");
+                            document.getElementById('mainForm').style.display = 'block';
+                        }
+                    }).catch(() => {
+                        document.getElementById('loader').style.display = 'none';
+                        document.getElementById('mainForm').style.display = 'block';
+                    });
+            }
+
             if (type === 'enrol') {
                 isEnrol = true;
                 document.getElementById('pageTitle').innerText = "Student Enrolment Form";
@@ -828,7 +929,12 @@
                 loader.style.display = 'none';
                 if (res.result === 'success') {
                     localStorage.removeItem('jcg_form_draft'); // Clear draft on success
-                    showSuccess(res.id || res.newRefId, formData);
+                    
+                    if (res.payment && res.payment.paymentRequired) {
+                        handleUPIPayment(res.payment, res.id, formData);
+                    } else {
+                        showSuccess(res.id || res.newRefId, formData);
+                    }
                 } else {
                     alert("Error: " + res.message);
                     btn.classList.remove('hidden');
@@ -855,6 +961,117 @@
                 "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id :
                 "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id;
             document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
+        }
+
+        function handleUPIPayment(p, refId, formData) {
+            document.getElementById('paymentOverlay').style.display = 'flex';
+            document.getElementById('displayAmount').innerText = "₹" + p.amount;
+            document.getElementById('paymentTitle').innerText = isEnrol ? "Registration Fee" : "Trial Fee";
+            
+            // Construct UPI URI
+            // format: upi://pay?pa=VPA&pn=NAME&am=AMOUNT&tn=NOTE&tr=REFID&cu=INR
+            var upiUri = "upi://pay?pa=" + p.upiId + 
+                         "&pn=" + encodeURIComponent(p.upiName) + 
+                         "&am=" + p.amount + 
+                         "&tn=" + encodeURIComponent(p.note + " (" + refId + ")") + 
+                         "&tr=" + refId + 
+                         "&cu=INR";
+
+            // Generate QR via Google Charts API
+            var qrUrl = "https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + encodeURIComponent(upiUri);
+            document.getElementById('upiQr').src = qrUrl;
+            document.getElementById('upiBtn').href = upiUri;
+
+            document.getElementById('btnSubmitProof').onclick = function() {
+                var utr = document.getElementById('utrInput').value.trim();
+                var fileInput = document.getElementById('screenshotInput');
+                var file = fileInput.files[0];
+
+                if (!utr && !file) {
+                    alert("Please either enter the UTR number OR upload a screenshot of the payment.");
+                    return;
+                }
+
+                if (file) {
+                    uploadAndSubmitProof(file, utr, p.amount, refId, formData);
+                } else {
+                    submitProof(utr, "", p.amount, refId, formData);
+                }
+            };
+        }
+
+        function uploadAndSubmitProof(file, utr, amount, refId, formData) {
+            document.getElementById('paymentStatus').innerText = "⏳ Uploading Screenshot...";
+            document.getElementById('paymentStatus').style.color = "orange";
+            document.getElementById('btnSubmitProof').disabled = true;
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var base64Data = e.target.result;
+                
+                var uploadData = {
+                    type: "uploadProofFile",
+                    fileData: base64Data,
+                    fileName: "Proof_" + refId + "_" + new Date().getTime() + ".png",
+                    refId: refId
+                };
+
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: new URLSearchParams(uploadData)
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.result === 'success') {
+                        submitProof(utr, res.url, amount, refId, formData);
+                    } else {
+                        alert("Upload failed: " + res.message);
+                        document.getElementById('btnSubmitProof').disabled = false;
+                    }
+                })
+                .catch(err => {
+                    alert("Upload Error: " + err);
+                    document.getElementById('btnSubmitProof').disabled = false;
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function submitProof(utr, proofUrl, amount, refId, formData) {
+            document.getElementById('paymentStatus').innerText = "⏳ Finalizing Submission...";
+            document.getElementById('paymentStatus').style.color = "orange";
+            document.getElementById('btnSubmitProof').disabled = true;
+
+            var proofData = {
+                type: "submitPaymentProof",
+                utr: utr,
+                proofUrl: proofUrl,
+                amount: amount,
+                refId: refId,
+                enrolType: isEnrol ? "Student" : "Trial"
+            };
+
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                body: new URLSearchParams(proofData)
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.result === 'success') {
+                    document.getElementById('paymentOverlay').style.display = 'none';
+                    showSuccess(refId, formData);
+                    alert("Payment proof submitted! Your registration will be confirmed once the centre admin verifies the transaction.");
+                } else {
+                    alert("Error submitting proof: " + res.message);
+                    document.getElementById('paymentStatus').innerText = "❌ Submission Failed";
+                    document.getElementById('paymentStatus').style.color = "red";
+                    document.getElementById('btnSubmitProof').disabled = false;
+                }
+            })
+            .catch(err => {
+                alert("Connection Error: " + err);
+                document.getElementById('btnSubmitProof').disabled = false;
+            });
         }
 
         window.onload = init;
