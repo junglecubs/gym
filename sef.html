@@ -298,7 +298,9 @@
             width: 100%;
             max-height: 95vh;
             overflow-y: auto;
+            overflow-x: hidden;
             position: relative;
+            box-sizing: border-box;
         }
 
         .payment-amount {
@@ -331,14 +333,23 @@
             color: #333;
             font-size: 11px;
             font-weight: 600;
+            padding: 10px 5px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            background: #fff;
+            border: 1px solid #f0f0f0;
+        }
+
+        .upi-app-btn:active {
+            transform: scale(0.95);
+            background: #f8f8f8;
         }
 
         .upi-app-icon {
-            width: 45px;
-            height: 45px;
-            border-radius: 10px;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
             object-fit: contain;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .btn-copy {
@@ -369,8 +380,12 @@
 
     <div id="paymentOverlay" class="payment-overlay">
         <div class="payment-card" style="text-align: center;">
-            <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" onerror="this.onerror=null; this.src='https://junglecubs.github.io/gym/junglecubslogo512x512pixel.png';">
-            <h2 id="paymentTitle" style="margin-bottom: 5px; font-size: 20px;">Payment Required</h2>
+            <div style="height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+                <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" 
+                     onerror="this.onerror=null; this.src='https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png';">
+            </div>
+            
+            <h2 id="paymentTitle" style="margin: 0 0 5px 0; font-size: 20px;">Payment Required</h2>
             
             <div id="qrContainer" style="margin: 10px 0;">
                 <img id="upiQr" src="" alt="UPI QR Code" style="width: 180px; height: 180px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
@@ -381,15 +396,15 @@
             <p style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
             <div class="upi-apps-grid">
                 <a id="gpayBtn" href="#" class="upi-app-btn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Google_Pay_G_Logo.svg/512px-Google_Pay_G_Logo.svg.png" class="upi-app-icon">
+                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-google-pay-2038779-1721670.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/google_pay/google_pay-icon.svg'">
                     GPay
                 </a>
                 <a id="phonepeBtn" href="#" class="upi-app-btn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/71/PhonePe_Logo.svg/512px-PhonePe_Logo.svg.png" class="upi-app-icon">
+                    <img src="https://w7.pngwing.com/pngs/303/240/png-transparent-phonepe-hd-logo.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
                     PhonePe
                 </a>
                 <a id="paytmBtn" href="#" class="upi-app-btn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/24/Paytm_Logo_%28standalone%29.svg/512px-Paytm_Logo_%28standalone%29.svg.png" class="upi-app-icon">
+                    <img src="https://cdn.iconscout.com/icon/free/png-256/free-paytm-226448.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/paytm/paytm-icon.svg'">
                     Paytm
                 </a>
             </div>
@@ -417,7 +432,9 @@
 
     <div class="container" id="mainForm">
         <div class="header">
-            <div style="font-size: 40px;">🦁</div>
+            <div style="margin-bottom: 10px;">
+                <img src="https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png" style="width: 80px; height: 80px; object-fit: contain;" alt="JCG Logo">
+            </div>
             <h1 id="pageTitle">Trial Class Registration</h1>
             <p>Welcome to Jungle Cubs Gym! Please fill in your details below.</p>
         </div>
