@@ -400,7 +400,7 @@
                     GPay
                 </a>
                 <a id="phonepeBtn" href="#" class="upi-app-btn">
-                    <img src="https://w7.pngwing.com/pngs/303/240/png-transparent-phonepe-hd-logo.png" class="upi-app-icon" onerror="this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
+                    <img src="https://i.ibb.co/3WqPz3V/phonepe.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
                     PhonePe
                 </a>
                 <a id="paytmBtn" href="#" class="upi-app-btn">
@@ -708,11 +708,13 @@
 
         function init() {
             var urlParams = new URLSearchParams(window.location.search);
-            var type = urlParams.get('type');
-            
-            // --- 💳 SMART PAYMENT PORTAL MODE ---
             var payId = urlParams.get('pay');
             var payCentre = urlParams.get('centre');
+            var type = urlParams.get('type');
+
+            console.log("Init: payId=" + payId + ", centre=" + payCentre);
+
+            // --- 💳 SMART PAYMENT PORTAL MODE (HIGH PRIORITY) ---
             if (payId) {
                 document.getElementById('mainForm').style.display = 'none';
                 document.getElementById('loader').style.display = 'block';
@@ -737,13 +739,17 @@
                             alert("Payment details not found for this centre.");
                             document.getElementById('mainForm').style.display = 'block';
                         }
-                    }).catch(() => {
+                    }).catch(err => {
+                        console.error("Fee Fetch Error:", err);
                         document.getElementById('loader').style.display = 'none';
+                        alert("Error loading payment details. Please check your connection.");
                         document.getElementById('mainForm').style.display = 'block';
                     });
+                
+                // Return early to prevent loading the rest of the form if in pay mode
+                loadCentres(); 
+                return; 
             }
-
-            if (type === 'enrol') {
                 isEnrol = true;
                 document.getElementById('pageTitle').innerText = "Student Enrolment Form";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
