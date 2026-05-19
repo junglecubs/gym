@@ -1168,13 +1168,14 @@
             document.getElementById('paymentStatus').style.color = "orange";
             document.getElementById('btnSubmitProof').disabled = true;
 
+            var isRegPayment = isEnrol || (formData && formData.isRegMode) || (refId && refId.indexOf("JC-") > -1);
             var proofData = {
                 type: "submitPaymentProof",
                 utr: utr,
                 proofUrl: proofUrl,
                 amount: amount,
                 refId: refId,
-                enrolType: isEnrol ? "Student" : "Trial"
+                enrolType: isRegPayment ? "Student" : "Trial"
             };
 
             fetch(SCRIPT_URL, {
