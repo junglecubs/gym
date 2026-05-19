@@ -413,13 +413,8 @@
             <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
             
             <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
-                <div style="margin-bottom: 10px;">
-                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Step 1: Enter 12-digit UTR No.</label>
-                    <input type="text" id="utrInput" placeholder="Enter UTR from your app" style="width: 100%; border: 1px solid #ddd; padding: 8px; border-radius: 8px;">
-                </div>
-                
-                <div style="margin-bottom: 10px;">
-                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Step 2: Upload Screenshot</label>
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Upload Payment Screenshot</label>
                     <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%;">
                 </div>
 
@@ -719,28 +714,39 @@
                 document.getElementById('mainForm').style.display = 'none';
                 document.getElementById('loader').style.display = 'block';
                 
-                fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + payCentre)
+                fetch(SCRIPT_URL + "?action=getChildName&id=" + encodeURIComponent(payId))
                     .then(r => r.json())
-                    .then(res => {
-                        document.getElementById('loader').style.display = 'none';
-                        if (res.upi) {
-                            let isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
-                            let feeKey = isReg ? 'registrationfee' : 'trialfee';
-                            let amt = res.amounts[feeKey] || (isReg ? res.amounts['registration fee'] : res.amounts['trial fee']) || 0;
-                            
-                            handleUPIPayment({
-                                amount: amt,
-                                upiId: res.upi,
-                                upiName: "Jungle Cubs Gym",
-                                note: (isReg ? "Reg Fee" : "Trial Fee"),
-                                paymentRequired: true
-                            }, payId, { childName: "Student", isSmartPortal: true, centreCode: payCentre, isRegMode: isReg });
-                        } else {
-                            alert("Payment details not found for this centre.");
-                            document.getElementById('mainForm').style.display = 'block';
-                        }
+                    .then(childRes => {
+                        var resolvedChildName = childRes.name || "Student";
+                        
+                        fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + payCentre)
+                            .then(r => r.json())
+                            .then(res => {
+                                document.getElementById('loader').style.display = 'none';
+                                if (res.upi) {
+                                    let isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
+                                    let feeKey = isReg ? 'registrationfee' : 'trialfee';
+                                    let amt = res.amounts[feeKey] || (isReg ? res.amounts['registration fee'] : res.amounts['trial fee']) || 0;
+                                    
+                                    handleUPIPayment({
+                                        amount: amt,
+                                        upiId: res.upi,
+                                        upiName: "Jungle Cubs Gym",
+                                        note: (isReg ? "Reg Fee" : "Trial Fee"),
+                                        paymentRequired: true
+                                    }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg });
+                                } else {
+                                    alert("Payment details not found for this centre.");
+                                    document.getElementById('mainForm').style.display = 'block';
+                                }
+                            }).catch(err => {
+                                console.error("Fee Fetch Error:", err);
+                                document.getElementById('loader').style.display = 'none';
+                                alert("Error loading payment details. Please check your connection.");
+                                document.getElementById('mainForm').style.display = 'block';
+                            });
                     }).catch(err => {
-                        console.error("Fee Fetch Error:", err);
+                        console.error("Child Name Fetch Error:", err);
                         document.getElementById('loader').style.display = 'none';
                         alert("Error loading payment details. Please check your connection.");
                         document.getElementById('mainForm').style.display = 'block';
@@ -1109,20 +1115,15 @@
             };
 
             document.getElementById('btnSubmitProof').onclick = function() {
-                var utr = document.getElementById('utrInput').value.trim();
                 var fileInput = document.getElementById('screenshotInput');
                 var file = fileInput.files[0];
 
-                if (!utr && !file) {
-                    alert("Please either enter the UTR number OR upload a screenshot of the payment.");
+                if (!file) {
+                    alert("Please upload a screenshot of the payment.");
                     return;
                 }
 
-                if (file) {
-                    uploadAndSubmitProof(file, utr, p.amount, refId, formData);
-                } else {
-                    submitProof(utr, "", p.amount, refId, formData);
-                }
+                uploadAndSubmitProof(file, "", p.amount, refId, formData);
             };
         }
 
