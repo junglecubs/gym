@@ -706,6 +706,8 @@
             var payId = urlParams.get('pay');
             var payCentre = urlParams.get('centre');
             var type = urlParams.get('type');
+            
+            isEnrol = (type === 'enrol');
 
             console.log("Init: payId=" + payId + ", centre=" + payCentre);
 
@@ -749,7 +751,7 @@
                                         }
                                     }
 
-                                    let displayTitle = feeKey.replace(/\b\w/g, c => c.toUpperCase());
+                                    let displayTitle = feeTypeParam ? feeTypeParam : feeKey.replace(/\b\w/g, c => c.toUpperCase());
                                     
                                     handleUPIPayment({
                                         amount: amt,
