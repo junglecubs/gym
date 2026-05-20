@@ -737,7 +737,10 @@
                                     let cleanKey = feeKey.replace(/\s+/g, '');
                                     let amt = 0;
                                     
-                                    if (res.amounts) {
+                                    let amtParam = urlParams.get('amount');
+                                    if (amtParam && !isNaN(parseFloat(amtParam))) {
+                                        amt = parseFloat(amtParam);
+                                    } else if (res.amounts) {
                                         let keys = Object.keys(res.amounts);
                                         let match = keys.find(k => {
                                             let ck = k.toLowerCase().replace(/\s+/g, '');
