@@ -725,16 +725,39 @@
                                 document.getElementById('loader').style.display = 'none';
                                 if (res.upi) {
                                     let isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
-                                    let feeKey = isReg ? 'registrationfee' : 'trialfee';
-                                    let amt = res.amounts[feeKey] || (isReg ? res.amounts['registration fee'] : res.amounts['trial fee']) || 0;
+                                    let feeKey = isReg ? 'registration fee' : 'trial fee';
+                                    
+                                    let feeTypeParam = urlParams.get('feeType') || "";
+                                    if (feeTypeParam) {
+                                        feeKey = feeTypeParam.toLowerCase().trim();
+                                    }
+                                    
+                                    let cleanKey = feeKey.replace(/\s+/g, '');
+                                    let amt = 0;
+                                    
+                                    if (res.amounts) {
+                                        let keys = Object.keys(res.amounts);
+                                        let match = keys.find(k => {
+                                            let ck = k.toLowerCase().replace(/\s+/g, '');
+                                            return ck === cleanKey || ck.includes(cleanKey) || cleanKey.includes(ck);
+                                        });
+                                        if (match) {
+                                            amt = res.amounts[match];
+                                            feeKey = match;
+                                        } else {
+                                            amt = res.amounts[feeKey] || 0;
+                                        }
+                                    }
+
+                                    let displayTitle = feeKey.replace(/\b\w/g, c => c.toUpperCase());
                                     
                                     handleUPIPayment({
                                         amount: amt,
                                         upiId: res.upi,
                                         upiName: "Jungle Cubs Gym",
-                                        note: (isReg ? "Reg Fee" : "Trial Fee"),
+                                        note: displayTitle,
                                         paymentRequired: true
-                                    }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg });
+                                    }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg, feeType: displayTitle });
                                 } else {
                                     alert("Payment details not found for this centre.");
                                     document.getElementById('mainForm').style.display = 'block';
@@ -1075,7 +1098,7 @@
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
             
             if (data.isSmartPortal) {
-                var feeType = data.isRegMode ? "Registration Fee" : "Trial Fee";
+                var feeType = data.feeType || (data.isRegMode ? "Registration Fee" : "Trial Fee");
                 text = "Hello! I have paid the " + feeType + " for " + data.childName + ". Ref ID: " + id + ". Please verify my payment proof.";
             }
 
@@ -1085,7 +1108,7 @@
         function handleUPIPayment(p, refId, formData) {
             document.getElementById('paymentOverlay').style.display = 'flex';
             document.getElementById('displayAmount').innerText = "₹" + p.amount;
-            document.getElementById('paymentTitle').innerText = isEnrol ? "Registration Fee" : "Trial Fee";
+            document.getElementById('paymentTitle').innerText = p.note || (isEnrol ? "Registration Fee" : "Trial Fee");
             
             // Construct UPI URI
             // format: upi://pay?pa=VPA&pn=NAME&am=AMOUNT&tn=NOTE&tr=REFID&cu=INR
