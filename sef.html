@@ -1201,7 +1201,8 @@
                 proofUrl: proofUrl,
                 amount: amount,
                 refId: refId,
-                enrolType: isRegPayment ? "Student" : "Trial"
+                enrolType: isRegPayment ? "Student" : "Trial",
+                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : "Trial Fee")
             };
 
             fetch(SCRIPT_URL, {
