@@ -953,9 +953,32 @@
                 });
         }
 
-        function applyCentre(centreName) {
+        function applyCentre(centreVal) {
+            if (!centreVal) return;
             var sel = document.getElementById('centreSelect');
-            sel.value = centreName;
+            var valClean = String(centreVal).trim().toLowerCase();
+            
+            var foundOption = Array.from(sel.options).find(opt => {
+                var optVal = String(opt.value).trim().toLowerCase();
+                var optCode = String(opt.dataset.code || "").trim().toLowerCase();
+                
+                // Match exact value or code
+                if (optVal === valClean || optCode === valClean) return true;
+                
+                // Match if centreVal contains code (e.g. "M15 Bandra West" contains "M15")
+                if (optCode && valClean.includes(optCode)) return true;
+                
+                // Match if centreVal contains name (e.g. "M15 Bandra West" contains "bandra west")
+                if (optVal && (valClean.includes(optVal) || optVal.includes(valClean))) return true;
+                
+                return false;
+            });
+            
+            if (foundOption) {
+                sel.value = foundOption.value;
+            } else {
+                sel.value = centreVal;
+            }
             updateCentreCode();
         }
 
@@ -1081,23 +1104,39 @@
             document.getElementById('mainForm').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('refId').innerText = id || "PENDING";
-            var waNum = "919876543210";
+            var waNum = "919137513185"; // Default to HO Chembur East WhatsApp number instead of dummy
             
-            // Resolve WA Number
-            if (data.preferredCentre && centreMap[data.preferredCentre]) {
-                var rawWa = centreMap[data.preferredCentre].wa;
-                if (rawWa) waNum = String(rawWa).replace(/\D/g, '');
-            } else if (data.centreCode) {
+            // Normalize inputs
+            var targetCentre = data.preferredCentre ? String(data.preferredCentre).trim().toLowerCase() : "";
+            var targetCode = data.centreCode ? String(data.centreCode).trim().toUpperCase() : "";
+            
+            // Try to find by name first
+            if (targetCentre) {
                 for (var name in centreMap) {
-                    if (centreMap[name].code === data.centreCode) {
+                    if (name.trim().toLowerCase() === targetCentre) {
                         var rawWa = centreMap[name].wa;
-                        if (rawWa) waNum = String(rawWa).replace(/\D/g, '');
-                        break;
+                        if (rawWa) {
+                            waNum = String(rawWa).replace(/\D/g, '');
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // If not resolved, try to find by code (important for smart payment portal mode)
+            if (waNum === "919137513185" && targetCode) {
+                for (var name in centreMap) {
+                    if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCode) {
+                        var rawWa = centreMap[name].wa;
+                        if (rawWa) {
+                            waNum = String(rawWa).replace(/\D/g, '');
+                            break;
+                        }
                     }
                 }
             }
 
-            if (!waNum.startsWith('91')) waNum = '91' + waNum;
+            if (waNum && !waNum.startsWith('91')) waNum = '91' + waNum;
             
             var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : "Trial Class Request";
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
