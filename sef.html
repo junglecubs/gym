@@ -737,9 +737,19 @@
                                     let cleanKey = feeKey.replace(/\s+/g, '');
                                     let amt = 0;
                                     
-                                    let amtParam = urlParams.get('amount');
-                                    if (amtParam && !isNaN(parseFloat(amtParam))) {
-                                        amt = parseFloat(amtParam);
+                                    // 🚀 Combo Fee Summing (Registration + Uniform)
+                                    if (cleanKey.includes("registration") && cleanKey.includes("uniform")) {
+                                        let regAmt = 0;
+                                        let uniAmt = 0;
+                                        if (res.amounts) {
+                                            Object.keys(res.amounts).forEach(k => {
+                                                let ck = k.toLowerCase().replace(/\s+/g, '');
+                                                if (ck.includes("registration")) regAmt = parseFloat(res.amounts[k]) || 0;
+                                                if (ck.includes("uniform")) uniAmt = parseFloat(res.amounts[k]) || 0;
+                                            });
+                                        }
+                                        amt = regAmt + uniAmt;
+                                        if (!amt || amt <= 0) amt = 1600;
                                     } else if (res.amounts) {
                                         let keys = Object.keys(res.amounts);
                                         let match = keys.find(k => {
