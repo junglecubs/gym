@@ -737,30 +737,35 @@
                                     let cleanKey = feeKey.replace(/\s+/g, '');
                                     let amt = 0;
                                     
-                                    // 🚀 Combo Fee Summing (Registration + Uniform)
-                                    if (cleanKey.includes("registration") && cleanKey.includes("uniform")) {
-                                        let regAmt = 0;
-                                        let uniAmt = 0;
-                                        if (res.amounts) {
-                                            Object.keys(res.amounts).forEach(k => {
+                                    let urlAmt = parseFloat(urlParams.get('amount'));
+                                    if (!isNaN(urlAmt) && urlAmt > 0) {
+                                        amt = urlAmt;
+                                    } else {
+                                        // 🚀 Combo Fee Summing (Registration + Uniform)
+                                        if (cleanKey.includes("registration") && cleanKey.includes("uniform")) {
+                                            let regAmt = 0;
+                                            let uniAmt = 0;
+                                            if (res.amounts) {
+                                                Object.keys(res.amounts).forEach(k => {
+                                                    let ck = k.toLowerCase().replace(/\s+/g, '');
+                                                    if (ck.includes("registration")) regAmt = parseFloat(res.amounts[k]) || 0;
+                                                    if (ck.includes("uniform")) uniAmt = parseFloat(res.amounts[k]) || 0;
+                                                });
+                                            }
+                                            amt = regAmt + uniAmt;
+                                            if (!amt || amt <= 0) amt = 1600;
+                                        } else if (res.amounts) {
+                                            let keys = Object.keys(res.amounts);
+                                            let match = keys.find(k => {
                                                 let ck = k.toLowerCase().replace(/\s+/g, '');
-                                                if (ck.includes("registration")) regAmt = parseFloat(res.amounts[k]) || 0;
-                                                if (ck.includes("uniform")) uniAmt = parseFloat(res.amounts[k]) || 0;
+                                                return ck === cleanKey || ck.includes(cleanKey) || cleanKey.includes(ck);
                                             });
-                                        }
-                                        amt = regAmt + uniAmt;
-                                        if (!amt || amt <= 0) amt = 1600;
-                                    } else if (res.amounts) {
-                                        let keys = Object.keys(res.amounts);
-                                        let match = keys.find(k => {
-                                            let ck = k.toLowerCase().replace(/\s+/g, '');
-                                            return ck === cleanKey || ck.includes(cleanKey) || cleanKey.includes(ck);
-                                        });
-                                        if (match) {
-                                            amt = res.amounts[match];
-                                            feeKey = match;
-                                        } else {
-                                            amt = res.amounts[feeKey] || 0;
+                                            if (match) {
+                                                amt = res.amounts[match];
+                                                feeKey = match;
+                                            } else {
+                                                amt = res.amounts[feeKey] || 0;
+                                            }
                                         }
                                     }
 
