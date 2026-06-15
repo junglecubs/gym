@@ -867,6 +867,17 @@
                 return;
             }
 
+            // Calculate precise progress based on active/visible required fields
+            const fields = Array.from(form.querySelectorAll('input, select, textarea'));
+            const requiredFields = fields.filter(el => el.required && el.type !== 'hidden' && el.name);
+            const totalRequired = requiredFields.length;
+            const filledRequired = requiredFields.filter(el => {
+                if (el.type === 'checkbox') return el.checked;
+                return el.value && el.value.trim() !== "";
+            }).length;
+            const progressVal = totalRequired > 0 ? Math.min(100, Math.round((filledRequired / totalRequired) * 100)) : 0;
+            formData.progress = progressVal + "%";
+
             formData.type = 'savePartialForm';
             
             // Background fetch (silent)
