@@ -771,9 +771,22 @@
 
                                     let displayTitle = feeTypeParam ? feeTypeParam : feeKey.replace(/\b\w/g, c => c.toUpperCase());
                                     
+                                    let specificUpi = urlParams.get('upi');
+                                    
+                                    if (!specificUpi && res.upis) {
+                                        specificUpi = res.upis[cleanKey];
+                                        if (!specificUpi) {
+                                            Object.keys(res.upis).forEach(k => {
+                                                let ck = k.toLowerCase().replace(/\s+/g, '');
+                                                if (cleanKey.includes(ck) || ck.includes(cleanKey)) specificUpi = res.upis[k];
+                                            });
+                                        }
+                                    }
+                                    if (!specificUpi) specificUpi = res.upi; // Ultimate fallback
+                                    
                                     handleUPIPayment({
                                         amount: amt,
-                                        upiId: res.upi,
+                                        upiId: specificUpi,
                                         upiName: "Jungle Cubs Gym",
                                         note: displayTitle,
                                         paymentRequired: true
