@@ -713,6 +713,31 @@
 
             // --- 💳 SMART PAYMENT PORTAL MODE (HIGH PRIORITY) ---
             if (payId) {
+                var urlAmt = parseFloat(urlParams.get('amount'));
+                var urlUpi = urlParams.get('upi');
+                var urlName = urlParams.get('name');
+                if (!isNaN(urlAmt) && urlAmt > 0 && urlUpi && urlName) {
+                    document.getElementById('mainForm').style.display = 'none';
+                    document.getElementById('loader').style.display = 'none';
+                    var isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
+                    var feeTypeParam = urlParams.get('feeType') || (isReg ? 'Registration Fee' : 'Trial Fee');
+                    handleUPIPayment({
+                        amount: urlAmt,
+                        upiId: urlUpi,
+                        upiName: "Jungle Cubs Gym",
+                        note: feeTypeParam,
+                        paymentRequired: true
+                    }, payId, {
+                        childName: urlName,
+                        isSmartPortal: true,
+                        centreCode: payCentre,
+                        isRegMode: isReg,
+                        feeType: feeTypeParam
+                    });
+                    loadCentres();
+                    return;
+                }
+
                 document.getElementById('mainForm').style.display = 'none';
                 document.getElementById('loader').style.display = 'block';
                 
