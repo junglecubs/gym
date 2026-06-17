@@ -1219,12 +1219,11 @@
             document.getElementById('paymentTitle').innerText = p.note || (isEnrol ? "Registration Fee" : "Trial Fee");
             
             // Construct UPI URI
-            // format: upi://pay?pa=VPA&pn=NAME&am=AMOUNT&tn=NOTE&tr=REFID&cu=INR
+            // format: upi://pay?pa=VPA&pn=NAME&am=AMOUNT&tn=NOTE&cu=INR
             var upiParams = "pa=" + p.upiId + 
                          "&pn=" + encodeURIComponent(p.upiName) + 
                          "&am=" + p.amount + 
                          "&tn=" + encodeURIComponent(p.note + " (" + refId + ")") + 
-                         "&tr=" + refId + 
                          "&cu=INR";
 
             var upiUri = "upi://pay?" + upiParams;
