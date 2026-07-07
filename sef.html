@@ -331,8 +331,8 @@
 
         .upi-apps-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             margin: 15px 0;
         }
 
@@ -433,18 +433,15 @@
                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/paytm-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-paytm-226448.png'">
                     Paytm
                 </a>
+                <a id="credBtn" href="#" class="upi-app-btn">
+                    <img src="https://web-assets.cred.club/assets/images/brand-logo.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-cred-3628704-3029966.png'">
+                    CRED
+                </a>
             </div>
             
             <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Pay via other UPI App</a>
             <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
-            
-            <div id="phonePayContainer" style="display: none; margin: 10px 0; border-top: 1px dashed #eee; padding-top: 10px;">
-                <p style="font-size: 11px; color: #666; margin: 0 0 5px 0; font-weight: 500;">Or pay directly to Mobile Number:</p>
-                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
-                    <span id="displayPhone" style="font-size: 15px; font-weight: bold; color: var(--primary);">9876543210</span>
-                    <button id="copyPhoneBtn" class="btn-copy" style="padding: 2px 8px; font-size: 10px; margin: 0;">📋 Copy Number</button>
-                </div>
-            </div>
+            <button id="copyPhoneBtn" class="btn-copy" style="display: none; margin-top: 5px;">📋 Copy UPI Phone Number</button>
             
             <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
                 <div id="paymentWarningBanner" style="margin-bottom: 15px; background: #fffde7; border: 1px solid #fff59d; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; color: #f57f17; font-weight: 600; text-align: center;">
@@ -1316,6 +1313,7 @@
             document.getElementById('gpayBtn').href = "tez://upi/pay?" + upiParams;
             document.getElementById('phonepeBtn').href = "phonepe://pay?" + upiParams;
             document.getElementById('paytmBtn').href = "paytmmp://cash_wallet?featuretype=cash_wallet&" + upiParams;
+            document.getElementById('credBtn').href = "credpay://upi/pay?" + upiParams;
 
             // Mobile vs Desktop styling logic to prevent scrolling bottlenecks
             var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -1370,17 +1368,16 @@
                 payPhone = payPhone.substring(2);
             }
 
-            var phoneContainer = document.getElementById('phonePayContainer');
+            var copyPhoneBtn = document.getElementById('copyPhoneBtn');
             if (payPhone && payPhone.length === 10) {
-                document.getElementById('displayPhone').innerText = payPhone;
-                phoneContainer.style.display = 'block';
-                document.getElementById('copyPhoneBtn').onclick = function() {
+                copyPhoneBtn.style.display = 'block';
+                copyPhoneBtn.onclick = function() {
                     navigator.clipboard.writeText(payPhone).then(() => {
-                        alert("Phone number copied: " + payPhone);
+                        alert("UPI Phone number copied: " + payPhone);
                     });
                 };
             } else {
-                phoneContainer.style.display = 'none';
+                copyPhoneBtn.style.display = 'none';
             }
 
             document.getElementById('btnSubmitProof').onclick = function() {
