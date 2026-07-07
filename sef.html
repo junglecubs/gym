@@ -270,6 +270,9 @@
             display: none;
             z-index: 999;
         }
+        #regForm {
+            display: none;
+        }
 
         /* Payment Overlay */
         .payment-overlay {
@@ -711,13 +714,18 @@
 
             console.log("Init: payId=" + payId + ", centre=" + payCentre);
 
+            // Show regForm immediately if not in payment mode
+            if (!payId) {
+                document.getElementById('regForm').style.display = 'block';
+            }
+
             // --- 💳 SMART PAYMENT PORTAL MODE (HIGH PRIORITY) ---
             if (payId) {
                 var urlAmt = parseFloat(urlParams.get('amount'));
                 var urlUpi = urlParams.get('upi');
                 var urlName = urlParams.get('name');
                 if (!isNaN(urlAmt) && urlAmt > 0 && urlUpi && urlName) {
-                    document.getElementById('mainForm').style.display = 'none';
+                    document.getElementById('regForm').style.display = 'none';
                     document.getElementById('loader').style.display = 'none';
                     var isReg = payId.indexOf('RG-') > -1 || payId.indexOf('JC-') > -1;
                     var feeTypeParam = urlParams.get('feeType') || (isReg ? 'Registration Fee' : 'Trial Fee');
@@ -738,7 +746,7 @@
                     return;
                 }
 
-                document.getElementById('mainForm').style.display = 'none';
+                document.getElementById('regForm').style.display = 'none';
                 document.getElementById('loader').style.display = 'block';
                 
                 fetch(SCRIPT_URL + "?action=getChildName&id=" + encodeURIComponent(payId))
@@ -818,19 +826,19 @@
                                     }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg, feeType: displayTitle });
                                 } else {
                                     alert("Payment details not found for this centre.");
-                                    document.getElementById('mainForm').style.display = 'block';
+                                    document.getElementById('regForm').style.display = 'block';
                                 }
                             }).catch(err => {
                                 console.error("Fee Fetch Error:", err);
                                 document.getElementById('loader').style.display = 'none';
                                 alert("Error loading payment details. Please check your connection.");
-                                document.getElementById('mainForm').style.display = 'block';
+                                document.getElementById('regForm').style.display = 'block';
                             });
                     }).catch(err => {
                         console.error("Child Name Fetch Error:", err);
                         document.getElementById('loader').style.display = 'none';
                         alert("Error loading payment details. Please check your connection.");
-                        document.getElementById('mainForm').style.display = 'block';
+                        document.getElementById('regForm').style.display = 'block';
                     });
                 
                 // Return early to prevent loading the rest of the form if in pay mode
