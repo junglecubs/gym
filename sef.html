@@ -399,14 +399,27 @@
             </div>
             
             <h2 id="paymentTitle" style="margin: 0 0 5px 0; font-size: 20px;">Payment Required</h2>
+
+            <!-- 🚨 Step by Step Instructions Alert -->
+            <div style="background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 12px; padding: 12px; margin: 12px 0; text-align: left; font-size: 13px; line-height: 1.4; color: #1b5e20;">
+                <strong id="greenAlertTitle" style="display: block; margin-bottom: 6px; font-size: 13px;">🦁 3 Steps to Complete Enrolment:</strong>
+                <div style="margin-bottom: 4px;"><strong>Step 1:</strong> Pay via one of the options below.</div>
+                <div style="margin-bottom: 4px;"><strong>Step 2:</strong> 📸 <strong>Take a Screenshot</strong> of the payment.</div>
+                <div><strong>Step 3:</strong> Upload the screenshot below & click **Submit Proof**.</div>
+            </div>
             
             <div id="qrContainer" style="margin: 10px 0;">
                 <img id="upiQr" src="" alt="UPI QR Code" style="width: 180px; height: 180px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
             </div>
 
+            <!-- Togglable QR link for Mobile Users -->
+            <div id="qrToggleContainer" style="display: none; margin: 10px 0;">
+                <button type="button" onclick="toggleQrCode()" style="background: none; border: none; color: var(--primary); text-decoration: underline; font-weight: bold; cursor: pointer; font-size: 13px; padding: 5px 10px;">📷 Show QR Code to Scan</button>
+            </div>
+
             <div class="payment-amount" id="displayAmount">₹0</div>
 
-            <p style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
+            <p id="upiAppsTitle" style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
             <div class="upi-apps-grid">
                 <a id="gpayBtn" href="#" class="upi-app-btn">
                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-pay-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-google-pay-2038779-1721670.png'">
@@ -422,7 +435,7 @@
                 </a>
             </div>
             
-            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Other UPI App</a>
+            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Pay via other UPI App</a>
             <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
             
             <div id="phonePayContainer" style="display: none; margin: 10px 0; border-top: 1px dashed #eee; padding-top: 10px;">
@@ -434,6 +447,9 @@
             </div>
             
             <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
+                <div id="paymentWarningBanner" style="margin-bottom: 15px; background: #fffde7; border: 1px solid #fff59d; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; color: #f57f17; font-weight: 600; text-align: center;">
+                    ⚠️ Upload payment screenshot to complete registration!
+                </div>
                 <div style="margin-bottom: 15px;">
                     <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Upload Payment Screenshot</label>
                     <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%;">
@@ -1258,10 +1274,34 @@
             document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
         }
 
+        function toggleQrCode() {
+            var qr = document.getElementById('qrContainer');
+            var btn = document.querySelector('#qrToggleContainer button');
+            if (qr.style.display === 'none') {
+                qr.style.display = 'block';
+                btn.innerText = '📷 Hide QR Code';
+            } else {
+                qr.style.display = 'none';
+                btn.innerText = '📷 Show QR Code to Scan';
+            }
+        }
+
         function handleUPIPayment(p, refId, formData) {
             document.getElementById('paymentOverlay').style.display = 'flex';
             document.getElementById('displayAmount').innerText = "₹" + p.amount;
-            document.getElementById('paymentTitle').innerText = p.note || (isEnrol ? "Registration Fee" : "Trial Fee");
+            
+            var feeTitle = p.note || (isEnrol ? "Registration Fee" : "Trial Fee");
+            document.getElementById('paymentTitle').innerText = feeTitle;
+            
+            // Dynamic warning banner & instructions updating
+            var greenTitle = document.getElementById('greenAlertTitle');
+            if (greenTitle) {
+                greenTitle.innerText = "🦁 3 Steps to Complete " + feeTitle + ":";
+            }
+            var warningBanner = document.getElementById('paymentWarningBanner');
+            if (warningBanner) {
+                warningBanner.innerText = "⚠️ Upload payment screenshot to complete " + feeTitle.toLowerCase() + " payment!";
+            }
             
             // Construct UPI URI
             // format: upi://pay?pa=VPA&am=AMOUNT&tn=NOTE&cu=INR
@@ -1276,6 +1316,28 @@
             document.getElementById('gpayBtn').href = "tez://upi/pay?" + upiParams;
             document.getElementById('phonepeBtn').href = "phonepe://pay?" + upiParams;
             document.getElementById('paytmBtn').href = "paytmmp://cash_wallet?featuretype=cash_wallet&" + upiParams;
+
+            // Mobile vs Desktop styling logic to prevent scrolling bottlenecks
+            var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+            var qrContainer = document.getElementById('qrContainer');
+            var qrToggleContainer = document.getElementById('qrToggleContainer');
+            var upiAppsTitle = document.getElementById('upiAppsTitle');
+            var upiAppsGrid = document.querySelector('.upi-apps-grid');
+            var upiBtn = document.getElementById('upiBtn');
+
+            if (isMobile) {
+                qrContainer.style.display = 'none';
+                qrToggleContainer.style.display = 'block';
+                upiAppsTitle.style.display = 'block';
+                upiAppsGrid.style.display = 'grid';
+                upiBtn.style.display = 'block';
+            } else {
+                qrContainer.style.display = 'block';
+                qrToggleContainer.style.display = 'none';
+                upiAppsTitle.style.display = 'none';
+                upiAppsGrid.style.display = 'none';
+                upiBtn.style.display = 'none';
+            }
 
             // Generate QR via QRServer
             var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUri);
