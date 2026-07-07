@@ -1200,7 +1200,10 @@
                 }
             }
 
-            if (waNum && !waNum.startsWith('91')) waNum = '91' + waNum;
+            if (waNum) {
+                waNum = waNum.replace(/\D/g, '');
+                if (waNum.length === 10) waNum = '91' + waNum;
+            }
             
             var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : "Trial Class Request";
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
