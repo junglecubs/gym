@@ -425,6 +425,14 @@
             <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Other UPI App</a>
             <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
             
+            <div id="phonePayContainer" style="display: none; margin: 10px 0; border-top: 1px dashed #eee; padding-top: 10px;">
+                <p style="font-size: 11px; color: #666; margin: 0 0 5px 0; font-weight: 500;">Or pay directly to Mobile Number:</p>
+                <div style="display: flex; gap: 8px; justify-content: center; align-items: center;">
+                    <span id="displayPhone" style="font-size: 15px; font-weight: bold; color: var(--primary);">9876543210</span>
+                    <button id="copyPhoneBtn" class="btn-copy" style="padding: 2px 8px; font-size: 10px; margin: 0;">📋 Copy Number</button>
+                </div>
+            </div>
+            
             <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
                 <div style="margin-bottom: 15px;">
                     <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Upload Payment Screenshot</label>
@@ -827,11 +835,24 @@
                                     }
                                     if (!specificUpi) specificUpi = res.upi; // Ultimate fallback
                                     
+                                    let specificPhone = "";
+                                    if (res.phones) {
+                                        specificPhone = res.phones[cleanKey];
+                                        if (!specificPhone) {
+                                            Object.keys(res.phones).forEach(k => {
+                                                let ck = k.toLowerCase().replace(/\s+/g, '');
+                                                if (cleanKey.includes(ck) || ck.includes(cleanKey)) specificPhone = res.phones[k];
+                                            });
+                                        }
+                                    }
+                                    if (!specificPhone) specificPhone = res.phone; // Fallback
+                                    
                                     handleUPIPayment({
                                         amount: amt,
                                         upiId: specificUpi,
                                         upiName: "Jungle Cubs Gym",
                                         note: displayTitle,
+                                        phone: specificPhone,
                                         paymentRequired: true
                                     }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg, feeType: displayTitle });
                                 } else {
@@ -1266,6 +1287,39 @@
                     alert("UPI ID copied: " + p.upiId);
                 });
             };
+
+            // Resolve payment phone number
+            var payPhone = "";
+            var urlParams = new URLSearchParams(window.location.search);
+            payPhone = urlParams.get('phone') || "";
+            
+            if (!payPhone && p.phone) {
+                payPhone = p.phone;
+            }
+            
+            if (!payPhone && p.upiId) {
+                var upiPhone = p.upiId.match(/\b\d{10}\b/);
+                if (upiPhone) payPhone = upiPhone[0];
+            }
+
+            // Normalize to exactly 10 digits
+            payPhone = String(payPhone).replace(/\D/g, '');
+            if (payPhone.startsWith("91") && payPhone.length > 10) {
+                payPhone = payPhone.substring(2);
+            }
+
+            var phoneContainer = document.getElementById('phonePayContainer');
+            if (payPhone && payPhone.length === 10) {
+                document.getElementById('displayPhone').innerText = payPhone;
+                phoneContainer.style.display = 'block';
+                document.getElementById('copyPhoneBtn').onclick = function() {
+                    navigator.clipboard.writeText(payPhone).then(() => {
+                        alert("Phone number copied: " + payPhone);
+                    });
+                };
+            } else {
+                phoneContainer.style.display = 'none';
+            }
 
             document.getElementById('btnSubmitProof').onclick = function() {
                 var fileInput = document.getElementById('screenshotInput');
