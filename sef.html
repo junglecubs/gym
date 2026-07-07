@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jungle Cubs Gym - Registration</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        // Synchronous check to prevent style flashing of the registration form on payment portal loads
+        if (window.location.search.indexOf('pay=') > -1) {
+            document.documentElement.classList.add('payment-portal-mode');
+        }
+    </script>
     <style>
         :root {
             --primary: #287844;
@@ -272,6 +278,10 @@
         }
         #regForm {
             display: none;
+        }
+        .payment-portal-mode .header,
+        .payment-portal-mode #regForm {
+            display: none !important;
         }
 
         /* Payment Overlay */
@@ -826,18 +836,21 @@
                                     }, payId, { childName: resolvedChildName, isSmartPortal: true, centreCode: payCentre, isRegMode: isReg, feeType: displayTitle });
                                 } else {
                                     alert("Payment details not found for this centre.");
+                                    document.documentElement.classList.remove('payment-portal-mode');
                                     document.getElementById('regForm').style.display = 'block';
                                 }
                             }).catch(err => {
                                 console.error("Fee Fetch Error:", err);
                                 document.getElementById('loader').style.display = 'none';
                                 alert("Error loading payment details. Please check your connection.");
+                                document.documentElement.classList.remove('payment-portal-mode');
                                 document.getElementById('regForm').style.display = 'block';
                             });
                     }).catch(err => {
                         console.error("Child Name Fetch Error:", err);
                         document.getElementById('loader').style.display = 'none';
                         alert("Error loading payment details. Please check your connection.");
+                        document.documentElement.classList.remove('payment-portal-mode');
                         document.getElementById('regForm').style.display = 'block';
                     });
                 
