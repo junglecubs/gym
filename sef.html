@@ -509,7 +509,33 @@
                     <div class="form-group">
                         <label>Preferred Centre *</label>
                         <select name="preferredCentre" id="centreSelect" required onchange="updateCentreCode()">
-                            <option value="">Loading Centres...</option>
+                            <option value="">Select Centre</option>
+                            <option value="Ghatkopar East" data-code="M01">Ghatkopar East</option>
+                            <option value="Mulund West" data-code="M02">Mulund West</option>
+                            <option value="Sporty Sprouts Mulund" data-code="SS01">Sporty Sprouts Mulund</option>
+                            <option value="Matunga East" data-code="M03">Matunga East</option>
+                            <option value="HO Chembur East" data-code="M04">HO Chembur East</option>
+                            <option value="Malad West" data-code="M05">Malad West</option>
+                            <option value="Borivali West" data-code="M09">Borivali West</option>
+                            <option value="Thane Indo Scots Global" data-code="M06">Thane Indo Scots Global</option>
+                            <option value="Wadala" data-code="M07">Wadala</option>
+                            <option value="Tardeo" data-code="M08">Tardeo</option>
+                            <option value="Lalbaugh" data-code="M10">Lalbaugh</option>
+                            <option value="Powai" data-code="M11">Powai</option>
+                            <option value="Thane Hiranandani Estate" data-code="M12">Thane Hiranandani Estate</option>
+                            <option value="Worli" data-code="M14">Worli</option>
+                            <option value="Bandra West" data-code="M15">Bandra West</option>
+                            <option value="Belapur Navi Mumbai" data-code="M13">Belapur Navi Mumbai</option>
+                            <option value="Vashi Navi Mumbai" data-code="M16">Vashi Navi Mumbai</option>
+                            <option value="Goregaon" data-code="M17">Goregaon</option>
+                            <option value="Andheri" data-code="M18">Andheri</option>
+                            <option value="Bhandup" data-code="M19">Bhandup</option>
+                            <option value="Kharghar" data-code="M20">Kharghar</option>
+                            <option value="Pune Kharadi" data-code="PN01">Pune Kharadi</option>
+                            <option value="Pune Kothrud" data-code="PN02">Pune Kothrud</option>
+                            <option value="Goa Porvorim" data-code="GOA01">Goa Porvorim</option>
+                            <option value="Bengaluru Malleswaram" data-code="BLR01">Bengaluru Malleswaram</option>
+                            <option value="Bengaluru Yelahanka DCSE" data-code="BLR02">Bengaluru Yelahanka DCSE</option>
                         </select>
                         <input type="hidden" name="preferredCentreCode" id="centreCode">
                     </div>
@@ -736,6 +762,15 @@
         var draftTimer = null;
 
         function init() {
+            // Populate fallback centreMap from hardcoded select options
+            var sel = document.getElementById('centreSelect');
+            for (var i = 0; i < sel.options.length; i++) {
+                var opt = sel.options[i];
+                if (opt.value) {
+                    centreMap[opt.value] = { code: opt.dataset.code || "", wa: "", email: "" };
+                }
+            }
+
             var urlParams = new URLSearchParams(window.location.search);
             var payId = urlParams.get('pay');
             var payCentre = urlParams.get('centre');
@@ -960,11 +995,11 @@
 
             formData.type = 'savePartialForm';
             
-            // Background fetch (silent)
             fetch(SCRIPT_URL, {
                 method: "POST",
+                mode: "no-cors",
                 body: new URLSearchParams(formData)
-            }).then(r => r.json()).then(res => {
+            }).then(() => {
                 document.getElementById('draft-status').innerText = '✅ Progress Saved';
                 setTimeout(() => {
                     document.getElementById('draft-status').style.display = 'none';
@@ -1135,9 +1170,10 @@
 
         function updateCentreCode() {
             var sel = document.getElementById('centreSelect');
-            var name = sel.value;
-            var details = centreMap[name];
-            if (details) document.getElementById('centreCode').value = details.code;
+            var opt = sel.options[sel.selectedIndex];
+            if (opt && opt.dataset.code) {
+                document.getElementById('centreCode').value = opt.dataset.code;
+            }
         }
 
         function calculateAge() {
