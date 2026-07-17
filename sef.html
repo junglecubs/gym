@@ -1238,6 +1238,10 @@
                 if (res.result === 'success') {
                     localStorage.removeItem('jcg_form_draft'); // Clear draft on success
                     
+                    // Trigger immediate background Firebase sync
+                    var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
+                    fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
+                    
                     if (res.payment && res.payment.paymentRequired) {
                         handleUPIPayment(res.payment, res.id, formData);
                     } else {
@@ -1489,6 +1493,10 @@
             .then(r => r.json())
             .then(res => {
                 if (res.result === 'success') {
+                    // Trigger immediate background Firebase sync for receipt/verification updates
+                    var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
+                    fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
+
                     document.getElementById('paymentOverlay').style.display = 'none';
                     showSuccess(refId, formData);
                     alert("Payment proof submitted! Your registration will be confirmed once the centre admin verifies the transaction.");
