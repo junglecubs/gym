@@ -400,6 +400,9 @@
             
             <h2 id="paymentTitle" style="margin: 0 0 5px 0; font-size: 20px;">Payment Required</h2>
 
+            <!-- Multi-Option Renewal Plan Selection Container -->
+            <div id="renewalOptionsContainer" style="display:none; margin:10px 0 15px 0; text-align:left;"></div>
+
             <!-- 🚨 Step by Step Instructions Alert -->
             <div style="background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 12px; padding: 12px; margin: 12px 0; text-align: left; font-size: 13px; line-height: 1.4; color: #1b5e20;">
                 <strong id="greenAlertTitle" style="display: block; margin-bottom: 6px; font-size: 13px;">🦁 3 Steps to Complete Enrolment:</strong>
@@ -787,6 +790,43 @@
 
             // --- 💳 SMART PAYMENT PORTAL MODE (HIGH PRIORITY) ---
             if (payId) {
+                var rawOptions = urlParams.get('options');
+                var parsedOptions = null;
+                if (rawOptions) {
+                    try { parsedOptions = JSON.parse(decodeURIComponent(rawOptions)); } catch(e) {}
+                }
+
+                if (parsedOptions && Array.isArray(parsedOptions) && parsedOptions.length > 0) {
+                    document.getElementById('regForm').style.display = 'none';
+                    document.getElementById('loader').style.display = 'none';
+
+                    var optContainer = document.getElementById('renewalOptionsContainer');
+                    if (optContainer) {
+                        optContainer.style.display = 'block';
+                        var optHtml = `<label style="font-size:12px; font-weight:800; color:#334155; display:block; margin-bottom:8px;">Choose Your Renewal Program Fee Option:</label><div style="display:flex; flex-direction:column; gap:8px; margin-bottom:10px;">`;
+                        parsedOptions.forEach((opt, idx) => {
+                            let isSel = idx === 0 ? 'border-color:var(--primary); background:#ebfbee;' : 'border-color:#cbd5e1; background:#f8fafc;';
+                            optHtml += `
+                                <div class="renewal-plan-card" data-idx="${idx}" onclick="selectPortalRenewalOption(${idx})" style="padding:10px 14px; border:2px solid; border-radius:10px; cursor:pointer; text-align:left; transition:all 0.2s; ${isSel}">
+                                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                                        <span style="font-weight:700; font-size:13px; color:#1e293b;">${opt.label}</span>
+                                        <span style="font-weight:900; font-size:14px; color:var(--primary);">₹${opt.totalAmount.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        optHtml += `</div>`;
+                        optContainer.innerHTML = optHtml;
+                    }
+
+                    window._portalRenewalOptions = parsedOptions;
+                    window._portalPayParams = { payId: payId, payCentre: payCentre, urlName: urlParams.get('name') || 'Student' };
+
+                    selectPortalRenewalOption(0);
+                    loadCentres();
+                    return;
+                }
+
                 var urlAmt = parseFloat(urlParams.get('amount'));
                 var urlUpi = urlParams.get('upi');
                 var urlName = urlParams.get('name');
@@ -1321,6 +1361,41 @@
                 qr.style.display = 'none';
                 btn.innerText = '📷 Show QR Code to Scan';
             }
+        }
+
+        function selectPortalRenewalOption(idx) {
+            const opts = window._portalRenewalOptions;
+            if (!opts || !opts[idx]) return;
+            const selected = opts[idx];
+            
+            const cards = document.querySelectorAll('.renewal-plan-card');
+            cards.forEach((c, i) => {
+                if (i === idx) {
+                    c.style.borderColor = 'var(--primary)';
+                    c.style.background = '#ebfbee';
+                } else {
+                    c.style.borderColor = '#cbd5e1';
+                    c.style.background = '#f8fafc';
+                }
+            });
+            
+            const params = window._portalPayParams || {};
+            const urlParams = new URLSearchParams(window.location.search);
+            const upi = urlParams.get('upi') || "junglecubs312@sbi";
+            
+            handleUPIPayment({
+                amount: selected.totalAmount,
+                upiId: upi,
+                upiName: "Jungle Cubs Gym",
+                note: selected.label,
+                paymentRequired: true
+            }, params.payId || "JC-RENEWAL", {
+                childName: params.urlName || "Student",
+                isSmartPortal: true,
+                centreCode: params.payCentre || "",
+                isRegMode: false,
+                feeType: selected.label
+            });
         }
 
         function handleUPIPayment(p, refId, formData) {
