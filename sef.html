@@ -742,8 +742,8 @@
     <!-- Success Screen -->
     <div class="container success-screen" id="successScreen">
         <div class="success-icon">🎉</div>
-        <h1>Registration Successful!</h1>
-        <p>Thank you for submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
+        <h1 id="successHeading">Registration Successful!</h1>
+        <p id="successMessage">Thank you for submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
         <p>Please click below to confirm via WhatsApp with the Centre.</p>
         <a href="#" id="waLink" class="btn-whatsapp" target="_blank">
             💬 Send Confirmation on WhatsApp
@@ -766,6 +766,7 @@
         var SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzEwGfICu2yZxrCQgKxjsZF85ah_DgoQkvLzJlgLxy1y1X1QbAaoLGFV03FRJEv3fubHw/exec";
         
         var isEnrol = false;
+        var isTrialPay = false;
         var centreMap = {};
         var draftTimer = null;
 
@@ -980,15 +981,30 @@
             
             if (type === 'enrol') {
                 isEnrol = true;
+                isTrialPay = false;
                 document.getElementById('pageTitle').innerText = "Student Enrolment Form";
+                document.getElementById('btnSubmit').innerText = "Submit Enrolment";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
 
                 // Set all enrol fields to required
                 document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
                     if (el.type !== 'hidden') el.required = true;
                 });
+            } else if (type === 'trial_pay' || type === 'trialpay' || (type === 'trial' && (urlParams.get('pay') === 'now' || urlParams.get('pay') === 'direct'))) {
+                isEnrol = false;
+                isTrialPay = true;
+                document.getElementById('pageTitle').innerText = "Trial Class Registration & Payment";
+                document.getElementById('btnSubmit').innerText = "Proceed to Payment →";
+                document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
+
+                document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
+                    el.required = false;
+                });
             } else {
+                isEnrol = false;
+                isTrialPay = false;
                 document.getElementById('pageTitle').innerText = "Trial Class Registration";
+                document.getElementById('btnSubmit').innerText = "Submit Registration";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
 
                 document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
@@ -1296,6 +1312,7 @@
 
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
+            if (isTrialPay) formData.isTrialPay = 'true';
 
             fetch(SCRIPT_URL, {
                 method: "POST",
@@ -1311,8 +1328,15 @@
                     var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
                     fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
                     
-                    if (res.payment && res.payment.paymentRequired) {
-                        handleUPIPayment(res.payment, res.id, formData);
+                    if (isTrialPay || (res.payment && res.payment.paymentRequired)) {
+                        var pInfo = res.payment || {
+                            amount: 500,
+                            upiId: "junglecubs312@sbi",
+                            upiName: "Jungle Cubs Gym",
+                            note: "Trial Fee: " + (formData.childName || "Student"),
+                            paymentRequired: true
+                        };
+                        handleUPIPayment(pInfo, res.id, { ...formData, isTrialPay: isTrialPay, feeType: "Trial Fee" });
                     } else {
                         showSuccess(res.id || res.newRefId, formData);
                     }
@@ -1369,12 +1393,17 @@
                 if (waNum.length === 10) waNum = '91' + waNum;
             }
             
-            var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : "Trial Class Request";
+            var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : (data.isTrialPay || isTrialPay ? "Trial Registration & Payment Proof" : "Trial Class Request");
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
             
-            if (data.isSmartPortal) {
+            if (data.isSmartPortal || data.isTrialPay || isTrialPay) {
                 var feeType = data.feeType || (data.isRegMode ? "Registration Fee" : "Trial Fee");
-                text = "Hello! I have paid the " + feeType + " for " + data.childName + ". Ref ID: " + id + ". Please verify my payment proof.";
+                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + ". Please verify my proof and confirm my slot.";
+                
+                var headingEl = document.getElementById('successHeading');
+                if (headingEl) headingEl.innerText = "Payment Proof Submitted!";
+                var msgEl = document.getElementById('successMessage');
+                if (msgEl) msgEl.innerHTML = "Thank you! Your details and payment proof have been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our team will verify your payment and confirm your slot shortly.";
             }
 
             document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
