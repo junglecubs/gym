@@ -384,6 +384,116 @@
             object-fit: contain;
             margin-bottom: 5px;
         }
+
+        /* 🎪 Special Demo Launch Styles */
+        .demo-banner {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+            display: none;
+        }
+        .demo-banner h3 {
+            margin: 0 0 6px 0;
+            font-size: 18px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #fff;
+        }
+        .demo-banner p {
+            margin: 0;
+            font-size: 13px;
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+        .demo-badge {
+            background: rgba(255,255,255,0.25);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+        .demo-slots-container {
+            display: none;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        .demo-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .demo-slot-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #fff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+            text-align: left;
+        }
+        .demo-slot-card:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.15);
+        }
+        .demo-slot-card.selected {
+            border-color: #4f46e5;
+            background: #eef2ff;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
+        }
+        .demo-slot-badge {
+            position: absolute;
+            top: 10px;
+            right: 12px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        .demo-slot-card.selected .demo-slot-badge {
+            background: #4f46e5;
+            color: #fff;
+        }
+        .demo-slot-day {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6366f1;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .demo-slot-time {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1e293b;
+            margin: 4px 0;
+        }
+        .demo-slot-age {
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+        .demo-slot-fee {
+            font-size: 13px;
+            font-weight: 800;
+            color: #059669;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
     </style>
 </head>
 
@@ -547,6 +657,31 @@
                         </select>
                         <input type="hidden" name="preferredCentreCode" id="centreCode">
                     </div>
+                </div>
+
+                <!-- 🎪 Special Demo Launch Slot Selector -->
+                <div id="demoLaunchSection" class="demo-slots-container">
+                    <div class="demo-banner" id="demoBanner" style="display:block;">
+                        <h3>🎪 Special Demo Launch Class <span class="demo-badge">₹200 Rate</span></h3>
+                        <p id="demoBannerDesc">Book an exclusive Demo session at Chhatrapati Sambhaji Nagar centre (CSN01). Choose your preferred date & age slot below!</p>
+                    </div>
+                    
+                    <label style="font-weight: 700; font-size: 13px; color: #1e293b; display: block; margin-top: 10px;">
+                        Select Your Demo Class Slot *
+                    </label>
+                    <div class="demo-slots-grid" id="demoSlotsGrid">
+                        <!-- Slots injected dynamically -->
+                    </div>
+                    <div id="demoAgeNotice" style="font-size: 12px; color: #6366f1; margin-top: 8px; font-weight: 600; display: none;"></div>
+                    
+                    <input type="hidden" name="demoSlotId" id="demoSlotId">
+                    <input type="hidden" name="demoBatch" id="demoBatch">
+                    <input type="hidden" name="demoDate" id="demoDate">
+                    <input type="hidden" name="demoTime" id="demoTime">
+                    <input type="hidden" name="demoDay" id="demoDay">
+                    <input type="hidden" name="demoFee" id="demoFee" value="200">
+                    <input type="hidden" name="isDemo" id="isDemoInput" value="false">
+                    <input type="hidden" name="isDemoPay" id="isDemoPayInput" value="false">
                 </div>
             </div>
 
@@ -767,8 +902,57 @@
         
         var isEnrol = false;
         var isTrialPay = false;
+        var isDemo = false;
+        var isDemoPay = false;
         var centreMap = {};
         var draftTimer = null;
+        var currentDemoSlots = [];
+        var selectedDemoSlot = null;
+
+        var DEFAULT_DEMO_SLOTS = [
+            {
+                id: "DEMO-CSN01-01",
+                centreCode: "CSN01",
+                campaignName: "Special Demo Launch",
+                date: "21-08-2026",
+                day: "Friday",
+                displayDate: "Friday, 21 Aug 2026",
+                timeSlot: "4:30–5:30 PM",
+                ageGroup: "2 to 4 Years",
+                minAge: 2.0,
+                maxAge: 4.0,
+                fee: 200,
+                spotsLeft: 8
+            },
+            {
+                id: "DEMO-CSN01-02",
+                centreCode: "CSN01",
+                campaignName: "Special Demo Launch",
+                date: "21-08-2026",
+                day: "Friday",
+                displayDate: "Friday, 21 Aug 2026",
+                timeSlot: "3:30–4:30 PM",
+                ageGroup: "4 to 6 Years",
+                minAge: 4.0,
+                maxAge: 6.0,
+                fee: 200,
+                spotsLeft: 9
+            },
+            {
+                id: "DEMO-CSN01-03",
+                centreCode: "CSN01",
+                campaignName: "Special Demo Launch",
+                date: "22-08-2026",
+                day: "Saturday",
+                displayDate: "Saturday, 22 Aug 2026",
+                timeSlot: "2:00–3:00 PM",
+                ageGroup: "2 to 6 Years",
+                minAge: 2.0,
+                maxAge: 6.0,
+                fee: 200,
+                spotsLeft: 12
+            }
+        ];
 
         function init() {
             // Populate fallback centreMap from hardcoded select options
@@ -982,6 +1166,10 @@
             if (type === 'enrol') {
                 isEnrol = true;
                 isTrialPay = false;
+                isDemo = false;
+                isDemoPay = false;
+                var dSec = document.getElementById('demoLaunchSection');
+                if (dSec) dSec.style.display = 'none';
                 document.getElementById('pageTitle').innerText = "Student Enrolment Form";
                 document.getElementById('btnSubmit').innerText = "Submit Enrolment";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
@@ -990,9 +1178,51 @@
                 document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
                     if (el.type !== 'hidden') el.required = true;
                 });
+            } else if (type === 'demo' || type === 'demo_pay' || type === 'demopay') {
+                isEnrol = false;
+                isDemo = true;
+                isTrialPay = (type === 'demo_pay' || type === 'demopay');
+                isDemoPay = (type === 'demo_pay' || type === 'demopay');
+                
+                var dSec = document.getElementById('demoLaunchSection');
+                if (dSec) dSec.style.display = 'block';
+                var isDemoEl = document.getElementById('isDemoInput');
+                if (isDemoEl) isDemoEl.value = 'true';
+                var isDemoPayEl = document.getElementById('isDemoPayInput');
+                if (isDemoPayEl) isDemoPayEl.value = isDemoPay ? 'true' : 'false';
+
+                if (isDemoPay) {
+                    document.getElementById('pageTitle').innerText = "Special Demo Class Registration & Fee Payment";
+                    document.getElementById('btnSubmit').innerText = "Proceed to Demo Fee Payment (₹200) →";
+                } else {
+                    document.getElementById('pageTitle').innerText = "Special Demo Class Registration";
+                    document.getElementById('btnSubmit').innerText = "Submit Demo Registration";
+                }
+
+                document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
+                    el.required = false;
+                });
+
+                // Render default slots first for instant response
+                renderDemoSlots(DEFAULT_DEMO_SLOTS);
+                
+                // Fetch dynamic slots if available
+                var fetchCode = payCentre || 'CSN01';
+                fetch(SCRIPT_URL + "?action=getDemoCampaigns&centreCode=" + encodeURIComponent(fetchCode))
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data && Array.isArray(data) && data.length > 0) {
+                            renderDemoSlots(data);
+                        }
+                    }).catch(function(e){});
             } else if (type === 'trial_pay' || type === 'trialpay' || (type === 'trial' && (urlParams.get('pay') === 'now' || urlParams.get('pay') === 'direct'))) {
                 isEnrol = false;
                 isTrialPay = true;
+                isDemo = false;
+                isDemoPay = false;
+                var dSec = document.getElementById('demoLaunchSection');
+                if (dSec) dSec.style.display = 'none';
                 document.getElementById('pageTitle').innerText = "Trial Class Registration & Payment";
                 document.getElementById('btnSubmit').innerText = "Proceed to Payment →";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
@@ -1003,6 +1233,10 @@
             } else {
                 isEnrol = false;
                 isTrialPay = false;
+                isDemo = false;
+                isDemoPay = false;
+                var dSec = document.getElementById('demoLaunchSection');
+                if (dSec) dSec.style.display = 'none';
                 document.getElementById('pageTitle').innerText = "Trial Class Registration";
                 document.getElementById('btnSubmit').innerText = "Submit Registration";
                 document.querySelectorAll('.enrol-field').forEach(el => el.classList.add('hidden'));
@@ -1261,6 +1495,61 @@
             }
         }
 
+        function renderDemoSlots(slots) {
+            currentDemoSlots = slots || DEFAULT_DEMO_SLOTS;
+            var container = document.getElementById('demoSlotsGrid');
+            if (!container) return;
+            container.innerHTML = '';
+
+            currentDemoSlots.forEach(function(slot, idx) {
+                var card = document.createElement('div');
+                card.className = 'demo-slot-card' + (selectedDemoSlot && selectedDemoSlot.id === slot.id ? ' selected' : '');
+                card.id = 'demo-card-' + slot.id;
+                card.onclick = function() { selectDemoSlot(slot, false); };
+
+                var badgeText = slot.spotsLeft !== undefined ? (slot.spotsLeft + ' spots left') : 'Available';
+                var dayDisplay = (slot.day ? slot.day + ' • ' : '') + (slot.displayDate || slot.date);
+
+                card.innerHTML = 
+                    '<span class="demo-slot-badge">' + badgeText + '</span>' +
+                    '<div class="demo-slot-day">📅 ' + dayDisplay + '</div>' +
+                    '<div class="demo-slot-time">⏰ ' + (slot.timeSlot || slot.time) + '</div>' +
+                    '<div class="demo-slot-age">👥 Age: <strong>' + slot.ageGroup + '</strong></div>' +
+                    '<div class="demo-slot-fee">🏷️ Launch Fee: ₹' + (slot.fee || 200) + '</div>';
+                container.appendChild(card);
+            });
+
+            // If nothing selected yet, select first slot
+            if (!selectedDemoSlot && currentDemoSlots.length > 0) {
+                selectDemoSlot(currentDemoSlots[0], false);
+            }
+        }
+
+        function selectDemoSlot(slot, isAuto) {
+            selectedDemoSlot = slot;
+            document.querySelectorAll('.demo-slot-card').forEach(function(c) { c.classList.remove('selected'); });
+            var el = document.getElementById('demo-card-' + slot.id);
+            if (el) el.classList.add('selected');
+
+            var timeVal = slot.timeSlot || slot.time || "";
+            var batchText = "DEMO: " + (slot.day ? slot.day + " " : "") + slot.date + " (" + timeVal + ") [" + slot.ageGroup + "]";
+            
+            var sIdEl = document.getElementById('demoSlotId'); if (sIdEl) sIdEl.value = slot.id;
+            var sBatchEl = document.getElementById('demoBatch'); if (sBatchEl) sBatchEl.value = batchText;
+            var sDateEl = document.getElementById('demoDate'); if (sDateEl) sDateEl.value = slot.date;
+            var sTimeEl = document.getElementById('demoTime'); if (sTimeEl) sTimeEl.value = timeVal;
+            var sDayEl = document.getElementById('demoDay'); if (sDayEl) sDayEl.value = slot.day || "";
+            var sFeeEl = document.getElementById('demoFee'); if (sFeeEl) sFeeEl.value = slot.fee || 200;
+
+            var notice = document.getElementById('demoAgeNotice');
+            if (notice) {
+                if (isAuto) {
+                    notice.style.display = 'block';
+                    notice.innerText = '✨ Recommended slot for child\'s age group: ' + slot.ageGroup + ' (' + timeVal + ')';
+                }
+            }
+        }
+
         function calculateAge() {
             var dob = document.getElementById('dobField').value;
             if (dob) {
@@ -1284,6 +1573,22 @@
 
                 var ageStr = years + " Years, " + months + " Months";
                 document.getElementById('ageField').value = ageStr;
+
+                // Auto-match demo slot based on child's age in demo mode
+                if (isDemo && currentDemoSlots && currentDemoSlots.length > 0) {
+                    var decimalAge = years + (months / 12);
+                    var matchedSlot = null;
+                    for (var s = 0; s < currentDemoSlots.length; s++) {
+                        var slot = currentDemoSlots[s];
+                        if (decimalAge >= (slot.minAge - 0.25) && decimalAge <= (slot.maxAge + 0.25)) {
+                            matchedSlot = slot;
+                            break;
+                        }
+                    }
+                    if (matchedSlot) {
+                        selectDemoSlot(matchedSlot, true);
+                    }
+                }
             }
         }
 
@@ -1313,6 +1618,11 @@
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
             if (isTrialPay) formData.isTrialPay = 'true';
+            if (isDemo) {
+                formData.isDemo = 'true';
+                if (isDemoPay) formData.isDemoPay = 'true';
+                formData.demoFee = (document.getElementById('demoFee') && document.getElementById('demoFee').value) || '200';
+            }
 
             fetch(SCRIPT_URL, {
                 method: "POST",
@@ -1328,17 +1638,22 @@
                     var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
                     fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
                     
-                    if (isTrialPay || (res.payment && res.payment.paymentRequired)) {
+                    if (isTrialPay || isDemoPay || (res.payment && res.payment.paymentRequired)) {
                         var pInfo = res.payment || {
-                            amount: 500,
+                            amount: isDemo ? 200 : 500,
                             upiId: "junglecubs312@sbi",
                             upiName: "Jungle Cubs Gym",
-                            note: "Trial Fee: " + (formData.childName || "Student"),
+                            note: (isDemo ? "Demo Fee: " : "Trial Fee: ") + (formData.childName || "Student"),
                             paymentRequired: true
                         };
-                        handleUPIPayment(pInfo, res.id, { ...formData, isTrialPay: isTrialPay, feeType: "Trial Fee" });
+                        handleUPIPayment(pInfo, res.id, Object.assign({}, formData, { 
+                            isTrialPay: isTrialPay, 
+                            isDemo: isDemo,
+                            isDemoPay: isDemoPay,
+                            feeType: isDemo ? "Demo Class Fee" : "Trial Fee" 
+                        }));
                     } else {
-                        showSuccess(res.id || res.newRefId, formData);
+                        showSuccess(res.id || res.newRefId, Object.assign({}, formData, { isDemo: isDemo, isDemoPay: isDemoPay }));
                     }
                 } else {
                     alert("Error: " + res.message);
@@ -1393,18 +1708,22 @@
                 if (waNum.length === 10) waNum = '91' + waNum;
             }
             
-            var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : (data.isTrialPay || isTrialPay ? "Trial Registration & Payment Proof" : "Trial Class Request");
+            var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : (data.isDemo || isDemo ? "Special Demo Class Registration" : (data.isTrialPay || isTrialPay ? "Trial Registration & Payment Proof" : "Trial Class Request"));
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
             
-            if (data.isSmartPortal || data.isTrialPay || isTrialPay) {
-                var feeType = data.feeType || (data.isRegMode ? "Registration Fee" : "Trial Fee");
+            if (data.isSmartPortal || data.isTrialPay || isTrialPay || data.isDemoPay || isDemoPay) {
+                var feeType = data.feeType || (data.isDemo ? "Demo Class Fee" : (data.isRegMode ? "Registration Fee" : "Trial Fee"));
                 var proofLinkText = data.proofUrl ? "\nPayment Proof: " + data.proofUrl : "";
-                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + "." + proofLinkText + "\nPlease verify my proof and confirm my slot.";
+                var slotDetail = data.demoBatch ? ("\nSlot: " + data.demoBatch) : "";
+                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + "." + slotDetail + proofLinkText + "\nPlease verify my proof and confirm my slot.";
                 
                 var headingEl = document.getElementById('successHeading');
                 if (headingEl) headingEl.innerText = "Payment Proof Submitted!";
                 var msgEl = document.getElementById('successMessage');
                 if (msgEl) msgEl.innerHTML = "Thank you! Your details and payment proof have been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our team will verify your payment and confirm your slot shortly.";
+            } else if (data.isDemo || isDemo) {
+                var slotDetail = data.demoBatch ? ("\nSlot: " + data.demoBatch) : "";
+                text = "Hello! I have registered for the Special Demo Class for " + data.childName + ". Ref ID: " + id + "." + slotDetail + "\nPlease confirm my slot.";
             }
 
             document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
