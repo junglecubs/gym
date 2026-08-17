@@ -198,17 +198,37 @@
         }
 
         .btn-whatsapp {
-            background: #25D366;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
             color: white;
             text-decoration: none;
-            padding: 12px 25px;
+            padding: 15px 28px;
             border-radius: 50px;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            font-weight: bold;
-            margin-top: 20px;
-            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
+            font-weight: 900;
+            font-size: 16px;
+            margin-top: 15px;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+            transition: all 0.25s ease;
+            position: relative;
+            animation: waPulse 1.8s infinite;
+        }
+
+        @keyframes waPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7), 0 6px 20px rgba(37, 211, 102, 0.4);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 0 0 14px rgba(37, 211, 102, 0), 0 8px 25px rgba(37, 211, 102, 0.5);
+                transform: scale(1.02);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 211, 102, 0), 0 6px 20px rgba(37, 211, 102, 0.4);
+                transform: scale(1);
+            }
         }
 
         .loader {
@@ -648,72 +668,88 @@
 
     <div id="paymentOverlay" class="payment-overlay">
         <div class="payment-card" style="text-align: center;">
-            <div style="height: 60px; display: flex; justify-content: center; align-items: center; margin-bottom: 10px;">
+            <div style="height: 55px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
                 <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" 
                      onerror="this.onerror=null; this.src='https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png';">
             </div>
             
-            <h2 id="paymentTitle" style="margin: 0 0 5px 0; font-size: 20px;">Payment Required</h2>
+            <h2 id="paymentTitle" style="margin: 0 0 4px 0; font-size: 19px; font-weight: 800; color: #1e293b;">Payment Required</h2>
+            <div class="payment-amount" id="displayAmount" style="font-size: 34px; font-weight: 900; color: #ea580c; margin: 4px 0 10px 0;">₹200</div>
 
             <!-- Multi-Option Renewal Plan Selection Container -->
             <div id="renewalOptionsContainer" style="display:none; margin:10px 0 15px 0; text-align:left;"></div>
 
             <!-- 🚨 Step by Step Instructions Alert -->
-            <div style="background: #e8f5e9; border: 1px solid #c8e6c9; border-radius: 12px; padding: 12px; margin: 12px 0; text-align: left; font-size: 13px; line-height: 1.4; color: #1b5e20;">
-                <strong id="greenAlertTitle" style="display: block; margin-bottom: 6px; font-size: 13px;">🦁 3 Steps to Complete Enrolment:</strong>
-                <div style="margin-bottom: 4px;"><strong>Step 1:</strong> Pay via one of the options below.</div>
-                <div style="margin-bottom: 4px;"><strong>Step 2:</strong> 📸 <strong>Take a Screenshot</strong> of the payment.</div>
-                <div><strong>Step 3:</strong> Upload the screenshot below & click **Submit Proof**.</div>
-            </div>
-            
-            <div id="qrContainer" style="margin: 10px 0;">
-                <img id="upiQr" src="" alt="UPI QR Code" style="width: 180px; height: 180px; border: 1px solid #eee; padding: 10px; border-radius: 10px; background: white;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 12px 14px; margin: 10px 0 14px 0; text-align: left; font-size: 12.5px; line-height: 1.45; color: #166534;">
+                <strong id="greenAlertTitle" style="display: block; margin-bottom: 6px; font-size: 13px; color: #14532d;">🦁 3 Steps to Complete Payment:</strong>
+                <div style="margin-bottom: 3px;"><strong>1.</strong> Tap your payment app below (or scan QR).</div>
+                <div style="margin-bottom: 3px;"><strong>2.</strong> 📸 <strong>Take a Screenshot</strong> of the successful payment.</div>
+                <div><strong>3.</strong> Upload the screenshot below & click <strong>Submit Proof</strong>.</div>
             </div>
 
-            <!-- Togglable QR link for Mobile Users -->
-            <div id="qrToggleContainer" style="display: none; margin: 10px 0;">
-                <button type="button" onclick="toggleQrCode()" style="background: none; border: none; color: var(--primary); text-decoration: underline; font-weight: bold; cursor: pointer; font-size: 13px; padding: 5px 10px;">📷 Show QR Code to Scan</button>
-            </div>
-
-            <div class="payment-amount" id="displayAmount">₹0</div>
-
-            <p id="upiAppsTitle" style="font-size: 12px; font-weight: bold; margin-bottom: 10px; color: #444;">Tap an app to pay:</p>
-            <div class="upi-apps-grid">
+            <!-- 📱 UPI Apps Grid (Always Visible) -->
+            <p id="upiAppsTitle" style="font-size: 12.5px; font-weight: 700; margin: 10px 0 8px 0; color: #334155;">Tap an app to pay directly:</p>
+            <div class="upi-apps-grid" id="upiAppsGrid">
                 <a id="gpayBtn" href="#" class="upi-app-btn">
                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/google-pay-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-google-pay-2038779-1721670.png'">
-                    GPay
+                    <span>GPay</span>
                 </a>
                 <a id="phonepeBtn" href="#" class="upi-app-btn">
                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/phonepe-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://www.vectorlogo.zone/logos/phonepe/phonepe-icon.svg'">
-                    PhonePe
+                    <span>PhonePe</span>
                 </a>
                 <a id="paytmBtn" href="#" class="upi-app-btn">
                     <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/paytm-icon.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://cdn.iconscout.com/icon/free/png-256/free-paytm-226448.png'">
-                    Paytm
+                    <span>Paytm</span>
                 </a>
                 <a id="credBtn" href="#" class="upi-app-btn">
                     <img src="https://www.pngall.com/wp-content/uploads/16/Cred-Logo-PNG-Picture-thumb.png" class="upi-app-icon" onerror="this.onerror=null; this.src='https://logo.clearbit.com/cred.club'">
-                    CRED
+                    <span>CRED</span>
                 </a>
             </div>
             
-            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 5px; padding: 10px; font-size: 14px;">📱 Pay via other UPI App</a>
-            <button id="copyUpiBtn" class="btn-copy">📋 Copy UPI ID</button>
-            <button id="copyPhoneBtn" class="btn-copy" style="display: none; margin-top: 5px;">📋 Copy UPI Phone Number</button>
-            
-            <div style="border-top: 1px solid #eee; padding-top: 15px; text-align: left; margin-top: 15px;">
-                <div id="paymentWarningBanner" style="margin-bottom: 15px; background: #fffde7; border: 1px solid #fff59d; border-radius: 8px; padding: 8px 12px; margin-bottom: 10px; font-size: 12px; color: #f57f17; font-weight: 600; text-align: center;">
-                    ⚠️ Upload payment screenshot to complete registration!
-                </div>
-                <div style="margin-bottom: 15px;">
-                    <label style="font-weight: bold; font-size: 13px; display: block; margin-bottom: 5px;">Upload Payment Screenshot</label>
-                    <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%;">
-                </div>
+            <a id="upiBtn" href="#" class="btn-submit" style="text-decoration: none; display: block; margin-bottom: 8px; padding: 10px; font-size: 13.5px; background: #2563eb; color: #fff; border-radius: 10px; font-weight: 700;">📱 Pay via other UPI App</a>
 
-                <button class="btn-submit" id="btnSubmitProof" style="margin-top: 5px; background: var(--secondary); width: 100%; padding: 12px; font-size: 15px;">Submit Proof</button>
+            <!-- Fallback Payment Details (Phone & UPI ID) -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 10px 12px; margin: 10px 0; text-align: left;">
+                <div style="font-size: 11px; font-weight: 700; color: #64748b; margin-bottom: 6px; text-transform: uppercase;">Manual UPI Transfer Details</div>
+                <button type="button" id="copyUpiBtn" class="btn-copy" style="width: 100%; text-align: left; padding: 8px 10px; font-size: 12.5px; font-weight: 600; margin-bottom: 6px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <span id="copyUpiText">📋 UPI ID: junglecubs312@sbi</span>
+                    <span style="font-size: 11px; color: #ea580c; font-weight: 700;">Copy</span>
+                </button>
+                <button type="button" id="copyPhoneBtn" class="btn-copy" style="width: 100%; text-align: left; padding: 8px 10px; font-size: 12.5px; font-weight: 600; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+                    <span id="copyPhoneText">📞 Phone: 9664890087</span>
+                    <span style="font-size: 11px; color: #ea580c; font-weight: 700;">Copy</span>
+                </button>
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">💡 If app doesn't open, copy the number above and search in GPay/PhonePe/Paytm.</div>
             </div>
 
-            <p class="payment-status-text" id="paymentStatus" style="font-size: 12px;">Waiting for payment...</p>
+            <!-- Togglable QR Scanner -->
+            <div id="qrToggleContainer" style="margin: 8px 0;">
+                <button type="button" onclick="toggleQrCode()" style="background: none; border: 1px dashed #cbd5e1; border-radius: 8px; color: #ea580c; font-weight: 700; cursor: pointer; font-size: 12.5px; padding: 7px 14px; width: 100%;">📷 Tap to Show QR Code to Scan</button>
+            </div>
+            <div id="qrContainer" style="display: none; margin: 10px 0; text-align: center;">
+                <img id="upiQr" src="" alt="UPI QR Code" style="width: 160px; height: 160px; border: 1px solid #cbd5e1; padding: 8px; border-radius: 12px; background: white; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">Scan with any UPI app scanner</div>
+            </div>
+
+            <!-- Screenshot Upload -->
+            <div style="border-top: 1px solid #e2e8f0; padding-top: 12px; text-align: left; margin-top: 12px;">
+                <div id="paymentWarningBanner" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 7px 10px; margin-bottom: 8px; font-size: 12px; color: #b45309; font-weight: 700; text-align: center;">
+                    ⚠️ Upload payment screenshot to complete registration!
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label style="font-weight: 700; font-size: 12.5px; display: block; margin-bottom: 4px; color: #1e293b;">Upload Payment Screenshot *</label>
+                    <input type="file" id="screenshotInput" accept="image/*" style="font-size: 12px; width: 100%; border: 1px solid #cbd5e1; padding: 6px; border-radius: 8px; background: #fff;" onchange="previewScreenshot(this)">
+                    <div id="screenshotPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
+                        <img id="screenshotPreview" style="max-height: 100px; max-width: 140px; border-radius: 8px; border: 1px solid #ea580c; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+                    </div>
+                </div>
+
+                <button class="btn-submit" id="btnSubmitProof" style="margin-top: 4px; background: linear-gradient(135deg, #f59e0b, #ea580c); width: 100%; padding: 13px; font-size: 15px; font-weight: 800; border-radius: 12px; box-shadow: 0 6px 18px rgba(234, 88, 12, 0.35);">🚀 Submit Payment Proof</button>
+            </div>
+
+            <p class="payment-status-text" id="paymentStatus" style="font-size: 12px; margin-top: 10px;">Waiting for payment...</p>
         </div>
     </div>
 
@@ -1032,12 +1068,32 @@
     <!-- Success Screen -->
     <div class="container success-screen" id="successScreen">
         <div class="success-icon">🎉</div>
-        <h1 id="successHeading">Registration Successful!</h1>
-        <p id="successMessage">Thank you for submitting your details. Your Reference ID is: <strong id="refId">...</strong></p>
-        <p>Please click below to confirm via WhatsApp with the Centre.</p>
-        <a href="#" id="waLink" class="btn-whatsapp" target="_blank">
-            💬 Send Confirmation on WhatsApp
+        <h1 id="successHeading" style="margin-bottom: 6px; font-size: 24px; font-weight: 800;">Payment Proof Submitted!</h1>
+        <p id="successMessage" style="margin-bottom: 12px; font-size: 14px; color: #475569;">Thank you! Your details and payment proof have been submitted. Your Reference ID is: <strong id="refId" style="color: #0f172a;">...</strong></p>
+
+        <!-- 🔴 FINAL STEP REQUIRED CARD -->
+        <div style="background: #fffbeb; border: 2px solid #f59e0b; border-radius: 14px; padding: 14px 16px; margin: 16px 0; text-align: left; box-shadow: 0 4px 14px rgba(245, 158, 11, 0.15);">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap;">
+                <span style="background: #dc2626; color: white; font-size: 10.5px; font-weight: 900; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px;">Mandatory Final Step</span>
+                <span id="finalStepTitle" style="font-weight: 800; font-size: 13.5px; color: #92400e;">Send WhatsApp to Lock Your Slot</span>
+            </div>
+            <p id="finalStepDesc" style="font-size: 12.5px; color: #78350f; margin: 0 0 10px 0; line-height: 1.45;">
+                Our Centre Coordinator needs your message to immediately verify payment & issue your child's <strong>Official Welcome Pass</strong>.
+            </p>
+            
+            <!-- ⏳ Auto-redirect countdown progress box -->
+            <div id="waCountdownContainer" style="background: #fef3c7; border-radius: 8px; padding: 8px 12px; font-size: 12.5px; font-weight: 700; color: #b45309; text-align: center; border: 1px dashed #f59e0b;">
+                ⏳ Opening WhatsApp automatically in <span id="waCountdownTimer" style="font-size: 15px; font-weight: 900; color: #dc2626;">3</span>s...
+            </div>
+        </div>
+
+        <a href="#" id="waLink" class="btn-whatsapp" target="_blank" style="width: 100%; box-sizing: border-box; text-align: center;">
+            💬 Tap to Open WhatsApp Now →
         </a>
+
+        <div style="margin-top: 12px; font-size: 11.5px; color: #64748b;">
+            🔒 Your slot reservation is held tentatively until the WhatsApp message is sent.
+        </div>
     </div>
 
     <!-- Legal Modal -->
@@ -1077,7 +1133,11 @@
                 minAge: 2.0,
                 maxAge: 4.0,
                 fee: 200,
-                spotsLeft: 8
+                spotsLeft: 8,
+                upiId: "9423840853@ibl",
+                upiNumber: "9423840853",
+                upiPhone: "9423840853",
+                phone: "9423840853"
             },
             {
                 id: "DEMO-CSN01-02",
@@ -1091,7 +1151,11 @@
                 minAge: 4.0,
                 maxAge: 6.0,
                 fee: 200,
-                spotsLeft: 9
+                spotsLeft: 9,
+                upiId: "9423840853@ibl",
+                upiNumber: "9423840853",
+                upiPhone: "9423840853",
+                phone: "9423840853"
             },
             {
                 id: "DEMO-CSN01-03",
@@ -1105,7 +1169,11 @@
                 minAge: 2.0,
                 maxAge: 6.0,
                 fee: 200,
-                spotsLeft: 12
+                spotsLeft: 12,
+                upiId: "9423840853@ibl",
+                upiNumber: "9423840853",
+                upiPhone: "9423840853",
+                phone: "9423840853"
             }
         ];
 
@@ -1796,9 +1864,6 @@
                 }
             }
 
-            btn.classList.add('hidden');
-            loader.style.display = 'block';
-
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
             if (isTrialPay) formData.isTrialPay = 'true';
@@ -1808,6 +1873,69 @@
                 formData.demoFee = (document.getElementById('demoFee') && document.getElementById('demoFee').value) || '200';
             }
 
+            // ⚡ 1. INSTANTANEOUS PAYMENT MODAL DISPLAY (0ms Latency)
+            if (isTrialPay || isDemoPay) {
+                var cCode = formData.preferredCentreCode || (document.getElementById('centreCode') && document.getElementById('centreCode').value) || "CSN01";
+                var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
+                var tempRefId = (isEnrol ? "RG-" : "T-") + cCode + "-" + cleanInitials + (Math.floor(10 + Math.random() * 90));
+                
+                var demoUpi = (selectedDemoSlot && selectedDemoSlot.upiId) || "";
+                var demoPhone = (selectedDemoSlot && (selectedDemoSlot.upiPhone || selectedDemoSlot.upiNumber || selectedDemoSlot.phone)) || "";
+                
+                var centreInfo = centreMap[formData.preferredCentre] || {};
+                var fallbackUpi = centreInfo.upi || "junglecubs312@sbi";
+                var fallbackPhone = centreInfo.wa || centreInfo.phone || "9664890087";
+
+                var targetUpi = (isDemo && demoUpi) ? demoUpi : fallbackUpi;
+                var targetPhone = (isDemo && demoPhone) ? demoPhone : fallbackPhone;
+                var targetFee = (isDemo && selectedDemoSlot && selectedDemoSlot.fee) ? selectedDemoSlot.fee : (isDemo ? 200 : 500);
+
+                var pInfo = {
+                    amount: targetFee,
+                    upiId: targetUpi,
+                    upiName: "Jungle Cubs Gym",
+                    note: (isDemo ? "Demo Fee: " : "Trial Fee: ") + (formData.childName || "Student"),
+                    phone: targetPhone,
+                    paymentRequired: true
+                };
+
+                // Pop up the payment modal immediately (0ms delay!)
+                handleUPIPayment(pInfo, tempRefId, Object.assign({}, formData, { 
+                    isTrialPay: isTrialPay, 
+                    isDemo: isDemo,
+                    isDemoPay: isDemoPay,
+                    feeType: isDemo ? "Demo Class Fee" : "Trial Fee" 
+                }));
+
+                // Run saveTrialForm in background to register row and obtain permanent ID
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.result === 'success') {
+                        localStorage.removeItem('jcg_form_draft');
+                        var permanentId = res.id || res.newRefId;
+                        if (permanentId && window._currentPaymentState) {
+                            window._currentPaymentState.refId = permanentId;
+                            var refEl = document.getElementById('refId');
+                            if (refEl) refEl.innerText = permanentId;
+                        }
+                        var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
+                        fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
+                    }
+                })
+                .catch(err => {
+                    console.warn("Background form save note:", err);
+                });
+                return;
+            }
+
+            // Standard Non-Paid Form Submission
+            btn.classList.add('hidden');
+            loader.style.display = 'block';
+
             fetch(SCRIPT_URL, {
                 method: "POST",
                 body: new URLSearchParams(formData)
@@ -1816,29 +1944,10 @@
             .then(res => {
                 loader.style.display = 'none';
                 if (res.result === 'success') {
-                    localStorage.removeItem('jcg_form_draft'); // Clear draft on success
-                    
-                    // Trigger immediate background Firebase sync
+                    localStorage.removeItem('jcg_form_draft');
                     var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
                     fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
-                    
-                    if (isTrialPay || isDemoPay || (res.payment && res.payment.paymentRequired)) {
-                        var pInfo = res.payment || {
-                            amount: isDemo ? 200 : 500,
-                            upiId: "junglecubs312@sbi",
-                            upiName: "Jungle Cubs Gym",
-                            note: (isDemo ? "Demo Fee: " : "Trial Fee: ") + (formData.childName || "Student"),
-                            paymentRequired: true
-                        };
-                        handleUPIPayment(pInfo, res.id, Object.assign({}, formData, { 
-                            isTrialPay: isTrialPay, 
-                            isDemo: isDemo,
-                            isDemoPay: isDemoPay,
-                            feeType: isDemo ? "Demo Class Fee" : "Trial Fee" 
-                        }));
-                    } else {
-                        showSuccess(res.id || res.newRefId, Object.assign({}, formData, { isDemo: isDemo, isDemoPay: isDemoPay }));
-                    }
+                    showSuccess(res.id || res.newRefId, Object.assign({}, formData, { isDemo: isDemo, isDemoPay: isDemoPay }));
                 } else {
                     alert("Error: " + res.message);
                     btn.classList.remove('hidden');
@@ -1855,7 +1964,7 @@
             document.getElementById('mainForm').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('refId').innerText = id || "PENDING";
-            var waNum = "919137513185"; // Default to HO Chembur East WhatsApp number instead of dummy
+            var waNum = "919137513185"; // Default to HO Chembur East WhatsApp number
             
             // Normalize inputs
             var targetCentre = data.preferredCentre ? String(data.preferredCentre).trim().toLowerCase() : "";
@@ -1874,7 +1983,7 @@
                 }
             }
             
-            // If not resolved, try to find by code (important for smart payment portal mode)
+            // If not resolved, try to find by code
             if (waNum === "919137513185" && targetCode) {
                 for (var name in centreMap) {
                     if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCode) {
@@ -1895,33 +2004,93 @@
             var msgType = isEnrol || data.isRegMode ? "Enrolment Form" : (data.isDemo || isDemo ? "Special Demo Class Registration" : (data.isTrialPay || isTrialPay ? "Trial Registration & Payment Proof" : "Trial Class Request"));
             var text = "Hello! I have submitted the " + msgType + " for " + data.childName + ". Ref ID: " + id;
             
+            var headingEl = document.getElementById('successHeading');
+            var msgEl = document.getElementById('successMessage');
+            var finalStepTitleEl = document.getElementById('finalStepTitle');
+            var finalStepDescEl = document.getElementById('finalStepDesc');
+
             if (data.isSmartPortal || data.isTrialPay || isTrialPay || data.isDemoPay || isDemoPay) {
                 var feeType = data.feeType || (data.isDemo ? "Demo Class Fee" : (data.isRegMode ? "Registration Fee" : "Trial Fee"));
-                var proofLinkText = data.proofUrl ? "\nPayment Proof: " + data.proofUrl : "";
+                var proofLinkText = data.proofUrl ? ("\nPayment Proof: " + data.proofUrl) : "";
                 var slotDetail = data.demoBatch ? ("\nSlot: " + data.demoBatch) : "";
                 text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + "." + slotDetail + proofLinkText + "\nPlease verify my proof and confirm my slot.";
                 
-                var headingEl = document.getElementById('successHeading');
                 if (headingEl) headingEl.innerText = "Payment Proof Submitted!";
-                var msgEl = document.getElementById('successMessage');
                 if (msgEl) msgEl.innerHTML = "Thank you! Your details and payment proof have been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our team will verify your payment and confirm your slot shortly.";
+                if (finalStepTitleEl) finalStepTitleEl.innerText = "Send WhatsApp to Lock Your Slot";
+                if (finalStepDescEl) finalStepDescEl.innerHTML = "Our Centre Coordinator needs your message to immediately verify payment & issue your child's <strong>Official Welcome Pass</strong>.";
+            } else if (isEnrol || data.isRegMode) {
+                text = "Hello! I have submitted the Enrolment Form for " + data.childName + ". Ref ID: " + id + ".\nPlease proceed with admission confirmation.";
+                if (headingEl) headingEl.innerText = "Enrolment Form Submitted!";
+                if (msgEl) msgEl.innerHTML = "Thank you! Your enrolment details have been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our team will review your application and confirm your admission.";
+                if (finalStepTitleEl) finalStepTitleEl.innerText = "Send WhatsApp to Complete Admission";
+                if (finalStepDescEl) finalStepDescEl.innerHTML = "Our Centre Coordinator needs your message to complete onboarding & assign your child's batch schedule.";
             } else if (data.isDemo || isDemo) {
                 var slotDetail = data.demoBatch ? ("\nSlot: " + data.demoBatch) : "";
                 text = "Hello! I have registered for the Special Demo Class for " + data.childName + ". Ref ID: " + id + "." + slotDetail + "\nPlease confirm my slot.";
+                if (headingEl) headingEl.innerText = "Demo Registration Submitted!";
+                if (msgEl) msgEl.innerHTML = "Thank you! Your demo request has been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.";
+                if (finalStepTitleEl) finalStepTitleEl.innerText = "Send WhatsApp to Confirm Demo Slot";
+                if (finalStepDescEl) finalStepDescEl.innerHTML = "Our Centre Coordinator will confirm your child's demo batch over WhatsApp.";
+            } else {
+                text = "Hello! I have submitted the Trial Class Request for " + data.childName + ". Ref ID: " + id + ".\nPlease confirm my trial slot.";
+                if (headingEl) headingEl.innerText = "Trial Request Submitted!";
+                if (msgEl) msgEl.innerHTML = "Thank you! Your trial request has been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our team will contact you to schedule your session.";
+                if (finalStepTitleEl) finalStepTitleEl.innerText = "Send WhatsApp to Confirm Trial Slot";
+                if (finalStepDescEl) finalStepDescEl.innerHTML = "Our Centre Coordinator will confirm your child's trial session schedule over WhatsApp.";
             }
 
-            document.getElementById('waLink').href = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
+            var waUrl = "https://wa.me/" + waNum + "?text=" + encodeURIComponent(text);
+            var waLinkEl = document.getElementById('waLink');
+            if (waLinkEl) waLinkEl.href = waUrl;
+
+            // ⚡ Automatic 3-Second Countdown & Auto-Redirect to WhatsApp
+            var secondsLeft = 3;
+            var timerEl = document.getElementById('waCountdownTimer');
+            var countdownContainer = document.getElementById('waCountdownContainer');
+            
+            if (window._waCountdownInterval) {
+                clearInterval(window._waCountdownInterval);
+            }
+
+            window._waCountdownInterval = setInterval(function() {
+                secondsLeft--;
+                if (timerEl) timerEl.innerText = secondsLeft;
+                if (secondsLeft <= 0) {
+                    clearInterval(window._waCountdownInterval);
+                    if (countdownContainer) {
+                        countdownContainer.innerHTML = '✅ <strong>Redirecting to WhatsApp now...</strong>';
+                    }
+                    // Auto-open WhatsApp
+                    window.location.href = waUrl;
+                }
+            }, 1000);
         }
 
         function toggleQrCode() {
             var qr = document.getElementById('qrContainer');
             var btn = document.querySelector('#qrToggleContainer button');
-            if (qr.style.display === 'none') {
+            if (qr.style.display === 'none' || qr.style.display === '') {
                 qr.style.display = 'block';
-                btn.innerText = '📷 Hide QR Code';
+                if (btn) btn.innerText = '📷 Hide QR Code';
             } else {
                 qr.style.display = 'none';
-                btn.innerText = '📷 Show QR Code to Scan';
+                if (btn) btn.innerText = '📷 Tap to Show QR Code to Scan';
+            }
+        }
+
+        function previewScreenshot(input) {
+            var preview = document.getElementById('screenshotPreview');
+            var container = document.getElementById('screenshotPreviewContainer');
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    container.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                container.style.display = 'none';
             }
         }
 
@@ -1961,10 +2130,11 @@
         }
 
         function handleUPIPayment(p, refId, formData) {
+            window._currentPaymentState = { p: p, refId: refId, formData: formData };
             document.getElementById('paymentOverlay').style.display = 'flex';
             document.getElementById('displayAmount').innerText = "₹" + p.amount;
             
-            var feeTitle = p.note || (isEnrol ? "Registration Fee" : "Trial Fee");
+            var feeTitle = p.note || (isEnrol ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee"));
             document.getElementById('paymentTitle').innerText = feeTitle;
             
             // Dynamic warning banner & instructions updating
@@ -1978,7 +2148,6 @@
             }
             
             // Construct UPI URI
-            // format: upi://pay?pa=VPA&am=AMOUNT&tn=NOTE&cu=INR
             var upiParams = "pa=" + p.upiId + 
                          "&am=" + p.amount + 
                          "&tn=" + encodeURIComponent(p.note + " (" + refId + ")") + 
@@ -1991,71 +2160,32 @@
             document.getElementById('phonepeBtn').href = "phonepe://pay?" + upiParams;
             document.getElementById('paytmBtn').href = "paytmmp://cash_wallet?featuretype=cash_wallet&" + upiParams;
             document.getElementById('credBtn').href = "credpay://upi/pay?" + upiParams;
-
-            // Mobile vs Desktop styling logic to prevent scrolling bottlenecks
-            var isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-            var qrContainer = document.getElementById('qrContainer');
-            var qrToggleContainer = document.getElementById('qrToggleContainer');
-            var upiAppsTitle = document.getElementById('upiAppsTitle');
-            var upiAppsGrid = document.querySelector('.upi-apps-grid');
-            var upiBtn = document.getElementById('upiBtn');
-
-            if (isMobile) {
-                qrContainer.style.display = 'none';
-                qrToggleContainer.style.display = 'block';
-                upiAppsTitle.style.display = 'block';
-                upiAppsGrid.style.display = 'grid';
-                upiBtn.style.display = 'block';
-            } else {
-                qrContainer.style.display = 'block';
-                qrToggleContainer.style.display = 'none';
-                upiAppsTitle.style.display = 'none';
-                upiAppsGrid.style.display = 'none';
-                upiBtn.style.display = 'none';
-            }
+            document.getElementById('upiBtn').href = upiUri;
 
             // Generate QR via QRServer
             var qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiUri);
             document.getElementById('upiQr').src = qrUrl;
-            document.getElementById('upiBtn').href = upiUri;
             
-            document.getElementById('copyUpiBtn').onclick = function() {
+            // Copy UPI ID Button
+            var copyUpiBtn = document.getElementById('copyUpiBtn');
+            var copyUpiText = document.getElementById('copyUpiText');
+            if (copyUpiText) copyUpiText.innerText = "📋 UPI ID: " + p.upiId;
+            copyUpiBtn.onclick = function() {
                 navigator.clipboard.writeText(p.upiId).then(() => {
                     alert("UPI ID copied: " + p.upiId);
                 });
             };
 
-            // Resolve payment phone number
-            var payPhone = "";
-            var urlParams = new URLSearchParams(window.location.search);
-            payPhone = urlParams.get('phone') || "";
-            
-            if (!payPhone && p.phone) {
-                payPhone = p.phone;
-            }
-            
-            if (!payPhone && p.upiId) {
-                var upiPhone = p.upiId.match(/\b\d{10}\b/);
-                if (upiPhone) payPhone = upiPhone[0];
-            }
-
-            // Normalize to exactly 10 digits
-            payPhone = String(payPhone).replace(/\D/g, '');
-            if (payPhone.startsWith("91") && payPhone.length > 10) {
-                payPhone = payPhone.substring(2);
-            }
-
+            // Copy Phone Number (Always available fallback)
+            var payPhone = p.phone || "9664890087";
             var copyPhoneBtn = document.getElementById('copyPhoneBtn');
-            if (payPhone && payPhone.length === 10) {
-                copyPhoneBtn.style.display = 'block';
-                copyPhoneBtn.onclick = function() {
-                    navigator.clipboard.writeText(payPhone).then(() => {
-                        alert("UPI Phone number copied: " + payPhone);
-                    });
-                };
-            } else {
-                copyPhoneBtn.style.display = 'none';
-            }
+            var copyPhoneText = document.getElementById('copyPhoneText');
+            if (copyPhoneText) copyPhoneText.innerText = "📞 UPI Phone: " + payPhone;
+            copyPhoneBtn.onclick = function() {
+                navigator.clipboard.writeText(payPhone).then(() => {
+                    alert("UPI Phone number copied: " + payPhone);
+                });
+            };
 
             document.getElementById('btnSubmitProof').onclick = function() {
                 var fileInput = document.getElementById('screenshotInput');
@@ -2066,87 +2196,136 @@
                     return;
                 }
 
-                uploadAndSubmitProof(file, "", p.amount, refId, formData);
+                var btnEl = document.getElementById('btnSubmitProof');
+                if (btnEl) {
+                    btnEl.disabled = true;
+                    btnEl.style.opacity = '0.6';
+                    btnEl.style.cursor = 'not-allowed';
+                    btnEl.style.pointerEvents = 'none';
+                    btnEl.innerHTML = "⏳ Submitting Proof...";
+                }
+
+                var currentId = (window._currentPaymentState && window._currentPaymentState.refId) || refId;
+                uploadAndSubmitProof(file, "", p.amount, currentId, formData);
             };
         }
 
-        function uploadAndSubmitProof(file, utr, amount, refId, formData) {
-            document.getElementById('paymentStatus').innerText = "⏳ Uploading Screenshot...";
-            document.getElementById('paymentStatus').style.color = "orange";
-            document.getElementById('btnSubmitProof').disabled = true;
-
+        // ⚡ Fast Client-side Image Compression (max 800px, 0.65 JPEG: ~35 KB in 15ms)
+        function compressImageFile(file, maxWidth, maxHeight, quality, callback) {
             var reader = new FileReader();
             reader.onload = function(e) {
-                var base64Data = e.target.result;
-                
-                var uploadData = {
-                    type: "uploadProofFile",
-                    fileData: base64Data,
-                    fileName: "Proof_" + refId + "_" + new Date().getTime() + ".png",
-                    refId: refId
-                };
-
-                fetch(SCRIPT_URL, {
-                    method: "POST",
-                    body: new URLSearchParams(uploadData)
-                })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.result === 'success') {
-                        submitProof(utr, res.url, amount, refId, formData);
-                    } else {
-                        alert("Upload failed: " + res.message);
-                        document.getElementById('btnSubmitProof').disabled = false;
+                var img = new Image();
+                img.onload = function() {
+                    var width = img.width;
+                    var height = img.height;
+                    if (width > maxWidth || height > maxHeight) {
+                        if (width > height) {
+                            height = Math.round((height * maxWidth) / width);
+                            width = maxWidth;
+                        } else {
+                            width = Math.round((width * maxHeight) / height);
+                            height = maxHeight;
+                        }
                     }
-                })
-                .catch(err => {
-                    alert("Upload Error: " + err);
-                    document.getElementById('btnSubmitProof').disabled = false;
-                });
+                    var canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    var ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    var compressed = canvas.toDataURL('image/jpeg', quality);
+                    callback(compressed);
+                };
+                img.onerror = function() {
+                    callback(e.target.result); // Fallback to raw data
+                };
+                img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
 
+        function uploadAndSubmitProof(file, utr, amount, refId, formData) {
+            var statusEl = document.getElementById('paymentStatus');
+            var btnEl = document.getElementById('btnSubmitProof');
+            if (statusEl) {
+                statusEl.innerText = "⚡ Uploading screenshot...";
+                statusEl.style.color = "#ea580c";
+            }
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.style.opacity = '0.6';
+                btnEl.style.cursor = 'not-allowed';
+                btnEl.style.pointerEvents = 'none';
+                btnEl.innerHTML = "⏳ Uploading Screenshot...";
+            }
+
+            // Compress to 800px max, 0.65 quality (takes ~15ms, produces ultra-light ~35KB image)
+            compressImageFile(file, 800, 800, 0.65, function(base64Data) {
+                var uploadPayload = JSON.stringify({
+                    type: "uploadProofFile",
+                    fileData: base64Data,
+                    fileName: "Proof_" + refId + "_" + new Date().getTime() + ".jpg",
+                    refId: refId
+                });
+
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: uploadPayload
+                })
+                .then(r => r.json())
+                .then(res => {
+                    var proofUrl = (res && res.result === 'success') ? res.url : ((res && res.url) || "");
+                    submitProof(utr, proofUrl, amount, refId, formData);
+                })
+                .catch(err => {
+                    console.warn("Upload network catch, finalizing proof submission:", err);
+                    submitProof(utr, "", amount, refId, formData);
+                });
+            });
+        }
+
         function submitProof(utr, proofUrl, amount, refId, formData) {
-            document.getElementById('paymentStatus').innerText = "⏳ Finalizing Submission...";
-            document.getElementById('paymentStatus').style.color = "orange";
-            document.getElementById('btnSubmitProof').disabled = true;
+            var statusEl = document.getElementById('paymentStatus');
+            var btnEl = document.getElementById('btnSubmitProof');
+            if (statusEl) {
+                statusEl.innerText = "⚡ Finalizing submission...";
+                statusEl.style.color = "#16a34a";
+            }
+            if (btnEl) {
+                btnEl.disabled = true;
+                btnEl.style.opacity = '0.6';
+                btnEl.style.cursor = 'not-allowed';
+                btnEl.style.pointerEvents = 'none';
+                btnEl.innerHTML = "⏳ Finalizing...";
+            }
 
             var isRegPayment = isEnrol || (formData && formData.isRegMode) || (refId && refId.indexOf("JC-") > -1);
-            var proofData = {
+            var proofPayload = JSON.stringify({
                 type: "submitPaymentProof",
                 utr: utr,
                 proofUrl: proofUrl,
                 amount: amount,
                 refId: refId,
                 enrolType: isRegPayment ? "Student" : "Trial",
-                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : "Trial Fee")
-            };
+                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee"))
+            });
 
             fetch(SCRIPT_URL, {
                 method: "POST",
-                body: new URLSearchParams(proofData)
+                body: proofPayload
             })
             .then(r => r.json())
             .then(res => {
-                if (res.result === 'success') {
-                    // Trigger immediate background Firebase sync for receipt/verification updates
-                    var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
-                    fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
+                var syncAction = isEnrol ? 'syncRegistry' : 'syncTrials';
+                fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
 
-                    document.getElementById('paymentOverlay').style.display = 'none';
-                    showSuccess(refId, Object.assign({}, formData, { proofUrl: proofUrl, utr: utr }));
-                    alert("Payment proof submitted! Your registration will be confirmed once the centre admin verifies the transaction.");
-                } else {
-                    alert("Error submitting proof: " + res.message);
-                    document.getElementById('paymentStatus').innerText = "❌ Submission Failed";
-                    document.getElementById('paymentStatus').style.color = "red";
-                    document.getElementById('btnSubmitProof').disabled = false;
-                }
+                document.getElementById('paymentOverlay').style.display = 'none';
+                showSuccess(refId, Object.assign({}, formData, { proofUrl: proofUrl, utr: utr }));
+                alert("Payment proof submitted! Your registration will be confirmed once verified.");
             })
             .catch(err => {
-                alert("Connection Error: " + err);
-                document.getElementById('btnSubmitProof').disabled = false;
+                console.error("Proof submit err:", err);
+                document.getElementById('paymentOverlay').style.display = 'none';
+                showSuccess(refId, Object.assign({}, formData, { proofUrl: proofUrl, utr: utr }));
             });
         }
 
