@@ -520,25 +520,30 @@
                             <option value="HO Chembur East" data-code="M04">HO Chembur East</option>
                             <option value="Malad West" data-code="M05">Malad West</option>
                             <option value="Borivali West" data-code="M09">Borivali West</option>
+                            <option value="Goregaon" data-code="M17">Goregaon</option>
+                            <option value="Andheri" data-code="M18">Andheri</option>
                             <option value="Thane Indo Scots Global" data-code="M06">Thane Indo Scots Global</option>
+                            <option value="Thane Hiranandani Estate" data-code="M12">Thane Hiranandani Estate</option>
+                            <option value="Sporty Sprouts Thane Hiranandani Estate" data-code="SS03">Sporty Sprouts Thane Hiranandani Estate</option>
+                            <option value="Bhandup" data-code="M19">Bhandup</option>
                             <option value="Wadala" data-code="M07">Wadala</option>
                             <option value="Tardeo" data-code="M08">Tardeo</option>
+                            <option value="Sporty Sprouts Tardeo" data-code="SS02">Sporty Sprouts Tardeo</option>
                             <option value="Lalbaugh" data-code="M10">Lalbaugh</option>
                             <option value="Powai" data-code="M11">Powai</option>
-                            <option value="Thane Hiranandani Estate" data-code="M12">Thane Hiranandani Estate</option>
                             <option value="Worli" data-code="M14">Worli</option>
                             <option value="Bandra West" data-code="M15">Bandra West</option>
                             <option value="Belapur Navi Mumbai" data-code="M13">Belapur Navi Mumbai</option>
                             <option value="Vashi Navi Mumbai" data-code="M16">Vashi Navi Mumbai</option>
-                            <option value="Goregaon" data-code="M17">Goregaon</option>
-                            <option value="Andheri" data-code="M18">Andheri</option>
-                            <option value="Bhandup" data-code="M19">Bhandup</option>
                             <option value="Kharghar" data-code="M20">Kharghar</option>
                             <option value="Pune Kharadi" data-code="PN01">Pune Kharadi</option>
                             <option value="Pune Kothrud" data-code="PN02">Pune Kothrud</option>
                             <option value="Goa Porvorim" data-code="GOA01">Goa Porvorim</option>
-                            <option value="Bengaluru Malleswaram" data-code="BLR01">Bengaluru Malleswaram</option>
+                            <option value="Bengaluru Basaveshwar Nagar" data-code="BLR01">Bengaluru Basaveshwar Nagar</option>
                             <option value="Bengaluru Yelahanka DCSE" data-code="BLR02">Bengaluru Yelahanka DCSE</option>
+                            <option value="Surat Vesu Happy Minds" data-code="ST01">Surat Vesu Happy Minds</option>
+                            <option value="Kids Corner Nursery Palghar" data-code="PLG01">Kids Corner Nursery Palghar</option>
+                            <option value="Chhatrapati Sambhaji Nagar Centre" data-code="CSN01">Chhatrapati Sambhaji Nagar Centre</option>
                         </select>
                         <input type="hidden" name="preferredCentreCode" id="centreCode">
                     </div>
@@ -776,12 +781,17 @@
 
             var urlParams = new URLSearchParams(window.location.search);
             var payId = urlParams.get('pay');
-            var payCentre = urlParams.get('centre');
+            var payCentre = urlParams.get('centre') || urlParams.get('preferredCentre') || urlParams.get('preferredCentreCode') || urlParams.get('loc') || urlParams.get('center');
             var type = urlParams.get('type');
             
             isEnrol = (type === 'enrol');
 
             console.log("Init: payId=" + payId + ", centre=" + payCentre);
+
+            if (payCentre) {
+                window._targetCentre = payCentre;
+                applyCentre(payCentre);
+            }
 
             // Show regForm immediately if not in payment mode
             if (!payId) {
@@ -997,6 +1007,10 @@
             
             // Try to load draft from localStorage
             loadDraft();
+
+            if (window._targetCentre) {
+                applyCentre(window._targetCentre);
+            }
         }
 
         // --- 💾 DRAFT & DYNAMIC SAVE LOGIC ---
@@ -1056,6 +1070,8 @@
                     var data = JSON.parse(draft);
                     var form = document.getElementById('regForm');
                     Object.keys(data).forEach(key => {
+                        // Do not overwrite centre if explicitly specified via URL parameter
+                        if (key === 'preferredCentre' && window._targetCentre) return;
                         var el = form.elements[key];
                         if (el && data[key] && !el.value) {
                             if (el.type === 'checkbox') el.checked = (data[key] === 'true' || data[key] === true);
@@ -1149,31 +1165,37 @@
 
         function applyCentre(centreVal) {
             if (!centreVal) return;
+            window._targetCentre = centreVal;
             var sel = document.getElementById('centreSelect');
+            if (!sel || !sel.options || sel.options.length === 0) return;
             var valClean = String(centreVal).trim().toLowerCase();
             
             var foundOption = Array.from(sel.options).find(opt => {
-                var optVal = String(opt.value).trim().toLowerCase();
+                var optVal = String(opt.value || "").trim().toLowerCase();
                 var optCode = String(opt.dataset.code || "").trim().toLowerCase();
+                if (!optVal && !optCode) return false;
                 
                 // Match exact value or code
                 if (optVal === valClean || optCode === valClean) return true;
                 
-                // Match if centreVal contains code (e.g. "M15 Bandra West" contains "M15")
-                if (optCode && valClean.includes(optCode)) return true;
+                // Match if centreVal contains code or code contains centreVal
+                if (optCode && (valClean === optCode || valClean.includes(optCode) || optCode.includes(valClean))) return true;
                 
-                // Match if centreVal contains name (e.g. "M15 Bandra West" contains "bandra west")
-                if (optVal && (valClean.includes(optVal) || optVal.includes(valClean))) return true;
+                // Match if centreVal contains name or name contains centreVal
+                if (optVal && (valClean === optVal || valClean.includes(optVal) || optVal.includes(valClean))) return true;
                 
                 return false;
             });
             
             if (foundOption) {
                 sel.value = foundOption.value;
+                updateCentreCode();
             } else {
-                sel.value = centreVal;
+                if (centreVal.length <= 8) {
+                    var codeInput = document.getElementById('centreCode');
+                    if (codeInput) codeInput.value = centreVal.toUpperCase();
+                }
             }
-            updateCentreCode();
         }
 
         function loadCentres() {
@@ -1187,6 +1209,8 @@
 
         function renderCentres(data) {
             var sel = document.getElementById('centreSelect');
+            var previouslySelected = sel.value;
+            var previousCode = document.getElementById('centreCode') ? document.getElementById('centreCode').value : "";
             sel.innerHTML = '<option value="">Select Centre</option>';
             var locs = (typeof data === 'string') ? JSON.parse(data) : data;
             if (locs && locs.length) {
@@ -1205,6 +1229,11 @@
                         centreMap[name] = { code: code, wa: wa, email: email };
                     }
                 });
+            }
+            // Re-apply target centre from URL, previous selection, or draft
+            var toApply = window._targetCentre || previouslySelected || previousCode;
+            if (toApply) {
+                applyCentre(toApply);
             }
         }
 
