@@ -1398,7 +1398,8 @@
             
             if (data.isSmartPortal || data.isTrialPay || isTrialPay) {
                 var feeType = data.feeType || (data.isRegMode ? "Registration Fee" : "Trial Fee");
-                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + ". Please verify my proof and confirm my slot.";
+                var proofLinkText = data.proofUrl ? "\nPayment Proof: " + data.proofUrl : "";
+                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + ". Ref ID: " + id + "." + proofLinkText + "\nPlease verify my proof and confirm my slot.";
                 
                 var headingEl = document.getElementById('successHeading');
                 if (headingEl) headingEl.innerText = "Payment Proof Submitted!";
@@ -1631,7 +1632,7 @@
                     fetch(SCRIPT_URL + "?action=" + syncAction, { keepalive: true, mode: 'no-cors' }).catch(function(e){});
 
                     document.getElementById('paymentOverlay').style.display = 'none';
-                    showSuccess(refId, formData);
+                    showSuccess(refId, Object.assign({}, formData, { proofUrl: proofUrl, utr: utr }));
                     alert("Payment proof submitted! Your registration will be confirmed once the centre admin verifies the transaction.");
                 } else {
                     alert("Error submitting proof: " + res.message);
