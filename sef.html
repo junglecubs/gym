@@ -385,114 +385,259 @@
             margin-bottom: 5px;
         }
 
-        /* 🎪 Special Demo Launch Styles */
-        .demo-banner {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
-            padding: 16px 20px;
-            border-radius: 14px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
-            display: none;
-        }
-        .demo-banner h3 {
-            margin: 0 0 6px 0;
-            font-size: 18px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #fff;
-        }
-        .demo-banner p {
-            margin: 0;
-            font-size: 13px;
-            opacity: 0.95;
-            line-height: 1.4;
-        }
-        .demo-badge {
-            background: rgba(255,255,255,0.25);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border: 1px solid rgba(255,255,255,0.4);
-        }
+        /* 🎪 Special Demo Launch Styles (Elevated Golden Orange Theme) */
         .demo-slots-container {
             display: none;
-            margin-top: 15px;
+            margin: 20px 0 10px 0;
+        }
+
+        .demo-banner {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            color: white;
+            padding: 20px 24px;
+            border-radius: 16px;
             margin-bottom: 20px;
-        }
-        .demo-slots-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 12px;
-            margin-top: 10px;
-        }
-        .demo-slot-card {
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px 16px;
-            background: #fff;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            box-shadow: 0 12px 28px -4px rgba(234, 88, 12, 0.35), 0 4px 12px rgba(0,0,0,0.05);
             position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-            text-align: left;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.35);
         }
-        .demo-slot-card:hover {
-            border-color: #6366f1;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(99, 102, 241, 0.15);
-        }
-        .demo-slot-card.selected {
-            border-color: #4f46e5;
-            background: #eef2ff;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.25);
-        }
-        .demo-slot-badge {
+
+        .demo-banner::before {
+            content: "";
             position: absolute;
-            top: 10px;
-            right: 12px;
-            background: #dcfce7;
-            color: #15803d;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 10px;
+            top: -40px;
+            right: -40px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(255,255,255,0.25) 0%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
         }
-        .demo-slot-card.selected .demo-slot-badge {
-            background: #4f46e5;
-            color: #fff;
+
+        .demo-banner-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 8px;
         }
-        .demo-slot-day {
-            font-size: 11px;
-            font-weight: 700;
-            color: #6366f1;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .demo-slot-time {
-            font-size: 15px;
+
+        .demo-banner-title {
+            margin: 0;
+            font-size: 20px;
             font-weight: 800;
-            color: #1e293b;
-            margin: 4px 0;
-        }
-        .demo-slot-age {
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-        }
-        .demo-slot-fee {
-            font-size: 13px;
-            font-weight: 800;
-            color: #059669;
-            margin-top: 6px;
             display: flex;
             align-items: center;
+            gap: 10px;
+            color: #ffffff;
+            letter-spacing: -0.2px;
+        }
+
+        .demo-banner-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(4px);
+            border-radius: 10px;
+            font-size: 18px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .demo-badge {
+            background: rgba(255, 255, 255, 0.95);
+            color: #c2410c;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .demo-banner-desc {
+            margin: 0;
+            font-size: 13.5px;
+            opacity: 0.96;
+            line-height: 1.5;
+            color: #fff9f5;
+        }
+
+        .demo-section-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            font-size: 13.5px;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .demo-section-subtext {
+            font-size: 11.5px;
+            color: #ea580c;
+            font-weight: 600;
+        }
+
+        .demo-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 14px;
+            margin-top: 10px;
+        }
+
+        .demo-slot-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 16px 18px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 140px;
+            box-sizing: border-box;
+        }
+
+        .demo-slot-card:hover {
+            border-color: #f59e0b;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(245, 158, 11, 0.22);
+        }
+
+        .demo-slot-card.selected {
+            border-color: #ea580c;
+            background: #fffdfa;
+            box-shadow: 0 0 0 3px rgba(234, 88, 12, 0.3), 0 8px 20px rgba(234, 88, 12, 0.12);
+        }
+
+        .demo-slot-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .demo-slot-day {
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #ea580c;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .demo-slot-badge {
+            background: #fef3c7;
+            color: #b45309;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 9px;
+            border-radius: 12px;
+            border: 1px solid #fde68a;
+            white-space: nowrap;
+        }
+
+        .demo-slot-card.selected .demo-slot-badge {
+            background: linear-gradient(135deg, #f59e0b, #ea580c);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
+        }
+
+        .demo-slot-time {
+            font-size: 16.5px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 2px 0 6px 0;
+            letter-spacing: -0.2px;
+        }
+
+        .demo-slot-age-pill {
+            display: inline-flex;
+            align-items: center;
             gap: 5px;
+            background: #f1f5f9;
+            color: #334155;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            width: fit-content;
+            margin-bottom: 8px;
+        }
+
+        .demo-slot-card.selected .demo-slot-age-pill {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .demo-slot-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+
+        .demo-slot-fee {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .demo-slot-radio {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .demo-slot-card.selected .demo-slot-radio {
+            border-color: #ea580c;
+            background: #ea580c;
+        }
+
+        .demo-slot-card.selected .demo-slot-radio::after {
+            content: "✓";
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        #demoAgeNotice {
+            font-size: 12.5px;
+            color: #92400e;
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            padding: 8px 14px;
+            border-radius: 10px;
+            margin-top: 12px;
+            font-weight: 600;
+            display: none;
+            box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08);
         }
     </style>
 </head>
@@ -662,17 +807,27 @@
                 <!-- 🎪 Special Demo Launch Slot Selector -->
                 <div id="demoLaunchSection" class="demo-slots-container">
                     <div class="demo-banner" id="demoBanner" style="display:block;">
-                        <h3>🎪 Special Demo Launch Class <span class="demo-badge">₹200 Rate</span></h3>
-                        <p id="demoBannerDesc">Book an exclusive Demo session at Chhatrapati Sambhaji Nagar centre (CSN01). Choose your preferred date & age slot below!</p>
+                        <div class="demo-banner-header">
+                            <h3 class="demo-banner-title">
+                                <span class="demo-banner-icon">🎪</span>
+                                Special Demo Launch Class
+                            </h3>
+                            <span class="demo-badge">⚡ ₹200 Special Rate</span>
+                        </div>
+                        <p class="demo-banner-desc" id="demoBannerDesc">
+                            Book an exclusive launch session at Chhatrapati Sambhaji Nagar centre (CSN01). Choose your child's age-appropriate slot below!
+                        </p>
                     </div>
                     
-                    <label style="font-weight: 700; font-size: 13px; color: #1e293b; display: block; margin-top: 10px;">
-                        Select Your Demo Class Slot *
-                    </label>
+                    <div class="demo-section-label">
+                        <span>Select Your Demo Class Slot *</span>
+                        <span class="demo-section-subtext">✨ Auto-matches child's age</span>
+                    </div>
+
                     <div class="demo-slots-grid" id="demoSlotsGrid">
                         <!-- Slots injected dynamically -->
                     </div>
-                    <div id="demoAgeNotice" style="font-size: 12px; color: #6366f1; margin-top: 8px; font-weight: 600; display: none;"></div>
+                    <div id="demoAgeNotice"></div>
                     
                     <input type="hidden" name="demoSlotId" id="demoSlotId">
                     <input type="hidden" name="demoBatch" id="demoBatch">
@@ -1495,6 +1650,25 @@
             }
         }
 
+        function formatCleanDate(rawDate) {
+            if (!rawDate) return "";
+            var str = String(rawDate).trim();
+            // If dd-MM-yyyy format
+            var ddmmyyyy = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+            if (ddmmyyyy) {
+                var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                var mIdx = parseInt(ddmmyyyy[2], 10) - 1;
+                return ddmmyyyy[1] + " " + (months[mIdx] || ddmmyyyy[2]) + " " + ddmmyyyy[3];
+            }
+            // If parsed Date or GMT string
+            var d = new Date(str);
+            if (!isNaN(d.getTime()) && str.length > 10) {
+                var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+                return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+            }
+            return str;
+        }
+
         function renderDemoSlots(slots) {
             currentDemoSlots = slots || DEFAULT_DEMO_SLOTS;
             var container = document.getElementById('demoSlotsGrid');
@@ -1502,20 +1676,29 @@
             container.innerHTML = '';
 
             currentDemoSlots.forEach(function(slot, idx) {
+                var isSelected = (selectedDemoSlot && selectedDemoSlot.id === slot.id);
                 var card = document.createElement('div');
-                card.className = 'demo-slot-card' + (selectedDemoSlot && selectedDemoSlot.id === slot.id ? ' selected' : '');
+                card.className = 'demo-slot-card' + (isSelected ? ' selected' : '');
                 card.id = 'demo-card-' + slot.id;
                 card.onclick = function() { selectDemoSlot(slot, false); };
 
                 var badgeText = slot.spotsLeft !== undefined ? (slot.spotsLeft + ' spots left') : 'Available';
-                var dayDisplay = (slot.day ? slot.day + ' • ' : '') + (slot.displayDate || slot.date);
+                var cleanDate = formatCleanDate(slot.date);
+                var dayDisplay = (slot.day ? slot.day + ' • ' : '') + cleanDate;
 
                 card.innerHTML = 
-                    '<span class="demo-slot-badge">' + badgeText + '</span>' +
-                    '<div class="demo-slot-day">📅 ' + dayDisplay + '</div>' +
-                    '<div class="demo-slot-time">⏰ ' + (slot.timeSlot || slot.time) + '</div>' +
-                    '<div class="demo-slot-age">👥 Age: <strong>' + slot.ageGroup + '</strong></div>' +
-                    '<div class="demo-slot-fee">🏷️ Launch Fee: ₹' + (slot.fee || 200) + '</div>';
+                    '<div>' +
+                        '<div class="demo-slot-top-row">' +
+                            '<span class="demo-slot-day">📅 ' + dayDisplay + '</span>' +
+                            '<span class="demo-slot-badge">' + badgeText + '</span>' +
+                        '</div>' +
+                        '<div class="demo-slot-time">⏰ ' + (slot.timeSlot || slot.time) + '</div>' +
+                        '<div class="demo-slot-age-pill">👥 Age Group: <strong>' + slot.ageGroup + '</strong></div>' +
+                    '</div>' +
+                    '<div class="demo-slot-footer">' +
+                        '<span class="demo-slot-fee">🏷️ Launch Fee: ₹' + (slot.fee || 200) + '</span>' +
+                        '<span class="demo-slot-radio"></span>' +
+                    '</div>';
                 container.appendChild(card);
             });
 
@@ -1531,12 +1714,13 @@
             var el = document.getElementById('demo-card-' + slot.id);
             if (el) el.classList.add('selected');
 
+            var cleanDate = formatCleanDate(slot.date);
             var timeVal = slot.timeSlot || slot.time || "";
-            var batchText = "DEMO: " + (slot.day ? slot.day + " " : "") + slot.date + " (" + timeVal + ") [" + slot.ageGroup + "]";
+            var batchText = "DEMO: " + (slot.day ? slot.day + " " : "") + cleanDate + " (" + timeVal + ") [" + slot.ageGroup + "]";
             
             var sIdEl = document.getElementById('demoSlotId'); if (sIdEl) sIdEl.value = slot.id;
             var sBatchEl = document.getElementById('demoBatch'); if (sBatchEl) sBatchEl.value = batchText;
-            var sDateEl = document.getElementById('demoDate'); if (sDateEl) sDateEl.value = slot.date;
+            var sDateEl = document.getElementById('demoDate'); if (sDateEl) sDateEl.value = cleanDate;
             var sTimeEl = document.getElementById('demoTime'); if (sTimeEl) sTimeEl.value = timeVal;
             var sDayEl = document.getElementById('demoDay'); if (sDayEl) sDayEl.value = slot.day || "";
             var sFeeEl = document.getElementById('demoFee'); if (sFeeEl) sFeeEl.value = slot.fee || 200;
@@ -1545,7 +1729,7 @@
             if (notice) {
                 if (isAuto) {
                     notice.style.display = 'block';
-                    notice.innerText = '✨ Recommended slot for child\'s age group: ' + slot.ageGroup + ' (' + timeVal + ')';
+                    notice.innerHTML = '✨ <strong>Recommended for your child\'s age:</strong> ' + (slot.day ? slot.day + ', ' : '') + cleanDate + ' &bull; ⏰ ' + timeVal + ' (' + slot.ageGroup + ')';
                 }
             }
         }
