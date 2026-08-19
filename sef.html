@@ -2306,7 +2306,10 @@
                 amount: amount,
                 refId: refId,
                 enrolType: isRegPayment ? "Student" : "Trial",
-                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee"))
+                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee")),
+                childName: (formData && (formData.childName || formData.name)) || "",
+                parentMobile: (formData && (formData.parent1Mobile || formData.parentMobile || formData.phone)) || "",
+                centreCode: (formData && (formData.preferredCentreCode || formData.centreCode)) || ""
             });
 
             fetch(SCRIPT_URL, {
@@ -2332,9 +2335,4 @@
         window.onload = init;
     </script>
 </body>
-
-</html>
-
-</body>
-
 </html>
