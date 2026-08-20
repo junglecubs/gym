@@ -846,12 +846,12 @@
                         <div class="demo-banner-header">
                             <h3 class="demo-banner-title">
                                 <span class="demo-banner-icon">🎪</span>
-                                Special Demo Launch Class
+                                <span id="demoBannerMainTitle">Special Demo Launch Class</span>
                             </h3>
-                            <span class="demo-badge">⚡ ₹200 Special Rate</span>
+                            <span class="demo-badge" id="demoBadgeRate">⚡ Special Launch Rate</span>
                         </div>
                         <p class="demo-banner-desc" id="demoBannerDesc">
-                            Book an exclusive launch session at Chhatrapati Sambhaji Nagar centre (CSN01). Choose your child's age-appropriate slot below!
+                            Book an exclusive launch session at Jungle Cubs Gym. Choose your child's age-appropriate slot below!
                         </p>
                     </div>
                     
@@ -1416,9 +1416,10 @@
                 var isDemoPayEl = document.getElementById('isDemoPayInput');
                 if (isDemoPayEl) isDemoPayEl.value = isDemoPay ? 'true' : 'false';
 
+                var initialDemoFee = (payCentre === 'M03') ? 400 : 200;
                 if (isDemoPay) {
                     document.getElementById('pageTitle').innerText = "Special Demo Class Registration & Fee Payment";
-                    document.getElementById('btnSubmit').innerText = "Proceed to Demo Fee Payment (₹200) →";
+                    document.getElementById('btnSubmit').innerText = "Proceed to Demo Fee Payment (₹" + initialDemoFee + ") →";
                 } else {
                     document.getElementById('pageTitle').innerText = "Special Demo Class Registration";
                     document.getElementById('btnSubmit').innerText = "Submit Demo Registration";
@@ -1739,11 +1740,58 @@
             return str;
         }
 
+        var CENTRE_NAMES_LOOKUP = {
+            "CSN01": "Chhatrapati Sambhaji Nagar",
+            "M01": "Vile Parle",
+            "M02": "Bandra",
+            "M03": "Matunga East",
+            "M04": "Chembur",
+            "M05": "Ghatkopar",
+            "M06": "Kandivali",
+            "M07": "Borivali",
+            "M08": "Thane",
+            "M09": "Santacruz",
+            "M10": "Andheri West",
+            "M11": "Mulund",
+            "M12": "Powai"
+        };
+
+        function updateDemoBannerInfo(centreCode, fee, campaignName) {
+            var cCode = String(centreCode || payCentre || "CSN01").trim().toUpperCase();
+            var cName = CENTRE_NAMES_LOOKUP[cCode] || cCode || "Jungle Cubs Gym";
+            var titleEl = document.getElementById('demoBannerMainTitle');
+            var badgeEl = document.getElementById('demoBadgeRate');
+            var descEl = document.getElementById('demoBannerDesc');
+            
+            if (titleEl && campaignName) {
+                titleEl.innerText = campaignName;
+            }
+            if (badgeEl) {
+                if (fee && fee > 0) {
+                    badgeEl.innerText = "⚡ ₹" + fee + " Special Rate";
+                    badgeEl.style.display = "inline-flex";
+                } else {
+                    badgeEl.innerText = "⚡ Special Rate";
+                }
+            }
+            if (descEl) {
+                descEl.innerText = "Book an exclusive session at " + cName + " (" + cCode + "). Choose your child's age-appropriate slot below!";
+            }
+        }
+
         function renderDemoSlots(slots) {
             currentDemoSlots = slots || DEFAULT_DEMO_SLOTS;
             var container = document.getElementById('demoSlotsGrid');
             if (!container) return;
             container.innerHTML = '';
+
+            if (currentDemoSlots.length > 0) {
+                var firstSlot = currentDemoSlots[0];
+                var cCode = firstSlot.centreCode || payCentre || 'CSN01';
+                var cFee = firstSlot.fee || (cCode === 'M03' ? 400 : 200);
+                var cName = firstSlot.campaignName || "Special Demo Launch Class";
+                updateDemoBannerInfo(cCode, cFee, cName);
+            }
 
             currentDemoSlots.forEach(function(slot, idx) {
                 var isSelected = (selectedDemoSlot && selectedDemoSlot.id === slot.id);
@@ -1755,6 +1803,7 @@
                 var badgeText = slot.spotsLeft !== undefined ? (slot.spotsLeft + ' spots left') : 'Available';
                 var cleanDate = formatCleanDate(slot.date);
                 var dayDisplay = (slot.day ? slot.day + ' • ' : '') + cleanDate;
+                var slotFee = slot.fee || (slot.centreCode === 'M03' ? 400 : 200);
 
                 card.innerHTML = 
                     '<div>' +
@@ -1766,14 +1815,17 @@
                         '<div class="demo-slot-age-pill">👥 Age Group: <strong>' + slot.ageGroup + '</strong></div>' +
                     '</div>' +
                     '<div class="demo-slot-footer">' +
-                        '<span class="demo-slot-fee">🏷️ Launch Fee: ₹' + (slot.fee || 200) + '</span>' +
+                        '<span class="demo-slot-fee">🏷️ Launch Fee: ₹' + slotFee + '</span>' +
                         '<span class="demo-slot-radio"></span>' +
                     '</div>';
                 container.appendChild(card);
             });
 
-            // If nothing selected yet, select first slot
-            if (!selectedDemoSlot && currentDemoSlots.length > 0) {
+            // Select matching slot or first slot from new dataset
+            var match = selectedDemoSlot && currentDemoSlots.find(function(s) { return s.id === selectedDemoSlot.id; });
+            if (match) {
+                selectDemoSlot(match, false);
+            } else if (currentDemoSlots.length > 0) {
                 selectDemoSlot(currentDemoSlots[0], false);
             }
         }
@@ -1787,13 +1839,24 @@
             var cleanDate = formatCleanDate(slot.date);
             var timeVal = slot.timeSlot || slot.time || "";
             var batchText = "DEMO: " + (slot.day ? slot.day + " " : "") + cleanDate + " (" + timeVal + ") [" + slot.ageGroup + "]";
+            var currentFee = slot.fee || (slot.centreCode === 'M03' ? 400 : 200);
             
             var sIdEl = document.getElementById('demoSlotId'); if (sIdEl) sIdEl.value = slot.id;
             var sBatchEl = document.getElementById('demoBatch'); if (sBatchEl) sBatchEl.value = batchText;
             var sDateEl = document.getElementById('demoDate'); if (sDateEl) sDateEl.value = cleanDate;
             var sTimeEl = document.getElementById('demoTime'); if (sTimeEl) sTimeEl.value = timeVal;
             var sDayEl = document.getElementById('demoDay'); if (sDayEl) sDayEl.value = slot.day || "";
-            var sFeeEl = document.getElementById('demoFee'); if (sFeeEl) sFeeEl.value = slot.fee || 200;
+            var sFeeEl = document.getElementById('demoFee'); if (sFeeEl) sFeeEl.value = currentFee;
+
+            var badgeEl = document.getElementById('demoBadgeRate');
+            if (badgeEl && currentFee > 0) {
+                badgeEl.innerText = "⚡ ₹" + currentFee + " Special Rate";
+            }
+
+            if (isDemoPay) {
+                var btn = document.getElementById('btnSubmit');
+                if (btn) btn.innerText = "Proceed to Demo Fee Payment (₹" + currentFee + ") →";
+            }
 
             var notice = document.getElementById('demoAgeNotice');
             if (notice) {
