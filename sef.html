@@ -1248,6 +1248,7 @@
                 var urlAmt = parseFloat(urlParams.get('amount'));
                 var urlUpi = urlParams.get('upi');
                 var urlName = urlParams.get('name');
+                var urlPhone = urlParams.get('phone') || "";
                 if (!isNaN(urlAmt) && urlAmt > 0 && urlUpi && urlName) {
                     document.getElementById('regForm').style.display = 'none';
                     document.getElementById('loader').style.display = 'none';
@@ -1258,6 +1259,7 @@
                         upiId: urlUpi,
                         upiName: "Jungle Cubs Gym",
                         note: feeTypeParam,
+                        phone: urlPhone,
                         paymentRequired: true
                     }, payId, {
                         childName: urlName,
@@ -1964,27 +1966,14 @@
             document.getElementById('mainForm').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             document.getElementById('refId').innerText = id || "PENDING";
-            var waNum = "919137513185"; // Default to HO Chembur East WhatsApp number
+            var waNum = "";
             
             // Normalize inputs
-            var targetCentre = data.preferredCentre ? String(data.preferredCentre).trim().toLowerCase() : "";
-            var targetCode = data.centreCode ? String(data.centreCode).trim().toUpperCase() : "";
+            var targetCentre = (data.preferredCentre || "").trim().toLowerCase();
+            var targetCode = (data.preferredCentreCode || data.centreCode || (document.getElementById('centreCode') && document.getElementById('centreCode').value) || "").trim().toUpperCase();
             
-            // Try to find by name first
-            if (targetCentre) {
-                for (var name in centreMap) {
-                    if (name.trim().toLowerCase() === targetCentre) {
-                        var rawWa = centreMap[name].wa;
-                        if (rawWa) {
-                            waNum = String(rawWa).replace(/\D/g, '');
-                            break;
-                        }
-                    }
-                }
-            }
-            
-            // If not resolved, try to find by code
-            if (waNum === "919137513185" && targetCode) {
+            // 1. Try to find by Centre Code in centreMap (e.g., GOA01, M08, M09, M04)
+            if (targetCode) {
                 for (var name in centreMap) {
                     if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCode) {
                         var rawWa = centreMap[name].wa;
@@ -1994,6 +1983,25 @@
                         }
                     }
                 }
+            }
+            
+            // 2. Try to find by Centre Name (exact or substring match)
+            if (!waNum && targetCentre) {
+                for (var name in centreMap) {
+                    var nClean = name.trim().toLowerCase();
+                    if (nClean === targetCentre || nClean.includes(targetCentre) || targetCentre.includes(nClean)) {
+                        var rawWa = centreMap[name].wa;
+                        if (rawWa) {
+                            waNum = String(rawWa).replace(/\D/g, '');
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // 3. Fallback to HO Chembur East WhatsApp number only if no centre was matched
+            if (!waNum) {
+                waNum = "919137513185";
             }
 
             if (waNum) {
@@ -2176,8 +2184,21 @@
                 });
             };
 
-            // Copy Phone Number (Always available fallback)
-            var payPhone = p.phone || "9664890087";
+            // Copy Phone Number (Always available fallback with dynamic centre lookup)
+            var payPhone = p.phone || "";
+            if (!payPhone && formData) {
+                var targetCC = (formData.centreCode || formData.preferredCentreCode || window._targetCentre || "").trim().toUpperCase();
+                if (targetCC) {
+                    for (var name in centreMap) {
+                        if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCC) {
+                            payPhone = centreMap[name].wa || centreMap[name].phone || "";
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!payPhone) payPhone = "9664890087";
+            
             var copyPhoneBtn = document.getElementById('copyPhoneBtn');
             var copyPhoneText = document.getElementById('copyPhoneText');
             if (copyPhoneText) copyPhoneText.innerText = "📞 UPI Phone: " + payPhone;
