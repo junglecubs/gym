@@ -579,6 +579,19 @@
             box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25);
         }
 
+        .demo-slot-badge.badge-full {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
+        }
+
+        .demo-slot-card.slot-full {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            cursor: not-allowed;
+            opacity: 0.75;
+        }
+
         .demo-slot-time {
             font-size: 16.5px;
             font-weight: 800;
@@ -1120,62 +1133,7 @@
         var currentDemoSlots = [];
         var selectedDemoSlot = null;
 
-        var DEFAULT_DEMO_SLOTS = [
-            {
-                id: "DEMO-CSN01-01",
-                centreCode: "CSN01",
-                campaignName: "Special Demo Launch",
-                date: "21-08-2026",
-                day: "Friday",
-                displayDate: "Friday, 21 Aug 2026",
-                timeSlot: "4:30–5:30 PM",
-                ageGroup: "2 to 4 Years",
-                minAge: 2.0,
-                maxAge: 4.0,
-                fee: 200,
-                spotsLeft: 8,
-                upiId: "9423840853@ibl",
-                upiNumber: "9423840853",
-                upiPhone: "9423840853",
-                phone: "9423840853"
-            },
-            {
-                id: "DEMO-CSN01-02",
-                centreCode: "CSN01",
-                campaignName: "Special Demo Launch",
-                date: "21-08-2026",
-                day: "Friday",
-                displayDate: "Friday, 21 Aug 2026",
-                timeSlot: "3:30–4:30 PM",
-                ageGroup: "4 to 6 Years",
-                minAge: 4.0,
-                maxAge: 6.0,
-                fee: 200,
-                spotsLeft: 9,
-                upiId: "9423840853@ibl",
-                upiNumber: "9423840853",
-                upiPhone: "9423840853",
-                phone: "9423840853"
-            },
-            {
-                id: "DEMO-CSN01-03",
-                centreCode: "CSN01",
-                campaignName: "Special Demo Launch",
-                date: "22-08-2026",
-                day: "Saturday",
-                displayDate: "Saturday, 22 Aug 2026",
-                timeSlot: "2:00–3:00 PM",
-                ageGroup: "2 to 6 Years",
-                minAge: 2.0,
-                maxAge: 6.0,
-                fee: 200,
-                spotsLeft: 12,
-                upiId: "9423840853@ibl",
-                upiNumber: "9423840853",
-                upiPhone: "9423840853",
-                phone: "9423840853"
-            }
-        ];
+        var DEFAULT_DEMO_SLOTS = [];
 
         function init() {
             // Populate fallback centreMap from hardcoded select options
@@ -1430,18 +1388,21 @@
                     el.required = false;
                 });
 
-                // Render default slots first for instant response
-                renderDemoSlots(DEFAULT_DEMO_SLOTS);
+                // Show loading skeleton in slots container
+                var container = document.getElementById('demoSlotsGrid');
+                if (container) {
+                    container.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 24px; color: #64748b; font-size: 14px; background: rgba(255,255,255,0.7); border-radius: 12px; border: 1px dashed #cbd5e1;">⏳ <strong>Loading available demo sessions...</strong></div>';
+                }
                 
                 // Fetch dynamic slots if available
                 var fetchCode = payCentre || 'CSN01';
-                fetch(SCRIPT_URL + "?action=getDemoCampaigns&centreCode=" + encodeURIComponent(fetchCode))
+                fetch(SCRIPT_URL + "?action=getDemoCampaigns&centreCode=" + encodeURIComponent(fetchCode) + "&onlyActive=true")
                     .then(r => r.json())
                     .then(data => {
-                        if (data && Array.isArray(data) && data.length > 0) {
-                            renderDemoSlots(data);
-                        }
-                    }).catch(function(e){});
+                        renderDemoSlots(data);
+                    }).catch(function(e){
+                        renderDemoSlots([]);
+                    });
             } else if (type === 'trial_pay' || type === 'trialpay' || (type === 'trial' && (urlParams.get('pay') === 'now' || urlParams.get('pay') === 'direct'))) {
                 isEnrol = false;
                 isTrialPay = true;
@@ -1780,27 +1741,79 @@
         }
 
         function renderDemoSlots(slots) {
-            currentDemoSlots = slots || DEFAULT_DEMO_SLOTS;
+            // Filter active & non-expired slots
+            var now = new Date();
+            var todayStr = now.getFullYear() + ("0" + (now.getMonth() + 1)).slice(-2) + ("0" + now.getDate()).slice(-2);
+            var todayInt = parseInt(todayStr, 10);
+
+            var activeSlots = (slots || []).filter(function(s) {
+                if (!s) return false;
+                if (s.status && s.status.toLowerCase() !== 'active') return false;
+                if (s.isExpired) return false;
+                if (s.date) {
+                    var parts = String(s.date).trim().split('-');
+                    if (parts.length === 3) {
+                        var slotDateInt = parseInt(parts[2] + parts[1] + parts[0], 10);
+                        if (slotDateInt < todayInt) return false;
+                    }
+                }
+                return true;
+            });
+
+            currentDemoSlots = activeSlots;
             var container = document.getElementById('demoSlotsGrid');
             if (!container) return;
             container.innerHTML = '';
 
-            if (currentDemoSlots.length > 0) {
-                var firstSlot = currentDemoSlots[0];
-                var cCode = firstSlot.centreCode || payCentre || 'CSN01';
-                var cFee = firstSlot.fee || (cCode === 'M03' ? 400 : 200);
-                var cName = firstSlot.campaignName || "Special Demo Launch Class";
-                updateDemoBannerInfo(cCode, cFee, cName);
+            if (currentDemoSlots.length === 0) {
+                var cCode = payCentre || 'CSN01';
+                var cName = (window.CENTRE_NAMES_LOOKUP && window.CENTRE_NAMES_LOOKUP[cCode]) || cCode;
+                container.innerHTML = 
+                    '<div style="grid-column: 1 / -1; text-align: center; padding: 28px 20px; background: #fff8f1; border: 1.5px solid #fed7aa; border-radius: 14px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.06);">' +
+                        '<div style="font-size: 28px; margin-bottom: 8px;">🎪</div>' +
+                        '<h4 style="font-size: 16px; font-weight: 700; color: #9a3412; margin: 0 0 6px 0;">All Demo Sessions Currently Full / Completed</h4>' +
+                        '<p style="font-size: 13px; color: #7c2d12; margin: 0 0 16px 0; line-height: 1.5;">Upcoming demo batches for ' + cName + ' will be announced soon. Tap below to chat with our Centre Coordinator on WhatsApp for slot reservations.</p>' +
+                        '<a href="https://wa.me/919664890087?text=' + encodeURIComponent("Hi Jungle Cubs Gym! I am interested in booking a demo class for " + cName + ". Please let me know the upcoming batch schedule.") + '" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; background: #22c55e; color: white; padding: 10px 18px; border-radius: 25px; font-size: 13px; font-weight: 600; text-decoration: none; box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);">' +
+                            '💬 Chat on WhatsApp for Demo Slots' +
+                        '</a>' +
+                    '</div>';
+                
+                var submitBtn = document.getElementById('btnSubmit');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.style.opacity = '0.5';
+                    submitBtn.style.cursor = 'not-allowed';
+                    submitBtn.innerText = "No Open Demo Slots Available";
+                }
+                return;
             }
+
+            var submitBtn = document.getElementById('btnSubmit');
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.style.opacity = '1';
+                submitBtn.style.cursor = 'pointer';
+            }
+
+            var firstSlot = currentDemoSlots[0];
+            var cCode = firstSlot.centreCode || payCentre || 'CSN01';
+            var cFee = firstSlot.fee || (cCode === 'M03' ? 400 : 200);
+            var cName = firstSlot.campaignName || "Special Demo Launch Class";
+            updateDemoBannerInfo(cCode, cFee, cName);
 
             currentDemoSlots.forEach(function(slot, idx) {
                 var isSelected = (selectedDemoSlot && selectedDemoSlot.id === slot.id);
+                var isFull = (slot.spotsLeft !== undefined && slot.spotsLeft <= 0);
                 var card = document.createElement('div');
-                card.className = 'demo-slot-card' + (isSelected ? ' selected' : '');
+                card.className = 'demo-slot-card' + (isSelected ? ' selected' : '') + (isFull ? ' slot-full' : '');
                 card.id = 'demo-card-' + slot.id;
-                card.onclick = function() { selectDemoSlot(slot, false); };
+                if (!isFull) {
+                    card.onclick = function() { selectDemoSlot(slot, false); };
+                } else {
+                    card.style.cursor = 'not-allowed';
+                }
 
-                var badgeText = slot.spotsLeft !== undefined ? (slot.spotsLeft + ' spots left') : 'Available';
+                var badgeText = isFull ? '⚠️ Full (0 spots)' : (slot.spotsLeft !== undefined ? (slot.spotsLeft + ' spots left') : 'Available');
                 var cleanDate = formatCleanDate(slot.date);
                 var dayDisplay = (slot.day ? slot.day + ' • ' : '') + cleanDate;
                 var slotFee = slot.fee || (slot.centreCode === 'M03' ? 400 : 200);
@@ -1809,7 +1822,7 @@
                     '<div>' +
                         '<div class="demo-slot-top-row">' +
                             '<span class="demo-slot-day">📅 ' + dayDisplay + '</span>' +
-                            '<span class="demo-slot-badge">' + badgeText + '</span>' +
+                            '<span class="demo-slot-badge' + (isFull ? ' badge-full' : '') + '">' + badgeText + '</span>' +
                         '</div>' +
                         '<div class="demo-slot-time">⏰ ' + (slot.timeSlot || slot.time) + '</div>' +
                         '<div class="demo-slot-age-pill">👥 Age Group: <strong>' + slot.ageGroup + '</strong></div>' +
@@ -1821,12 +1834,15 @@
                 container.appendChild(card);
             });
 
-            // Select matching slot or first slot from new dataset
-            var match = selectedDemoSlot && currentDemoSlots.find(function(s) { return s.id === selectedDemoSlot.id; });
+            // Select first available open slot
+            var match = selectedDemoSlot && currentDemoSlots.find(function(s) { return s.id === selectedDemoSlot.id && (s.spotsLeft === undefined || s.spotsLeft > 0); });
             if (match) {
                 selectDemoSlot(match, false);
-            } else if (currentDemoSlots.length > 0) {
-                selectDemoSlot(currentDemoSlots[0], false);
+            } else {
+                var firstOpen = currentDemoSlots.find(function(s) { return s.spotsLeft === undefined || s.spotsLeft > 0; }) || currentDemoSlots[0];
+                if (firstOpen) {
+                    selectDemoSlot(firstOpen, false);
+                }
             }
         }
 
