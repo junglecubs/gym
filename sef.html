@@ -672,6 +672,167 @@
             display: none;
             box-shadow: 0 2px 6px rgba(245, 158, 11, 0.08);
         }
+
+        /* 🎽 CSN01 Batch Selector & Program Fee Selection Modern Styles */
+        .csn-section-container {
+            margin-top: 18px;
+            margin-bottom: 20px;
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            display: none;
+        }
+
+        .csn-header-banner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .csn-header-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+        }
+
+        .csn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .csn-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px 16px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        .csn-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(40, 120, 68, 0.12);
+        }
+
+        .csn-card.selected {
+            border-color: var(--primary);
+            background: #f4fdf6;
+            box-shadow: 0 0 0 3px rgba(40, 120, 68, 0.25), 0 6px 18px rgba(40, 120, 68, 0.1);
+        }
+
+        .csn-card.card-full {
+            border-color: #fca5a5;
+            background: #fffafa;
+        }
+
+        .csn-card.card-full.selected {
+            border-color: #dc2626;
+            background: #fef2f2;
+            box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25);
+        }
+
+        .csn-badge {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .csn-badge-avail {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        .csn-badge-urgent {
+            background: #ffedd5;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+        }
+
+        .csn-badge-full {
+            background: #fee2e2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .csn-card-title {
+            font-size: 14.5px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 2px 0 4px 0;
+        }
+
+        .csn-card-sub {
+            font-size: 12px;
+            color: #475569;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .csn-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            padding-top: 6px;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .csn-card-radio {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .csn-card.selected .csn-card-radio {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .csn-card.card-full.selected .csn-card-radio {
+            border-color: #dc2626;
+            background: #dc2626;
+        }
+
+        .csn-card.selected .csn-card-radio::after {
+            content: "✓";
+            color: white;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .csn-hidden {
+            display: none !important;
+        }
     </style>
 </head>
 
@@ -680,7 +841,10 @@
     <div id="draft-status">Saving draft...</div>
 
     <div id="paymentOverlay" class="payment-overlay">
-        <div class="payment-card" style="text-align: center;">
+        <div class="payment-card" style="text-align: center; position: relative;">
+            <!-- Close / Back Button -->
+            <button type="button" onclick="closePaymentModal()" title="Close and return to form" style="position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #64748b; cursor: pointer; transition: all 0.2s ease; z-index: 10;">✕</button>
+
             <div style="height: 55px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
                 <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" 
                      onerror="this.onerror=null; this.src='https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png';">
@@ -762,6 +926,13 @@
                 <button class="btn-submit" id="btnSubmitProof" style="margin-top: 4px; background: linear-gradient(135deg, #f59e0b, #ea580c); width: 100%; padding: 13px; font-size: 15px; font-weight: 800; border-radius: 12px; box-shadow: 0 6px 18px rgba(234, 88, 12, 0.35);">🚀 Submit Payment Proof</button>
             </div>
 
+            <!-- Bottom Back Button -->
+            <div style="margin-top: 12px; padding-top: 8px;">
+                <button type="button" onclick="closePaymentModal()" style="background: none; border: none; color: #64748b; font-size: 13px; font-weight: 700; cursor: pointer; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+                    <span>← Cancel &amp; Return to Form</span>
+                </button>
+            </div>
+
             <p class="payment-status-text" id="paymentStatus" style="font-size: 12px; margin-top: 10px;">Waiting for payment...</p>
         </div>
     </div>
@@ -775,18 +946,22 @@
             <p>Welcome to Jungle Cubs Gym! Please fill in your details below.</p>
         </div>
 
-        <div id="pref-fill-section" class="form-section enrol-field hidden"
-            style="background: #e3f2fd; border-color: #bbdefb;">
-            <div class="section-title" style="color: #1976d2; border-bottom-color: #bbdefb;">Pre-fill from Trial</div>
-            <p style="font-size: 13px; margin-top: -10px; margin-bottom: 15px; color: #555;">Already took a trial? Enter
-                your Trial ID (TIN) to quickly pull your details.</p>
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="preFillTin" placeholder="e.g. T-M01-KS1" style="flex: 1;">
-                <button type="button" onclick="fetchPreFill()"
-                    style="background: #1976d2; color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">Fetch</button>
+        <details id="pref-fill-section" class="form-section enrol-field hidden"
+            style="background: #f0f9ff; border: 1.5px dashed #0284c7; border-radius: 14px; padding: 12px 16px; margin-bottom: 20px;">
+            <summary style="cursor: pointer; font-weight: 700; color: #0284c7; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; user-select: none;">
+                <span>🔄 <strong>Have a Trial ID?</strong> Tap here to pre-fill details</span>
+                <span style="font-size: 11.5px; background: #e0f2fe; padding: 2px 8px; border-radius: 6px; color: #0369a1; font-weight: 800;">Optional</span>
+            </summary>
+            <div style="margin-top: 12px; border-top: 1px solid #bae6fd; padding-top: 10px;">
+                <p style="font-size: 12.5px; margin: 0 0 10px 0; color: #475569;">Enter your Trial ID (TIN) to quickly pull your trial registration details.</p>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="preFillTin" placeholder="e.g. T-CSN01-KS1" style="flex: 1; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 13px;">
+                    <button type="button" onclick="fetchPreFill()"
+                        style="background: #0284c7; color: white; border: none; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 13px;">Fetch</button>
+                </div>
+                <div id="preFillStatus" style="font-size: 12px; margin-top: 6px; min-height: 18px;"></div>
             </div>
-            <div id="preFillStatus" style="font-size: 12px; margin-top: 5px; min-height: 18px;"></div>
-        </div>
+        </details>
 
         <form id="regForm" oninput="queueDraftSave()">
             <!-- 1. Child Details -->
@@ -798,20 +973,33 @@
                         <input type="text" name="childName" required placeholder="e.g. Kiah Shah">
                     </div>
                     <div class="form-group">
-                        <label>Sex *</label>
-                        <select name="childSex" required>
-                            <option value="">Select</option>
-                            <option value="Boy">Boy</option>
-                            <option value="Girl">Girl</option>
-                        </select>
+                        <label>Gender *</label>
+                        <input type="hidden" name="childSex" id="childSexInput" required>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+                            <div id="genderCardBoy" onclick="selectGender('Boy')" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; border: 2px solid #cbd5e1; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 14px; color: #475569; background: #f8fafc; transition: all 0.2s ease; user-select: none;">
+                                <span style="font-size: 20px;">👦</span>
+                                <span>Boy</span>
+                            </div>
+                            <div id="genderCardGirl" onclick="selectGender('Girl')" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 16px; border: 2px solid #cbd5e1; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 14px; color: #475569; background: #f8fafc; transition: all 0.2s ease; user-select: none;">
+                                <span style="font-size: 20px;">👧</span>
+                                <span>Girl</span>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label>Date of Birth *</label>
                         <input type="date" name="dob" id="dobField" required onchange="calculateAge()">
                     </div>
+                    <div class="form-group" id="ageGroupContainer" style="display: none;">
+                        <label>Child's Age (Auto-calculated)</label>
+                        <div id="ageBadgeDisplay" style="background:#e0f2fe; color:#0369a1; border:1px solid #bae6fd; font-weight:800; font-size:13.5px; padding:10px 14px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; width:100%;">
+                            <span>👶</span> <span id="ageTextDisplay">...</span>
+                        </div>
+                        <input type="hidden" id="ageField" name="age">
+                    </div>
                     <div class="form-group">
-                        <label>Age (Auto)</label>
-                        <input type="text" id="ageField" readonly style="background: #eee;">
+                        <label>Child's School *</label>
+                        <input type="text" name="school" required placeholder="e.g. DPS / EuroKids / Toddlers">
                     </div>
                     <div class="form-group">
                         <label>Preferred Centre *</label>
@@ -887,40 +1075,62 @@
                     <input type="hidden" name="isDemo" id="isDemoInput" value="false">
                     <input type="hidden" name="isDemoPay" id="isDemoPayInput" value="false">
                 </div>
+
+                <!-- 🎽 CSN01 Smart Batch Selector (Live Capacity & Auto Age Match) -->
+                <div id="csnBatchSection" class="csn-section-container">
+                    <div class="csn-header-banner">
+                        <h3 class="csn-header-title">
+                            <span>🎽 Select Batch Slot for CSN01 *</span>
+                        </h3>
+                        <span class="csn-badge csn-badge-avail" id="csnBatchStatusBadge">✨ Auto-matching child's age</span>
+                    </div>
+                    <p style="font-size:12.5px; color:#64748b; margin:0 0 10px 0; line-height:1.45;">
+                        Choose your child's weekly schedule. Batches reflect live available capacity and slot limits.
+                    </p>
+
+                    <div id="csnBatchGrid" class="csn-grid">
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #64748b; font-size: 13px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                            ⏳ <strong>Loading CSN01 batches & live capacity...</strong>
+                        </div>
+                    </div>
+
+                    <div id="csnAgeNotice" style="display:none; margin-top:12px; font-size:12.5px; color:#15803d; background:#f0fdf4; border:1px solid #bbf7d0; padding:8px 14px; border-radius:10px; font-weight:700;"></div>
+
+                    <!-- ⚠️ Overcapacity Priority Waitlist Alert Banner -->
+                    <div id="csnWaitlistAlert" style="display:none; margin-top:12px; background:#fff1f2; border:1.5px solid #fecdd3; border-radius:12px; padding:12px 16px; color:#9f1239; font-size:12.5px; line-height:1.45;">
+                        <strong style="display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:13px; color:#be123c;">
+                            <span>⚠️ Priority Waitlist Queue</span>
+                        </strong>
+                        This batch is currently at full capacity. Submitting will register your child in the <strong>Priority Waitlist Queue</strong> for CSN01. Centre Admin & Management will be notified immediately to review your slot.
+                    </div>
+                </div>
             </div>
 
-            <!-- 2. Parent 1 Details -->
+            <!-- 2. Mother's Details (Primary Contact) -->
             <div class="form-section">
-                <div class="section-title">Parent 1 Details (Primary Contact)</div>
+                <div class="section-title">Mother's Details (Primary Contact)</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Full Name * (First + Last)</label>
-                        <input type="text" name="parent1Name" required>
+                        <label>Mother's Full Name * (First + Last)</label>
+                        <input type="text" name="parent1Name" required placeholder="e.g. Anita Shah">
                     </div>
+                    <input type="hidden" name="parent1Sex" value="Mother">
                     <div class="form-group">
-                        <label>Relation/Sex *</label>
-                        <select name="parent1Sex" required>
-                            <option value="Mother">Mother</option>
-                            <option value="Father">Father</option>
-                            <option value="Guardian">Guardian</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Mobile Number (WhatsApp) *</label>
+                        <label>Mother's Mobile Number (WhatsApp) *</label>
                         <input type="tel" name="parent1Mobile" required pattern="\d{10}" minlength="10" maxlength="10"
                             placeholder="10 digit number" title="Please enter exactly 10 digits">
                     </div>
                     <div class="form-group">
-                        <label>Email ID *</label>
-                        <input type="email" name="parent1Email" required placeholder="e.g. name@email.com">
+                        <label>Mother's Email ID *</label>
+                        <input type="email" name="parent1Email" required placeholder="e.g. anita@email.com">
                     </div>
 
-                    <!-- ENROL ONLY FIELDS -->
-                    <div class="form-group enrol-field hidden">
+                    <!-- ENROL FULL ONLY FIELDS (Skipped for CSN01) -->
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Qualification *</label>
                         <input type="text" name="parent1Qual">
                     </div>
-                    <div class="form-group enrol-field hidden">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Occupation *</label>
                         <select name="parent1Occ" class="occ-sh-dropdown">
                             <option value="">Select</option>
@@ -932,7 +1142,7 @@
                             <option value="Others">Others</option>
                         </select>
                     </div>
-                    <div class="form-group enrol-field hidden">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Nature of Work/Business *</label>
                         <input type="text" name="parent1WorkNature">
                     </div>
@@ -940,36 +1150,28 @@
                 </div>
             </div>
 
-            <!-- 3. Parent 2 Details (Enrol Only) -->
+            <!-- 3. Father's Details (Secondary Contact) -->
             <div class="form-section enrol-field hidden">
-                <div class="section-title">Parent 2 Details</div>
+                <div class="section-title">Father's Details (Secondary Contact)</div>
                 <div class="grid">
                     <div class="form-group">
-                        <label>Full Name * (First + Last)</label>
-                        <input type="text" name="parent2Name">
+                        <label>Father's Full Name * (First + Last)</label>
+                        <input type="text" name="parent2Name" placeholder="e.g. Rahul Shah">
+                    </div>
+                    <input type="hidden" name="parent2Sex" value="Father">
+                    <div class="form-group">
+                        <label>Father's Mobile Number *</label>
+                        <input type="tel" name="parent2Mobile" pattern="\d{10}" minlength="10" maxlength="10" placeholder="10 digit number">
                     </div>
                     <div class="form-group">
-                        <label>Relation/Sex *</label>
-                        <select name="parent2Sex">
-                            <option value="">Select</option>
-                            <option value="Father">Father</option>
-                            <option value="Mother">Mother</option>
-                            <option value="Guardian">Guardian</option>
-                        </select>
+                        <label>Father's Email ID *</label>
+                        <input type="email" name="parent2Email" placeholder="e.g. rahul@email.com">
                     </div>
-                    <div class="form-group">
-                        <label>Mobile Number *</label>
-                        <input type="tel" name="parent2Mobile" pattern="\d{10}" minlength="10" maxlength="10">
-                    </div>
-                    <div class="form-group">
-                        <label>Email ID *</label>
-                        <input type="email" name="parent2Email">
-                    </div>
-                    <div class="form-group">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Qualification *</label>
                         <input type="text" name="parent2Qual">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Occupation *</label>
                         <select name="parent2Occ" class="occ-sh-dropdown">
                             <option value="">Select</option>
@@ -981,7 +1183,7 @@
                             <option value="Others">Others</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Nature of Work/Business *</label>
                         <input type="text" name="parent2WorkNature">
                     </div>
@@ -989,8 +1191,8 @@
                 </div>
             </div>
 
-            <!-- 4. Additional Info (Enrol Only) -->
-            <div class="form-section enrol-field hidden">
+            <!-- 4. Additional Info (Enrol Full Only - Skipped for CSN01) -->
+            <div class="form-section enrol-field enrol-full-only hidden">
                 <div class="section-title">Additional Information</div>
                 <div class="grid">
                     <div class="form-group" style="grid-column: span 2;">
@@ -1006,10 +1208,6 @@
                         <input type="text" name="siblings">
                     </div>
                     <div class="form-group">
-                        <label>Child's School *</label>
-                        <input type="text" name="school">
-                    </div>
-                    <div class="form-group">
                         <label>School Timings *</label>
                         <input type="text" name="schoolTimings">
                     </div>
@@ -1019,19 +1217,19 @@
 
             <!-- 5. Medical & Emergency (Enrol Only) -->
             <div class="form-section enrol-field hidden">
-                <div class="section-title">Medical & Emergency</div>
+                <div class="section-title">Medical & Emergency Details</div>
                 <div class="grid">
-                    <div class="form-group">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Allergies *</label>
                         <input type="text" name="allergies">
                     </div>
                     <div class="form-group">
-                        <label>Medical Conditions *</label>
-                        <input type="text" name="medical">
+                        <label>Medical Conditions * (Enter 'None' if NA)</label>
+                        <input type="text" name="medical" placeholder="e.g. None or any medical note">
                     </div>
                     <div class="form-group">
                         <label>Doctor's Name *</label>
-                        <input type="text" name="doctorName">
+                        <input type="text" name="doctorName" placeholder="Family Doctor / Pediatrician">
                     </div>
                     <div class="form-group">
                         <label>Doctor's Mobile *</label>
@@ -1045,9 +1243,28 @@
                         <label>Emergency Contact Mobile *</label>
                         <input type="tel" name="emergencyMobile" pattern="\d{10}" minlength="10" maxlength="10">
                     </div>
-                    <div class="form-group">
+                    <div class="form-group enrol-field enrol-full-only hidden">
                         <label>Authorised Person for Pickup *</label>
                         <input type="text" name="pickupPerson">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 💰 CSN01 Dynamic Program Fee Selection Section -->
+            <div id="csnProgramFeeSection" class="csn-section-container">
+                <div class="csn-header-banner">
+                    <h3 class="csn-header-title">
+                        <span>💳 Select Program Fee Plan *</span>
+                    </h3>
+                    <span class="csn-badge csn-badge-urgent" id="csnFeeTierBadge">⚡ Standard CSN01 Plan</span>
+                </div>
+                <p style="font-size:12.5px; color:#64748b; margin:0 0 12px 0; line-height:1.45;">
+                    Select your membership duration. Registration is Free (₹1,000 waived off) and Uniform fees can be paid later.
+                </p>
+
+                <div id="csnFeeGrid" class="csn-grid">
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #64748b; font-size: 13px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                        ⏳ <strong>Loading Program Fee options...</strong>
                     </div>
                 </div>
             </div>
@@ -1072,6 +1289,14 @@
             </div>
 
             <input type="hidden" name="originTin" id="originTin">
+
+            <!-- CSN Specific Hidden Inputs -->
+            <input type="hidden" name="selectedBatch" id="csnSelectedBatch">
+            <input type="hidden" name="selectedBatchId" id="csnSelectedBatchId">
+            <input type="hidden" name="selectedProgramFee" id="csnSelectedProgramFee">
+            <input type="hidden" name="selectedProgramTier" id="csnSelectedProgramTier">
+            <input type="hidden" name="isProgramPay" id="csnIsProgramPay" value="false">
+            <input type="hidden" name="isWaitlist" id="csnIsWaitlist" value="false">
 
             <button type="submit" class="btn-submit" id="btnSubmit">Submit Registration</button>
             <div class="loader" id="loader"></div>
@@ -1353,14 +1578,23 @@
                 isDemoPay = false;
                 var dSec = document.getElementById('demoLaunchSection');
                 if (dSec) dSec.style.display = 'none';
-                document.getElementById('pageTitle').innerText = "Student Enrolment Form";
-                document.getElementById('btnSubmit').innerText = "Submit Enrolment";
-                document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
 
-                // Set all enrol fields to required
-                document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
-                    if (el.type !== 'hidden') el.required = true;
-                });
+                var urlCentre = (urlParams.get('centre') || payCentre || "").trim().toUpperCase();
+                var tin = urlParams.get('tin') || "";
+
+                if (urlCentre === 'CSN01' || tin.toUpperCase().indexOf('CSN01') > -1) {
+                    setupCsnEnrolMode();
+                } else {
+                    document.getElementById('pageTitle').innerText = "Student Enrolment Form";
+                    document.getElementById('btnSubmit').innerText = "Submit Enrolment";
+                    document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
+                    document.querySelectorAll('.enrol-full-only').forEach(el => el.classList.remove('hidden'));
+
+                    // Set all enrol fields to required
+                    document.querySelectorAll('.enrol-field input, .enrol-field select, .enrol-field textarea').forEach(el => {
+                        if (el.type !== 'hidden') el.required = true;
+                    });
+                }
             } else if (type === 'demo' || type === 'demo_pay' || type === 'demopay') {
                 isEnrol = false;
                 isDemo = true;
@@ -1500,6 +1734,43 @@
             });
         }
 
+        function selectGender(val) {
+            var input = document.getElementById('childSexInput');
+            if (input) input.value = val;
+            var boyCard = document.getElementById('genderCardBoy');
+            var girlCard = document.getElementById('genderCardGirl');
+            if (val === 'Boy' || val === 'Male' || val === 'boy') {
+                if (input) input.value = 'Boy';
+                if (boyCard) {
+                    boyCard.style.borderColor = '#0284c7';
+                    boyCard.style.background = '#e0f2fe';
+                    boyCard.style.color = '#0369a1';
+                    boyCard.style.boxShadow = '0 2px 8px rgba(2, 132, 199, 0.15)';
+                }
+                if (girlCard) {
+                    girlCard.style.borderColor = '#cbd5e1';
+                    girlCard.style.background = '#f8fafc';
+                    girlCard.style.color = '#475569';
+                    girlCard.style.boxShadow = 'none';
+                }
+            } else if (val === 'Girl' || val === 'Female' || val === 'girl') {
+                if (input) input.value = 'Girl';
+                if (girlCard) {
+                    girlCard.style.borderColor = '#ec4899';
+                    girlCard.style.background = '#fdf2f8';
+                    girlCard.style.color = '#be185d';
+                    girlCard.style.boxShadow = '0 2px 8px rgba(236, 72, 153, 0.15)';
+                }
+                if (boyCard) {
+                    boyCard.style.borderColor = '#cbd5e1';
+                    boyCard.style.background = '#f8fafc';
+                    boyCard.style.color = '#475569';
+                    boyCard.style.boxShadow = 'none';
+                }
+            }
+            queueDraftSave();
+        }
+
         function loadDraft() {
             var draft = localStorage.getItem('jcg_form_draft');
             if (draft) {
@@ -1515,6 +1786,9 @@
                             else el.value = data[key];
                         }
                     });
+                    if (data.childSex) {
+                        selectGender(data.childSex);
+                    }
                     calculateAge();
                 } catch(e) {}
             }
@@ -1570,10 +1844,11 @@
 
                         // Populate
                         document.getElementsByName('childName')[0].value = d.childName;
-                        document.getElementsByName('childSex')[0].value = d.childSex;
+                        if (d.childSex) selectGender(d.childSex);
                         document.getElementsByName('dob')[0].value = d.dob;
+                        if (d.school && document.getElementsByName('school')[0]) document.getElementsByName('school')[0].value = d.school;
                         document.getElementsByName('parent1Name')[0].value = d.parent1Name;
-                        document.getElementsByName('parent1Sex')[0].value = d.parent1Sex;
+                        document.getElementsByName('parent1Sex')[0].value = d.parent1Sex || "Mother";
                         document.getElementsByName('parent1Mobile')[0].value = d.parent1Mobile;
                         document.getElementsByName('parent1Email')[0].value = d.parent1Email;
 
@@ -1678,7 +1953,11 @@
             var sel = document.getElementById('centreSelect');
             var opt = sel.options[sel.selectedIndex];
             if (opt && opt.dataset.code) {
-                document.getElementById('centreCode').value = opt.dataset.code;
+                var cCode = String(opt.dataset.code).trim().toUpperCase();
+                document.getElementById('centreCode').value = cCode;
+                if (isEnrol && cCode === 'CSN01' && !isCsnEnrol) {
+                    setupCsnEnrolMode();
+                }
             }
         }
 
@@ -1883,8 +2162,290 @@
             }
         }
 
+        // --- 🎽 CSN01 CUSTOM ENROLMENT CONTROLLER ---
+        var isCsnEnrol = false;
+        var currentCsnBatches = [];
+        var selectedCsnBatch = null;
+        var currentCsnPackages = [];
+        var selectedCsnPackage = null;
+
+        function setupCsnEnrolMode() {
+            isCsnEnrol = true;
+            isEnrol = true;
+            
+            document.getElementById('pageTitle').innerText = "Student Enrolment Form - CSN01";
+            var btn = document.getElementById('btnSubmit');
+            if (btn) btn.innerText = "Proceed to Program Fee Payment →";
+
+            var isProgEl = document.getElementById('csnIsProgramPay');
+            if (isProgEl) isProgEl.value = 'true';
+
+            // Show base enrol fields (Parent 2, Medical, Agreements)
+            document.querySelectorAll('.enrol-field').forEach(el => el.classList.remove('hidden'));
+
+            // HIDE all non-essential demographic fields (enrol-full-only)
+            document.querySelectorAll('.enrol-full-only').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.add('csn-hidden');
+            });
+
+            // Set required attributes correctly for CSN01
+            document.querySelectorAll('.enrol-full-only input, .enrol-full-only select, .enrol-full-only textarea').forEach(el => {
+                el.required = false;
+            });
+
+            // Core CSN Enrol fields required
+            var reqNames = ['childName', 'dob', 'school', 'parent1Name', 'parent1Sex', 'parent1Mobile', 'parent1Email', 'rulesAgreed', 'declarationAgreed', 'refundAgreed'];
+            reqNames.forEach(name => {
+                var el = document.querySelector('[name="' + name + '"]');
+                if (el) el.required = true;
+            });
+
+            // Show CSN Batch Selector Section & CSN Program Fee Section
+            var bSec = document.getElementById('csnBatchSection');
+            if (bSec) bSec.style.display = 'block';
+
+            var fSec = document.getElementById('csnProgramFeeSection');
+            if (fSec) fSec.style.display = 'block';
+
+            // Auto-lock Preferred Centre to CSN01
+            applyCentre('CSN01');
+
+            // Load CSN Batches and Packages
+            loadCsnBatches();
+            loadCsnFeePackages();
+        }
+
+        function loadCsnBatches() {
+            var grid = document.getElementById('csnBatchGrid');
+            if (grid) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #64748b; font-size: 13px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">⏳ <strong>Loading CSN01 batches & live capacity...</strong></div>';
+            }
+
+            fetch(SCRIPT_URL + "?action=getBatches&centreCode=CSN01")
+                .then(r => r.json())
+                .then(data => {
+                    renderCsnBatches(data);
+                })
+                .catch(err => {
+                    console.error("Batch fetch err:", err);
+                    renderCsnBatches([
+                        { id: "CSN01-MW-PT1", program: "Parent Toddler", ageGroup: "1.5 to 2.5 Years", day: "Mon & Wed", timeStr: "04:30 PM - 05:30 PM", capacity: 12, enrollment: 0 },
+                        { id: "CSN01-MW-PS1", program: "Preschoolers", ageGroup: "2.5 to 4 Years", day: "Mon & Wed", timeStr: "05:30 PM - 06:30 PM", capacity: 12, enrollment: 0 },
+                        { id: "CSN01-TTS-TT1", program: "Tiny Tigers", ageGroup: "3 to 4.5 Years", day: "Tue, Thu & Sat", timeStr: "04:30 PM - 05:30 PM", capacity: 12, enrollment: 0 },
+                        { id: "CSN01-TTS-RC1", program: "Rising Cheetahs", ageGroup: "4.5 to 6 Years", day: "Tue, Thu & Sat", timeStr: "05:30 PM - 06:30 PM", capacity: 12, enrollment: 0 }
+                    ]);
+                });
+        }
+
+        function renderCsnBatches(batches) {
+            var grid = document.getElementById('csnBatchGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            currentCsnBatches = batches || [];
+
+            if (!currentCsnBatches.length) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 18px; color: #64748b; font-size: 13px; background: #f8fafc; border-radius: 12px;">No active batches found for CSN01. Please contact the centre.</div>';
+                return;
+            }
+
+            currentCsnBatches.forEach(b => {
+                var card = document.createElement('div');
+                card.className = 'csn-card';
+                card.id = 'csn-batch-card-' + b.id;
+
+                var cap = parseInt(b.capacity) || 12;
+                var enroll = parseInt(b.enrollment) || 0;
+                var spotsLeft = Math.max(0, cap - enroll);
+                var isFull = (spotsLeft <= 0 || enroll >= cap);
+
+                var badgeHtml = '';
+                if (isFull) {
+                    badgeHtml = '<span class="csn-badge csn-badge-full">🔴 FULL (Waitlist)</span>';
+                    card.classList.add('card-full');
+                } else if (spotsLeft <= 3) {
+                    badgeHtml = '<span class="csn-badge csn-badge-urgent">🔥 ' + spotsLeft + ' spots left! (' + enroll + '/' + cap + ')</span>';
+                } else {
+                    badgeHtml = '<span class="csn-badge csn-badge-avail">🟢 ' + spotsLeft + ' spots open (' + enroll + '/' + cap + ')</span>';
+                }
+
+                card.onclick = function() {
+                    selectCsnBatch(b, false);
+                };
+
+                card.innerHTML = 
+                    '<div>' +
+                        '<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; gap:6px;">' +
+                            '<span style="font-size:11px; font-weight:800; color:var(--primary); text-transform:uppercase; letter-spacing:0.5px;">' + (b.day || "Regular Batch") + '</span>' +
+                            badgeHtml +
+                        '</div>' +
+                        '<div class="csn-card-title">' + (b.program || b.programName || "Gymnastics Batch") + '</div>' +
+                        '<div class="csn-card-sub">⏰ ' + (b.timeStr || (b.fromTime + " - " + b.toTime)) + '</div>' +
+                        '<div style="display:inline-block; font-size:11.5px; font-weight:700; color:#475569; background:#f1f5f9; padding:3px 8px; border-radius:6px;">👥 Age: ' + (b.ageGroup || "All Ages") + '</div>' +
+                    '</div>' +
+                    '<div class="csn-card-footer">' +
+                        '<span style="font-size:12px; font-weight:700; color:#64748b;">Batch ID: ' + b.id + '</span>' +
+                        '<span class="csn-card-radio"></span>' +
+                    '</div>';
+
+                grid.appendChild(card);
+            });
+
+            // If we have an age calculated, auto-match
+            calculateAge();
+        }
+
+        function selectCsnBatch(batch, isAuto) {
+            selectedCsnBatch = batch;
+            document.querySelectorAll('#csnBatchGrid .csn-card').forEach(c => c.classList.remove('selected'));
+            var cardEl = document.getElementById('csn-batch-card-' + batch.id);
+            if (cardEl) cardEl.classList.add('selected');
+
+            var cap = parseInt(batch.capacity) || 12;
+            var enroll = parseInt(batch.enrollment) || 0;
+            var isFull = (cap - enroll <= 0 || enroll >= cap);
+
+            var batchDisplay = (batch.program || "Gymnastics") + " [" + batch.id + "] (" + (batch.day || "") + " " + (batch.timeStr || "") + ")";
+            
+            var bIdInput = document.getElementById('csnSelectedBatchId');
+            if (bIdInput) bIdInput.value = batch.id;
+            
+            var bInput = document.getElementById('csnSelectedBatch');
+            if (bInput) bInput.value = batchDisplay;
+
+            var waitlistInput = document.getElementById('csnIsWaitlist');
+            var waitlistAlert = document.getElementById('csnWaitlistAlert');
+
+            if (isFull) {
+                if (waitlistInput) waitlistInput.value = 'true';
+                if (waitlistAlert) waitlistAlert.style.display = 'block';
+            } else {
+                if (waitlistInput) waitlistInput.value = 'false';
+                if (waitlistAlert) waitlistAlert.style.display = 'none';
+            }
+
+            var notice = document.getElementById('csnAgeNotice');
+            if (notice) {
+                if (isAuto) {
+                    notice.style.display = 'block';
+                    notice.innerHTML = '✨ <strong>Recommended for your child\'s age:</strong> ' + (batch.program || '') + ' (' + (batch.day || '') + ' ' + (batch.timeStr || '') + ')';
+                }
+            }
+        }
+
+        function loadCsnFeePackages() {
+            var grid = document.getElementById('csnFeeGrid');
+            if (grid) {
+                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #64748b; font-size: 13px; background: #f8fafc; border-radius: 12px; border: 1px dashed #cbd5e1;">⏳ <strong>Loading Program Fee options...</strong></div>';
+            }
+
+            fetch(SCRIPT_URL + "?action=getFeeStructure&centreCode=CSN01")
+                .then(r => r.json())
+                .then(data => {
+                    var progFees = (data || []).filter(function(row) {
+                        var cat = String(row.category || "").toLowerCase();
+                        var sub = String(row.subCategory || "").toLowerCase();
+                        return cat.indexOf("program") > -1 || sub.indexOf("quarter") > -1 || sub.indexOf("semi") > -1 || sub.indexOf("annual") > -1 || sub.indexOf("month") > -1 || row.amount >= 3000;
+                    });
+                    
+                    if (!progFees || progFees.length === 0) {
+                        progFees = [
+                            { category: "Program Fee", subCategory: "Quarterly (3 Months)", amount: 8000, freebies: "Full Gym Access + Progress Card" },
+                            { category: "Program Fee", subCategory: "Semi-Annual (6 Months)", amount: 15000, freebies: "1 Month Free Grace + Skill Certificate" },
+                            { category: "Program Fee", subCategory: "Annual (12 Months)", amount: 27000, freebies: "2 Months Free Grace + Annual Showcase Pass" }
+                        ];
+                    }
+                    renderCsnFeePackages(progFees);
+                })
+                .catch(err => {
+                    console.error("Fee packages err:", err);
+                    renderCsnFeePackages([
+                        { category: "Program Fee", subCategory: "Quarterly (3 Months)", amount: 8000, freebies: "Full Gym Access + Progress Card" },
+                        { category: "Program Fee", subCategory: "Semi-Annual (6 Months)", amount: 15000, freebies: "1 Month Free Grace + Skill Certificate" },
+                        { category: "Program Fee", subCategory: "Annual (12 Months)", amount: 27000, freebies: "2 Months Free Grace + Annual Showcase Pass" }
+                    ]);
+                });
+        }
+
+        function renderCsnFeePackages(packages) {
+            var grid = document.getElementById('csnFeeGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            currentCsnPackages = packages || [];
+
+            currentCsnPackages.forEach(function(pkg, idx) {
+                var card = document.createElement('div');
+                card.className = 'csn-card';
+                card.id = 'csn-pkg-card-' + idx;
+
+                var tierLabel = pkg.subCategory || pkg.category || "Membership Plan";
+                var amountVal = pkg.amount || 0;
+                var freebiesText = pkg.freebies ? ('🎁 ' + pkg.freebies) : "✨ Includes All Coaching Sessions";
+
+                card.onclick = function() {
+                    selectCsnFeePackage(pkg, idx);
+                };
+
+                card.innerHTML = 
+                    '<div>' +
+                        '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">' +
+                            '<span style="font-size:11px; font-weight:800; color:#0284c7; text-transform:uppercase; letter-spacing:0.5px;">🦁 ' + (pkg.category || "Program Fee") + '</span>' +
+                            '<span style="font-size:18px; font-weight:900; color:var(--primary);">₹' + amountVal.toLocaleString('en-IN') + '</span>' +
+                        '</div>' +
+                        '<div class="csn-card-title">' + tierLabel + '</div>' +
+                        '<div class="csn-card-sub" style="color:#059669; font-weight:600;">' + freebiesText + '</div>' +
+                    '</div>' +
+                    '<div class="csn-card-footer" style="flex-direction: column; align-items: flex-start; gap: 4px;">' +
+                        '<span style="font-size:11px; font-weight:700; color:#059669; line-height:1.35;">🎉 Registration is Free (₹1,000 waived off) &bull; Uniform fees can be paid later</span>' +
+                        '<div style="display:flex; justify-content:flex-end; width:100%;"><span class="csn-card-radio"></span></div>' +
+                    '</div>';
+
+                grid.appendChild(card);
+            });
+
+            // Default select the first package
+            if (currentCsnPackages.length > 0) {
+                selectCsnFeePackage(currentCsnPackages[0], 0);
+            }
+        }
+
+        function selectCsnFeePackage(pkg, idx) {
+            selectedCsnPackage = pkg;
+            document.querySelectorAll('#csnFeeGrid .csn-card').forEach(c => c.classList.remove('selected'));
+            var cardEl = document.getElementById('csn-pkg-card-' + idx);
+            if (cardEl) cardEl.classList.add('selected');
+
+            var amountInput = document.getElementById('csnSelectedProgramFee');
+            if (amountInput) amountInput.value = pkg.amount;
+
+            var tierInput = document.getElementById('csnSelectedProgramTier');
+            if (tierInput) tierInput.value = pkg.subCategory || pkg.category;
+
+            var btn = document.getElementById('btnSubmit');
+            if (btn) {
+                btn.innerText = "Proceed to Program Fee Payment (₹" + (pkg.amount || 0).toLocaleString('en-IN') + ") →";
+            }
+        }
+
+        function closePaymentModal() {
+            var overlay = document.getElementById('paymentOverlay');
+            if (overlay) overlay.style.display = 'none';
+            document.documentElement.classList.remove('payment-portal-mode');
+            var btn = document.getElementById('btnSubmit');
+            if (btn) {
+                btn.classList.remove('hidden');
+                btn.style.display = 'block';
+            }
+            var loader = document.getElementById('loader');
+            if (loader) loader.style.display = 'none';
+        }
+
         function calculateAge() {
             var dob = document.getElementById('dobField').value;
+            var ageGroupContainer = document.getElementById('ageGroupContainer');
+            var ageTextDisplay = document.getElementById('ageTextDisplay');
+            var ageField = document.getElementById('ageField');
+
             if (dob) {
                 var now = new Date();
                 var birth = new Date(dob);
@@ -1905,7 +2466,9 @@
                 }
 
                 var ageStr = years + " Years, " + months + " Months";
-                document.getElementById('ageField').value = ageStr;
+                if (ageField) ageField.value = ageStr;
+                if (ageTextDisplay) ageTextDisplay.innerText = ageStr;
+                if (ageGroupContainer) ageGroupContainer.style.display = 'block';
 
                 // Auto-match demo slot based on child's age in demo mode
                 if (isDemo && currentDemoSlots && currentDemoSlots.length > 0) {
@@ -1922,6 +2485,31 @@
                         selectDemoSlot(matchedSlot, true);
                     }
                 }
+
+                // Auto-match CSN batch based on child's age in CSN mode
+                if (isCsnEnrol && currentCsnBatches && currentCsnBatches.length > 0) {
+                    var decimalAge = years + (months / 12);
+                    var matchedBatch = null;
+                    for (var b = 0; b < currentCsnBatches.length; b++) {
+                        var batch = currentCsnBatches[b];
+                        var rawAge = String(batch.ageGroup || "").toLowerCase();
+                        var numbers = rawAge.match(/(\d+(\.\d+)?)/g);
+                        if (numbers && numbers.length >= 2) {
+                            var minA = parseFloat(numbers[0]);
+                            var maxA = parseFloat(numbers[1]);
+                            if (decimalAge >= (minA - 0.25) && decimalAge <= (maxA + 0.25)) {
+                                matchedBatch = batch;
+                                break;
+                            }
+                        }
+                    }
+                    if (matchedBatch) {
+                        selectCsnBatch(matchedBatch, true);
+                    }
+                }
+            } else {
+                if (ageGroupContainer) ageGroupContainer.style.display = 'none';
+                if (ageField) ageField.value = '';
             }
         }
 
@@ -1945,6 +2533,13 @@
                 }
             }
 
+            if (!formData.childSex) {
+                alert("Please select your child's Gender (Boy or Girl).");
+                var gCard = document.getElementById('genderCardBoy');
+                if (gCard) gCard.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
             if (isTrialPay) formData.isTrialPay = 'true';
@@ -1954,7 +2549,76 @@
                 formData.demoFee = (document.getElementById('demoFee') && document.getElementById('demoFee').value) || '200';
             }
 
-            // ⚡ 1. INSTANTANEOUS PAYMENT MODAL DISPLAY (0ms Latency)
+            // ⚡ 1. CSN01 PROGRAM FEE PAYMENT FLOW
+            if (isCsnEnrol) {
+                if (!selectedCsnBatch) {
+                    alert("Please select a Batch Slot for your child.");
+                    var bSec = document.getElementById('csnBatchSection');
+                    if (bSec) bSec.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+                if (!selectedCsnPackage) {
+                    alert("Please select a Program Fee package.");
+                    var fSec = document.getElementById('csnProgramFeeSection');
+                    if (fSec) fSec.scrollIntoView({ behavior: 'smooth' });
+                    return;
+                }
+
+                formData.preferredCentreCode = "CSN01";
+                formData.selectedBatch = (document.getElementById('csnSelectedBatch') && document.getElementById('csnSelectedBatch').value) || selectedCsnBatch.id;
+                formData.selectedBatchId = selectedCsnBatch.id;
+                formData.selectedProgramFee = selectedCsnPackage.amount;
+                formData.selectedProgramTier = selectedCsnPackage.subCategory || selectedCsnPackage.category;
+                formData.isProgramPay = 'true';
+                formData.isWaitlist = (document.getElementById('csnIsWaitlist') && document.getElementById('csnIsWaitlist').value) || 'false';
+                formData.feeType = "Program Fee: " + (selectedCsnPackage.subCategory || selectedCsnPackage.category);
+
+                var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
+                var tempRefId = "JC-CSN01-" + cleanInitials + (Math.floor(10 + Math.random() * 90));
+                var csnUpi = "9423840853@ibl";
+                var csnPhone = "9325214464";
+
+                var pInfo = {
+                    amount: selectedCsnPackage.amount,
+                    upiId: csnUpi,
+                    upiName: "Nirupama Bafna / Jungle Cubs Gym",
+                    note: "Program Fee: " + (formData.childName || "Student"),
+                    phone: csnPhone,
+                    paymentRequired: true
+                };
+
+                // Pop up the payment modal immediately (0ms delay!)
+                handleUPIPayment(pInfo, tempRefId, Object.assign({}, formData, { 
+                    isProgramPay: true, 
+                    feeType: "Program Fee: " + (selectedCsnPackage.subCategory || selectedCsnPackage.category),
+                    isRegMode: true
+                }));
+
+                // Run saveStudentForm in background to register row and obtain permanent ID
+                fetch(SCRIPT_URL, {
+                    method: "POST",
+                    body: new URLSearchParams(formData)
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.result === 'success') {
+                        localStorage.removeItem('jcg_form_draft');
+                        var permanentId = res.id || res.newRefId;
+                        if (permanentId && window._currentPaymentState) {
+                            window._currentPaymentState.refId = permanentId;
+                            var refEl = document.getElementById('refId');
+                            if (refEl) refEl.innerText = permanentId;
+                        }
+                        fetch(SCRIPT_URL + "?action=syncRegistry", { keepalive: true, mode: 'no-cors' }).catch(function(e){});
+                    }
+                })
+                .catch(err => {
+                    console.warn("Background form save note:", err);
+                });
+                return;
+            }
+
+            // ⚡ 2. DEMO / TRIAL PAYMENT MODAL DISPLAY (0ms Latency)
             if (isTrialPay || isDemoPay) {
                 var cCode = formData.preferredCentreCode || (document.getElementById('centreCode') && document.getElementById('centreCode').value) || "CSN01";
                 var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
@@ -2096,7 +2760,18 @@
             var finalStepTitleEl = document.getElementById('finalStepTitle');
             var finalStepDescEl = document.getElementById('finalStepDesc');
 
-            if (data.isSmartPortal || data.isTrialPay || isTrialPay || data.isDemoPay || isDemoPay) {
+            if (data.isProgramPay || isCsnEnrol) {
+                var feeType = data.feeType || "Program Fee";
+                var batchDetail = data.selectedBatch ? ("\nBatch: " + data.selectedBatch) : "";
+                var proofLinkText = data.proofUrl ? ("\nPayment Proof: " + data.proofUrl) : "";
+                var waitlistTag = (data.isWaitlist === 'true' || data.isWaitlist === true) ? " [Priority Waitlist]" : "";
+                text = "Hello! I have submitted the " + feeType + " payment proof for " + data.childName + "." + waitlistTag + "\nRef ID: " + id + batchDetail + proofLinkText + "\nPlease verify my payment and confirm admission.";
+                
+                if (headingEl) headingEl.innerText = (data.isWaitlist === 'true' || data.isWaitlist === true) ? "Waitlist Registration Submitted!" : "Enrolment & Payment Proof Submitted!";
+                if (msgEl) msgEl.innerHTML = "Thank you! Your enrolment details and Program Fee payment proof have been submitted. Your Reference ID is: <strong id='refId'>" + id + "</strong>.<br><br>Our CSN01 team will verify your payment and activate your admission.";
+                if (finalStepTitleEl) finalStepTitleEl.innerText = "Send WhatsApp to Confirm Admission";
+                if (finalStepDescEl) finalStepDescEl.innerHTML = "Our Centre Coordinator needs your message to immediately verify payment & issue your child's <strong>Official Welcome Pass</strong>.";
+            } else if (data.isSmartPortal || data.isTrialPay || isTrialPay || data.isDemoPay || isDemoPay) {
                 var feeType = data.feeType || (data.isDemo ? "Demo Class Fee" : (data.isRegMode ? "Registration Fee" : "Trial Fee"));
                 var proofLinkText = data.proofUrl ? ("\nPayment Proof: " + data.proofUrl) : "";
                 var slotDetail = data.demoBatch ? ("\nSlot: " + data.demoBatch) : "";
