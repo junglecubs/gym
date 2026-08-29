@@ -2575,14 +2575,15 @@
 
                 var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
                 var tempRefId = "JC-CSN01-" + cleanInitials + (Math.floor(10 + Math.random() * 90));
-                var csnUpi = "9423840853@ibl";
+                var csnUpi = "neeropmabafna@oksbi";
                 var csnPhone = "9325214464";
+                var planName = selectedCsnPackage.subCategory || selectedCsnPackage.category || "Plan";
 
                 var pInfo = {
                     amount: selectedCsnPackage.amount,
                     upiId: csnUpi,
                     upiName: "Nirupama Bafna / Jungle Cubs Gym",
-                    note: "Program Fee: " + (formData.childName || "Student"),
+                    note: "Program Fee: " + planName,
                     phone: csnPhone,
                     paymentRequired: true
                 };
@@ -2590,7 +2591,7 @@
                 // Pop up the payment modal immediately (0ms delay!)
                 handleUPIPayment(pInfo, tempRefId, Object.assign({}, formData, { 
                     isProgramPay: true, 
-                    feeType: "Program Fee: " + (selectedCsnPackage.subCategory || selectedCsnPackage.category),
+                    feeType: "Program Fee: " + planName,
                     isRegMode: true
                 }));
 
