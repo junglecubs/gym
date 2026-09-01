@@ -1295,7 +1295,7 @@
             <input type="hidden" name="selectedBatchId" id="csnSelectedBatchId">
             <input type="hidden" name="selectedProgramFee" id="csnSelectedProgramFee">
             <input type="hidden" name="selectedProgramTier" id="csnSelectedProgramTier">
-            <input type="hidden" name="isProgramPay" id="csnIsProgramPay" value="false">
+            <input type="hidden" name="isProgramPay" id="csnIsProgramPay" value="">
             <input type="hidden" name="isWaitlist" id="csnIsWaitlist" value="false">
 
             <button type="submit" class="btn-submit" id="btnSubmit">Submit Registration</button>
@@ -2761,7 +2761,7 @@
             var finalStepTitleEl = document.getElementById('finalStepTitle');
             var finalStepDescEl = document.getElementById('finalStepDesc');
 
-            if (data.isProgramPay || isCsnEnrol) {
+            if ((data.isProgramPay === 'true' || data.isProgramPay === true) && isCsnEnrol) {
                 var feeType = data.feeType || "Program Fee";
                 var batchDetail = data.selectedBatch ? ("\nBatch: " + data.selectedBatch) : "";
                 var proofLinkText = data.proofUrl ? ("\nPayment Proof: " + data.proofUrl) : "";
@@ -3083,6 +3083,7 @@
             }
 
             var isRegPayment = isEnrol || (formData && formData.isRegMode) || (refId && refId.indexOf("JC-") > -1);
+            var urlFeeType = urlParams.get('feeType') || "";
             var proofPayload = JSON.stringify({
                 type: "submitPaymentProof",
                 utr: utr,
@@ -3090,7 +3091,7 @@
                 amount: amount,
                 refId: refId,
                 enrolType: isRegPayment ? "Student" : "Trial",
-                feeType: (formData && formData.feeType) || (isRegPayment ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee")),
+                feeType: (formData && formData.feeType) || urlFeeType || (isRegPayment ? "Registration Fee" : (isDemo ? "Demo Class Fee" : "Trial Fee")),
                 childName: (formData && (formData.childName || formData.name)) || "",
                 parentMobile: (formData && (formData.parent1Mobile || formData.parentMobile || formData.phone)) || "",
                 centreCode: (formData && (formData.preferredCentreCode || formData.centreCode)) || ""
