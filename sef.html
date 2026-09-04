@@ -2426,6 +2426,7 @@
         }
 
         function closePaymentModal() {
+            _isSubmitting = false;
             var overlay = document.getElementById('paymentOverlay');
             if (overlay) overlay.style.display = 'none';
             document.documentElement.classList.remove('payment-portal-mode');
@@ -2511,8 +2512,16 @@
             }
         }
 
+        var _isSubmitting = false;
+        var _activeSavedRefId = null;
+
         document.getElementById('regForm').addEventListener('submit', function (e) {
             e.preventDefault();
+            if (_isSubmitting) {
+                console.warn("Submission already in progress. Ignoring duplicate click.");
+                return;
+            }
+
             var btn = document.getElementById('btnSubmit');
             var loader = document.getElementById('loader');
             var formData = {};
@@ -2540,6 +2549,10 @@
 
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
+            if (_activeSavedRefId) {
+                formData.overrideJIN = _activeSavedRefId;
+                formData.overrideTIN = _activeSavedRefId;
+            }
             if (isTrialPay) formData.isTrialPay = 'true';
             if (isDemo) {
                 formData.isDemo = 'true';
@@ -2547,15 +2560,19 @@
                 formData.demoFee = (document.getElementById('demoFee') && document.getElementById('demoFee').value) || '200';
             }
 
+            _isSubmitting = true;
+
             // ⚡ 1. CSN01 PROGRAM FEE PAYMENT FLOW
             if (isCsnEnrol) {
                 if (!selectedCsnBatch) {
+                    _isSubmitting = false;
                     alert("Please select a Batch Slot for your child.");
                     var bSec = document.getElementById('csnBatchSection');
                     if (bSec) bSec.scrollIntoView({ behavior: 'smooth' });
                     return;
                 }
                 if (!selectedCsnPackage) {
+                    _isSubmitting = false;
                     alert("Please select a Program Fee package.");
                     var fSec = document.getElementById('csnProgramFeeSection');
                     if (fSec) fSec.scrollIntoView({ behavior: 'smooth' });
@@ -2572,7 +2589,7 @@
                 formData.feeType = "Program Fee: " + (selectedCsnPackage.subCategory || selectedCsnPackage.category);
 
                 var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
-                var tempRefId = "JC-CSN01-" + cleanInitials + (Math.floor(10 + Math.random() * 90));
+                var tempRefId = _activeSavedRefId || ("JC-CSN01-" + cleanInitials + (Math.floor(10 + Math.random() * 90)));
                 var csnUpi = "neeropmabafna@oksbi";
                 var csnPhone = "9325214464";
                 var planName = selectedCsnPackage.subCategory || selectedCsnPackage.category || "Plan";
@@ -2600,11 +2617,15 @@
                 })
                 .then(r => r.json())
                 .then(res => {
+                    _isSubmitting = false;
                     if (res.result === 'success') {
                         localStorage.removeItem('jcg_form_draft');
                         var permanentId = res.id || res.newRefId;
-                        if (permanentId && window._currentPaymentState) {
-                            window._currentPaymentState.refId = permanentId;
+                        if (permanentId) {
+                            _activeSavedRefId = permanentId;
+                            if (window._currentPaymentState) {
+                                window._currentPaymentState.refId = permanentId;
+                            }
                             var refEl = document.getElementById('refId');
                             if (refEl) refEl.innerText = permanentId;
                         }
@@ -2612,6 +2633,7 @@
                     }
                 })
                 .catch(err => {
+                    _isSubmitting = false;
                     console.warn("Background form save note:", err);
                 });
                 return;
@@ -2621,7 +2643,7 @@
             if (isTrialPay || isDemoPay) {
                 var cCode = formData.preferredCentreCode || (document.getElementById('centreCode') && document.getElementById('centreCode').value) || "CSN01";
                 var cleanInitials = (formData.childName || "ST").split(' ').filter(x => x).map(n => n[0]).join('').toUpperCase() || "ST";
-                var tempRefId = (isEnrol ? "RG-" : "T-") + cCode + "-" + cleanInitials + (Math.floor(10 + Math.random() * 90));
+                var tempRefId = _activeSavedRefId || ((isEnrol ? "RG-" : "T-") + cCode + "-" + cleanInitials + (Math.floor(10 + Math.random() * 90)));
                 
                 var demoUpi = (selectedDemoSlot && selectedDemoSlot.upiId) || "";
                 var demoPhone = (selectedDemoSlot && (selectedDemoSlot.upiPhone || selectedDemoSlot.upiNumber || selectedDemoSlot.phone)) || "";
@@ -2658,11 +2680,15 @@
                 })
                 .then(r => r.json())
                 .then(res => {
+                    _isSubmitting = false;
                     if (res.result === 'success') {
                         localStorage.removeItem('jcg_form_draft');
                         var permanentId = res.id || res.newRefId;
-                        if (permanentId && window._currentPaymentState) {
-                            window._currentPaymentState.refId = permanentId;
+                        if (permanentId) {
+                            _activeSavedRefId = permanentId;
+                            if (window._currentPaymentState) {
+                                window._currentPaymentState.refId = permanentId;
+                            }
                             var refEl = document.getElementById('refId');
                             if (refEl) refEl.innerText = permanentId;
                         }
@@ -2671,6 +2697,7 @@
                     }
                 })
                 .catch(err => {
+                    _isSubmitting = false;
                     console.warn("Background form save note:", err);
                 });
                 return;
@@ -2686,6 +2713,7 @@
             })
             .then(r => r.json())
             .then(res => {
+                _isSubmitting = false;
                 loader.style.display = 'none';
                 if (res.result === 'success') {
                     localStorage.removeItem('jcg_form_draft');
@@ -2698,6 +2726,7 @@
                 }
             })
             .catch(err => {
+                _isSubmitting = false;
                 loader.style.display = 'none';
                 alert("Submission Error: " + err);
                 btn.classList.remove('hidden');
