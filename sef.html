@@ -1030,12 +1030,12 @@
                             <option value="Kharghar" data-code="M20" data-wa="9987717913">Kharghar</option>
                             <option value="Pune Kharadi" data-code="PN01" data-wa="8850931091">Pune Kharadi</option>
                             <option value="Pune Kothrud" data-code="PN02" data-wa="8850931091">Pune Kothrud</option>
-                            <option value="Goa Porvorim" data-code="GOA01" data-wa="9967130057" data-phone="7248915767">Goa Porvorim</option>
+                            <option value="Goa Porvorim" data-code="GOA01" data-wa="9967130057" data-phone="7248915767" data-upi="7248915767@ptyes">Goa Porvorim</option>
                             <option value="Bengaluru Basaveshwar Nagar" data-code="BLR01" data-wa="8779408213">Bengaluru Basaveshwar Nagar</option>
                             <option value="Bengaluru Yelahanka DCSE" data-code="BLR02" data-wa="8779408213">Bengaluru Yelahanka DCSE</option>
                             <option value="Surat Vesu Happy Minds" data-code="ST01" data-wa="9326770400">Surat Vesu Happy Minds</option>
                             <option value="Kids Corner Nursery Palghar" data-code="PLG01" data-wa="9326770400">Kids Corner Nursery Palghar</option>
-                            <option value="Chhatrapati Sambhaji Nagar Centre" data-code="CSN01" data-wa="9325214464">Chhatrapati Sambhaji Nagar Centre</option>
+                            <option value="Chhatrapati Sambhaji Nagar Centre" data-code="CSN01" data-wa="9325214464" data-phone="9325214464" data-upi="neeropmabafna@oksbi">Chhatrapati Sambhaji Nagar Centre</option>
                         </select>
                         <input type="hidden" name="preferredCentreCode" id="centreCode">
                     </div>
@@ -1366,7 +1366,7 @@
             for (var i = 0; i < sel.options.length; i++) {
                 var opt = sel.options[i];
                 if (opt.value) {
-                    centreMap[opt.value] = { code: opt.dataset.code || "", wa: opt.dataset.wa || "", phone: opt.dataset.phone || opt.dataset.wa || "", email: "" };
+                    centreMap[opt.value] = { code: opt.dataset.code || "", wa: opt.dataset.wa || "", phone: opt.dataset.phone || "", upi: opt.dataset.upi || "", email: "" };
                 }
             }
 
@@ -1421,7 +1421,13 @@
                     }
 
                     window._portalRenewalOptions = parsedOptions;
-                    window._portalPayParams = { payId: payId, payCentre: payCentre, urlName: urlParams.get('name') || 'Student' };
+                    window._portalPayParams = { 
+                        payId: payId, 
+                        payCentre: payCentre, 
+                        urlName: urlParams.get('name') || 'Student',
+                        phone: urlParams.get('phone') || "",
+                        upi: urlParams.get('upi') || ""
+                    };
 
                     selectPortalRenewalOption(0);
                     loadCentres();
@@ -1931,14 +1937,18 @@
                     var code = l.code || l[0];
                     var wa = l.wa || l[7];
                     var email = l.email || l[8];
+                    var phone = l.phone || l.upiPhone || "";
+                    var upi = l.upi || l.upiId || "";
                     if (name) {
                         var opt = document.createElement('option');
                         opt.value = name;
                         opt.dataset.code = code;
                         opt.dataset.wa = wa;
+                        if (phone) opt.dataset.phone = phone;
+                        if (upi) opt.dataset.upi = upi;
                         opt.textContent = name;
                         sel.appendChild(opt);
-                        centreMap[name] = { code: code, wa: wa, email: email };
+                        centreMap[name] = { code: code, wa: wa, phone: phone, upi: upi, email: email };
                     }
                 });
             }
@@ -2434,6 +2444,11 @@
             if (btn) {
                 btn.classList.remove('hidden');
                 btn.style.display = 'block';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                if (isCsnEnrol && selectedCsnPackage) {
+                    btn.innerText = "Proceed to Program Fee Payment (₹" + (selectedCsnPackage.amount || 0).toLocaleString('en-IN') + ") →";
+                }
             }
             var loader = document.getElementById('loader');
             if (loader) loader.style.display = 'none';
@@ -2547,6 +2562,21 @@
                 return;
             }
 
+            // 🛡️ Client-side Deduplication Cache Check
+            var cleanC = (formData.preferredCentreCode || (document.getElementById('centreCode') && document.getElementById('centreCode').value) || "GEN").trim().toUpperCase();
+            var cleanN = (formData.childName || "").trim().toLowerCase().replace(/\s+/g, "_");
+            var cleanM = (formData.parent1Mobile || "").replace(/\D/g, "").slice(-10);
+            var localCacheKey = (cleanN && cleanM) ? ("jcg_ref_" + cleanC + "_" + cleanN + "_" + cleanM) : null;
+
+            if (!_activeSavedRefId && localCacheKey) {
+                try {
+                    var cachedId = localStorage.getItem(localCacheKey);
+                    if (cachedId) {
+                        _activeSavedRefId = cachedId;
+                    }
+                } catch(e) {}
+            }
+
             var handler = isEnrol ? 'saveStudentForm' : 'saveTrialForm';
             formData.type = handler;
             if (_activeSavedRefId) {
@@ -2603,6 +2633,13 @@
                     paymentRequired: true
                 };
 
+                // Disable submit button immediately to prevent multi-tapping
+                if (btn) {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.65';
+                    btn.innerText = "⏳ Processing Enrolment...";
+                }
+
                 // Pop up the payment modal immediately (0ms delay!)
                 handleUPIPayment(pInfo, tempRefId, Object.assign({}, formData, { 
                     isProgramPay: true, 
@@ -2618,11 +2655,19 @@
                 .then(r => r.json())
                 .then(res => {
                     _isSubmitting = false;
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.innerText = "Proceed to Program Fee Payment (₹" + (selectedCsnPackage.amount || 0).toLocaleString('en-IN') + ") →";
+                    }
                     if (res.result === 'success') {
                         localStorage.removeItem('jcg_form_draft');
-                        var permanentId = res.id || res.newRefId;
+                        var permanentId = res.id || res.newRefId || res.jin;
                         if (permanentId) {
                             _activeSavedRefId = permanentId;
+                            if (localCacheKey) {
+                                try { localStorage.setItem(localCacheKey, permanentId); } catch(e){}
+                            }
                             if (window._currentPaymentState) {
                                 window._currentPaymentState.refId = permanentId;
                             }
@@ -2634,6 +2679,11 @@
                 })
                 .catch(err => {
                     _isSubmitting = false;
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.style.opacity = '1';
+                        btn.innerText = "Proceed to Program Fee Payment (₹" + (selectedCsnPackage.amount || 0).toLocaleString('en-IN') + ") →";
+                    }
                     console.warn("Background form save note:", err);
                 });
                 return;
@@ -2650,7 +2700,7 @@
                 
                 var centreInfo = centreMap[formData.preferredCentre] || {};
                 var fallbackUpi = centreInfo.upi || "junglecubs312@sbi";
-                var fallbackPhone = centreInfo.wa || centreInfo.phone || "9664890087";
+                var fallbackPhone = centreInfo.phone || "9664890087";
 
                 var targetUpi = (isDemo && demoUpi) ? demoUpi : fallbackUpi;
                 var targetPhone = (isDemo && demoPhone) ? demoPhone : fallbackPhone;
@@ -2902,13 +2952,15 @@
             
             const params = window._portalPayParams || {};
             const urlParams = new URLSearchParams(window.location.search);
-            const upi = urlParams.get('upi') || "junglecubs312@sbi";
+            const upi = urlParams.get('upi') || params.upi || "junglecubs312@sbi";
+            const renewalPhone = urlParams.get('phone') || params.phone || "";
             
             handleUPIPayment({
                 amount: selected.totalAmount,
                 upiId: upi,
                 upiName: "Jungle Cubs Gym",
                 note: selected.label,
+                phone: renewalPhone,
                 paymentRequired: true
             }, params.payId || "JC-RENEWAL", {
                 childName: params.urlName || "Student",
@@ -2966,28 +3018,51 @@
                 });
             };
 
-            // Copy Phone Number (Always available fallback with dynamic centre lookup & UPI ID parsing)
-            var payPhone = p.phone || "";
-            // 1. Check if UPI ID itself starts with a 10-digit phone number (e.g. 7248915767@ptyes -> 7248915767)
-            if (!payPhone && p.upiId && p.upiId.indexOf('@') > -1) {
-                var upiPrefix = p.upiId.split('@')[0].replace(/\D/g, '');
-                if (upiPrefix.length === 10) {
-                    payPhone = upiPrefix;
+            // Copy Phone Number (Manual UPI Transfer Phone)
+            var payPhone = "";
+            var isStandardJcgUpi = !p.upiId || p.upiId.toLowerCase().includes("junglecubs312");
+
+            // 1. If paying to standard Jungle Cubs Gym account (junglecubs312@sbi), always use company UPI phone
+            if (isStandardJcgUpi) {
+                payPhone = "9664890087";
+            } else {
+                // 2. For custom UPI IDs (e.g. franchisee):
+                // a. Check if UPI ID itself begins with a 10-digit phone number (e.g. 7248915767@ptyes -> 7248915767)
+                if (p.upiId && p.upiId.indexOf('@') > -1) {
+                    var upiPrefix = p.upiId.split('@')[0].replace(/\D/g, '');
+                    if (upiPrefix.length === 10) {
+                        payPhone = upiPrefix;
+                    }
                 }
-            }
-            // 2. Check centreMap by Centre Code
-            if (!payPhone && formData) {
-                var targetCC = (formData.centreCode || formData.preferredCentreCode || window._targetCentre || "").trim().toUpperCase();
-                if (targetCC) {
-                    for (var name in centreMap) {
-                        if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCC) {
-                            payPhone = centreMap[name].phone || centreMap[name].wa || "";
-                            break;
+                // b. Explicit verified phone passed in parameters
+                if (!payPhone && p.phone) {
+                    payPhone = p.phone;
+                }
+                // c. Check centreMap for verified centre payment phone (never fallback to coach WhatsApp)
+                if (!payPhone && formData) {
+                    var targetCC = (formData.centreCode || formData.preferredCentreCode || window._targetCentre || "").trim().toUpperCase();
+                    if (targetCC) {
+                        for (var name in centreMap) {
+                            if (centreMap[name] && String(centreMap[name].code).trim().toUpperCase() === targetCC) {
+                                payPhone = centreMap[name].phone || "";
+                                break;
+                            }
                         }
                     }
                 }
             }
+
+            // Fallback default
             if (!payPhone) payPhone = "9664890087";
+
+            // Clean up: strip non-digits, and remove leading 91 if 12 digits
+            payPhone = String(payPhone).replace(/\D/g, '');
+            if (payPhone.length === 12 && payPhone.startsWith('91')) {
+                payPhone = payPhone.substring(2);
+            }
+            if (payPhone.length !== 10) {
+                payPhone = "9664890087";
+            }
             
             var copyPhoneBtn = document.getElementById('copyPhoneBtn');
             var copyPhoneText = document.getElementById('copyPhoneText');
