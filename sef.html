@@ -1420,14 +1420,42 @@
                         optContainer.innerHTML = optHtml;
                     }
 
+                    var passedUpi = urlParams.get('upi') || "";
+                    var passedPhone = urlParams.get('phone') || "";
+
                     window._portalRenewalOptions = parsedOptions;
                     window._portalPayParams = { 
                         payId: payId, 
                         payCentre: payCentre, 
                         urlName: urlParams.get('name') || 'Student',
-                        phone: urlParams.get('phone') || "",
-                        upi: urlParams.get('upi') || ""
+                        phone: passedPhone,
+                        upi: passedUpi
                     };
+
+                    // 🛡️ DYNAMIC PARTNER CENTRE RESOLUTION:
+                    // If &upi= is not in the URL (e.g. existing renewal links sent to parents), dynamically resolve the centre's fee config!
+                    if (!passedUpi && payCentre) {
+                        fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + encodeURIComponent(payCentre))
+                            .then(r => r.json())
+                            .then(res => {
+                                if (res && res.upi) {
+                                    window._portalPayParams.upi = res.upi;
+                                    if (res.phone && !window._portalPayParams.phone) {
+                                        window._portalPayParams.phone = res.phone;
+                                    }
+                                    // Re-trigger option selection with the partner's verified UPI & Phone
+                                    var curIdx = 0;
+                                    var selCard = document.querySelector('.renewal-plan-card[style*="var(--primary)"]');
+                                    if (selCard && selCard.dataset && selCard.dataset.idx !== undefined) {
+                                        curIdx = parseInt(selCard.dataset.idx) || 0;
+                                    }
+                                    selectPortalRenewalOption(curIdx);
+                                }
+                            })
+                            .catch(err => {
+                                console.warn("Could not fetch centre fee config for renewal:", err);
+                            });
+                    }
 
                     selectPortalRenewalOption(0);
                     loadCentres();
@@ -2952,8 +2980,8 @@
             
             const params = window._portalPayParams || {};
             const urlParams = new URLSearchParams(window.location.search);
-            const upi = urlParams.get('upi') || params.upi || "junglecubs312@sbi";
-            const renewalPhone = urlParams.get('phone') || params.phone || "";
+            const upi = params.upi || urlParams.get('upi') || "junglecubs312@sbi";
+            const renewalPhone = params.phone || urlParams.get('phone') || "";
             
             handleUPIPayment({
                 amount: selected.totalAmount,
