@@ -1402,10 +1402,42 @@
 
             // --- 💳 SMART PAYMENT PORTAL MODE (HIGH PRIORITY) ---
             if (payId) {
+                var rawOpts = urlParams.get('opts');
                 var rawOptions = urlParams.get('options');
                 var parsedOptions = null;
-                if (rawOptions) {
-                    try { parsedOptions = JSON.parse(decodeURIComponent(rawOptions)); } catch(e) {}
+
+                // 1. Dual Parser: Support Ultra-Compact format (opts=label:total:base|label2:total2:base2)
+                if (rawOpts) {
+                    try {
+                        var decodedOpts = decodeURIComponent(rawOpts);
+                        var optItems = decodedOpts.split('|');
+                        parsedOptions = [];
+                        optItems.forEach(item => {
+                            if (!item) return;
+                            var parts = item.split(':');
+                            if (parts.length >= 2) {
+                                var label = decodeURIComponent(parts[0]);
+                                var tot = parseFloat(parts[1]) || 0;
+                                var base = parts[2] ? (parseFloat(parts[2]) || tot) : tot;
+                                parsedOptions.push({
+                                    label: label,
+                                    totalAmount: tot,
+                                    baseAmount: base
+                                });
+                            }
+                        });
+                    } catch(err) {
+                        console.warn("Could not parse compact opts:", err);
+                    }
+                }
+
+                // 2. Fallback to Legacy JSON options
+                if ((!parsedOptions || parsedOptions.length === 0) && rawOptions) {
+                    try { 
+                        parsedOptions = JSON.parse(decodeURIComponent(rawOptions)); 
+                    } catch(e) {
+                        console.warn("Could not parse legacy options JSON:", e);
+                    }
                 }
 
                 if (parsedOptions && Array.isArray(parsedOptions) && parsedOptions.length > 0) {
@@ -1445,31 +1477,49 @@
                         neft: passedNeft
                     };
 
-                    // 🛡️ DYNAMIC PARTNER CENTRE RESOLUTION:
-                    // If &upi= is not in the URL (e.g. existing renewal links sent to parents), dynamically resolve the centre's fee config!
-                    if (!passedUpi && payCentre) {
-                        fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + encodeURIComponent(payCentre))
+                    // 🛡️ DYNAMIC FEESTRUCTURE RESOLUTION (High Speed Edge API / GAS Fallback):
+                    // Automatically resolve UPI and Bank NEFT for the centre if not passed in URL
+                    if ((!passedNeft || !passedUpi) && payCentre) {
+                        fetch("https://junglecubs-api.rajiv-jcg.workers.dev/v1/feeStructure")
                             .then(r => r.json())
-                            .then(res => {
-                                if (res && res.upi) {
-                                    window._portalPayParams.upi = res.upi;
-                                    if (res.phone && !window._portalPayParams.phone) {
-                                        window._portalPayParams.phone = res.phone;
+                            .then(feeRows => {
+                                if (Array.isArray(feeRows)) {
+                                    var cCode = payCentre.toUpperCase().trim();
+                                    var progRows = feeRows.filter(f => {
+                                        if (!f || f.status === "In-active" || f.status === "Inactive") return false;
+                                        var rCode = String(f.centre || "").toUpperCase().trim();
+                                        var isC = (rCode === cCode || rCode.indexOf(cCode) > -1 || cCode.indexOf(rCode) > -1);
+                                        var cat = String(f.category || "").toLowerCase();
+                                        return isC && (cat.includes("program") || cat.includes("renewal"));
+                                    });
+                                    if (progRows.length > 0) {
+                                        var pRow = progRows[0];
+                                        if (pRow.neft && !window._portalPayParams.neft) {
+                                            window._portalPayParams.neft = pRow.neft;
+                                            updatePortalNeftDisplay(pRow.neft);
+                                        }
+                                        if (pRow.upi && !window._portalPayParams.upi) {
+                                            window._portalPayParams.upi = pRow.upi;
+                                        }
+                                        if (pRow.phone && !window._portalPayParams.phone) {
+                                            window._portalPayParams.phone = pRow.phone;
+                                        }
                                     }
-                                    if (res.neft && !window._portalPayParams.neft) {
-                                        window._portalPayParams.neft = res.neft;
-                                    }
-                                    // Re-trigger option selection with the partner's verified UPI & Phone
-                                    var curIdx = 0;
-                                    var selCard = document.querySelector('.renewal-plan-card[style*="var(--primary)"]');
-                                    if (selCard && selCard.dataset && selCard.dataset.idx !== undefined) {
-                                        curIdx = parseInt(selCard.dataset.idx) || 0;
-                                    }
-                                    selectPortalRenewalOption(curIdx);
                                 }
                             })
                             .catch(err => {
-                                console.warn("Could not fetch centre fee config for renewal:", err);
+                                console.warn("Edge FeeStructure fetch fallback:", err);
+                                fetch(SCRIPT_URL + "?action=getFeeStructureConfig&centreCode=" + encodeURIComponent(payCentre))
+                                    .then(r => r.json())
+                                    .then(res => {
+                                        if (res && res.neft && !window._portalPayParams.neft) {
+                                            window._portalPayParams.neft = res.neft;
+                                            updatePortalNeftDisplay(res.neft);
+                                        }
+                                        if (res && res.upi && !window._portalPayParams.upi) window._portalPayParams.upi = res.upi;
+                                        if (res && res.phone && !window._portalPayParams.phone) window._portalPayParams.phone = res.phone;
+                                    })
+                                    .catch(e => console.warn("GAS FeeStructure fallback:", e));
                             });
                     }
 
@@ -3017,6 +3067,22 @@
             });
         }
 
+        function updatePortalNeftDisplay(neftStr) {
+            if (!neftStr || neftStr.length < 5 || neftStr === "-") return;
+            var neftContainer = document.getElementById('neftDetailsContainer');
+            var neftTextContent = document.getElementById('neftTextContent');
+            var copyNeftBtn = document.getElementById('copyNeftBtn');
+            if (neftContainer) neftContainer.style.display = 'block';
+            if (neftTextContent) neftTextContent.innerText = neftStr;
+            if (copyNeftBtn) {
+                copyNeftBtn.onclick = function() {
+                    navigator.clipboard.writeText(neftStr).then(() => {
+                        alert("Bank NEFT Details copied:\n" + neftStr);
+                    });
+                };
+            }
+        }
+
         function handleUPIPayment(p, refId, formData) {
             window._currentPaymentState = { p: p, refId: refId, formData: formData };
             document.getElementById('paymentOverlay').style.display = 'flex';
@@ -3132,22 +3198,11 @@
             }
 
             // Dynamic Bank NEFT Details Display
-            var neftContainer = document.getElementById('neftDetailsContainer');
-            var neftTextContent = document.getElementById('neftTextContent');
-            var copyNeftBtn = document.getElementById('copyNeftBtn');
             var neftData = p.neft || (window._portalPayParams && window._portalPayParams.neft) || "";
-
             if (neftData && neftData.length > 5 && neftData !== "-") {
-                if (neftContainer) neftContainer.style.display = 'block';
-                if (neftTextContent) neftTextContent.innerText = neftData;
-                if (copyNeftBtn) {
-                    copyNeftBtn.onclick = function() {
-                        navigator.clipboard.writeText(neftData).then(() => {
-                            alert("Bank NEFT Details copied:\n" + neftData);
-                        });
-                    };
-                }
+                updatePortalNeftDisplay(neftData);
             } else {
+                var neftContainer = document.getElementById('neftDetailsContainer');
                 if (neftContainer) neftContainer.style.display = 'none';
             }
 
