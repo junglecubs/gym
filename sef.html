@@ -898,7 +898,19 @@
                     <span id="copyPhoneText">📞 Phone: 9664890087</span>
                     <span style="font-size: 11px; color: #ea580c; font-weight: 700;">Copy</span>
                 </button>
-                <div style="font-size: 11px; color: #64748b; margin-top: 4px;">💡 If app doesn't open, copy the number above and search in GPay/PhonePe/Paytm.</div>
+                <div id="manualTransferHint" style="font-size: 11px; color: #64748b; margin-top: 4px;">💡 If app doesn't open, copy the UPI ID above and search in GPay/PhonePe/Paytm.</div>
+            </div>
+
+            <!-- Dynamic Bank NEFT Details -->
+            <div id="neftDetailsContainer" style="display:none; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 10px 12px; margin: 10px 0; text-align: left;">
+                <div style="font-size: 11px; font-weight: 700; color: #166534; margin-bottom: 6px; text-transform: uppercase; display: flex; justify-content: space-between; align-items: center;">
+                    <span>🏦 Bank NEFT / IMPS Transfer Details</span>
+                    <span style="font-size: 10px; background: #dcfce7; color: #15803d; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Direct Bank</span>
+                </div>
+                <div id="neftTextContent" style="font-size: 12px; color: #1e293b; line-height: 1.5; margin-bottom: 8px; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid #dcfce7; word-break: break-word;"></div>
+                <button type="button" id="copyNeftBtn" class="btn-copy" style="width: 100%; text-align: center; padding: 8px 10px; font-size: 12px; font-weight: 700; border-radius: 8px; border: 1px solid #86efac; background: #fff; color: #15803d; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 6px;">
+                    <span>📋 Copy Bank Details</span>
+                </button>
             </div>
 
             <!-- Togglable QR Scanner -->
@@ -1422,6 +1434,7 @@
 
                     var passedUpi = urlParams.get('upi') || "";
                     var passedPhone = urlParams.get('phone') || "";
+                    var passedNeft = urlParams.get('neft') || "";
 
                     window._portalRenewalOptions = parsedOptions;
                     window._portalPayParams = { 
@@ -1429,7 +1442,8 @@
                         payCentre: payCentre, 
                         urlName: urlParams.get('name') || 'Student',
                         phone: passedPhone,
-                        upi: passedUpi
+                        upi: passedUpi,
+                        neft: passedNeft
                     };
 
                     // 🛡️ DYNAMIC PARTNER CENTRE RESOLUTION:
@@ -1442,6 +1456,9 @@
                                     window._portalPayParams.upi = res.upi;
                                     if (res.phone && !window._portalPayParams.phone) {
                                         window._portalPayParams.phone = res.phone;
+                                    }
+                                    if (res.neft && !window._portalPayParams.neft) {
+                                        window._portalPayParams.neft = res.neft;
                                     }
                                     // Re-trigger option selection with the partner's verified UPI & Phone
                                     var curIdx = 0;
@@ -2981,7 +2998,8 @@
             const params = window._portalPayParams || {};
             const urlParams = new URLSearchParams(window.location.search);
             const upi = params.upi || urlParams.get('upi') || "junglecubs312@sbi";
-            const renewalPhone = params.phone || urlParams.get('phone') || "";
+            const renewalPhone = (params.phone !== undefined && params.phone !== null) ? params.phone : (urlParams.get('phone') || "");
+            const renewalNeft = params.neft || urlParams.get('neft') || "";
             
             handleUPIPayment({
                 amount: selected.totalAmount,
@@ -2989,6 +3007,7 @@
                 upiName: "Jungle Cubs Gym",
                 note: selected.label,
                 phone: renewalPhone,
+                neft: renewalNeft,
                 paymentRequired: true
             }, params.payId || "JC-RENEWAL", {
                 childName: params.urlName || "Student",
@@ -3050,11 +3069,11 @@
             var payPhone = "";
             var isStandardJcgUpi = !p.upiId || p.upiId.toLowerCase().includes("junglecubs312");
 
-            // 1. If paying to standard Jungle Cubs Gym account (junglecubs312@sbi), always use company UPI phone
             if (isStandardJcgUpi) {
-                payPhone = "9664890087";
+                // Strictly follow FeeStructure: Company ProgramFee UPI has NO phone; only use if explicitly passed
+                payPhone = p.phone || "";
             } else {
-                // 2. For custom UPI IDs (e.g. franchisee):
+                // For custom UPI IDs (e.g. franchisee):
                 // a. Check if UPI ID itself begins with a 10-digit phone number (e.g. 7248915767@ptyes -> 7248915767)
                 if (p.upiId && p.upiId.indexOf('@') > -1) {
                     var upiPrefix = p.upiId.split('@')[0].replace(/\D/g, '');
@@ -3080,22 +3099,58 @@
                 }
             }
 
-            // Fallback default
-            if (!payPhone) payPhone = "9664890087";
-
             // Clean up: strip non-digits, and remove leading 91 if 12 digits
-            payPhone = String(payPhone).replace(/\D/g, '');
+            payPhone = String(payPhone || "").replace(/\D/g, '');
             if (payPhone.length === 12 && payPhone.startsWith('91')) {
                 payPhone = payPhone.substring(2);
             }
             if (payPhone.length !== 10) {
-                payPhone = "9664890087";
+                payPhone = "";
             }
             
             var copyPhoneBtn = document.getElementById('copyPhoneBtn');
             var copyPhoneText = document.getElementById('copyPhoneText');
-            if (copyPhoneText) copyPhoneText.innerText = "📞 UPI Phone: " + payPhone;
-            copyPhoneBtn.onclick = function() {
+            var manualTransferHint = document.getElementById('manualTransferHint');
+
+            if (payPhone) {
+                if (copyPhoneBtn) copyPhoneBtn.style.display = 'flex';
+                if (copyPhoneText) copyPhoneText.innerText = "📞 Phone: " + payPhone;
+                if (copyPhoneBtn) {
+                    copyPhoneBtn.onclick = function() {
+                        navigator.clipboard.writeText(payPhone).then(() => {
+                            alert("UPI Phone number copied: " + payPhone);
+                        });
+                    };
+                }
+                if (manualTransferHint) {
+                    manualTransferHint.innerText = "💡 If app doesn't open, copy the UPI ID or Phone number above and search in GPay/PhonePe/Paytm.";
+                }
+            } else {
+                if (copyPhoneBtn) copyPhoneBtn.style.display = 'none';
+                if (manualTransferHint) {
+                    manualTransferHint.innerText = "💡 If app doesn't open, copy the UPI ID above and search in GPay/PhonePe/Paytm.";
+                }
+            }
+
+            // Dynamic Bank NEFT Details Display
+            var neftContainer = document.getElementById('neftDetailsContainer');
+            var neftTextContent = document.getElementById('neftTextContent');
+            var copyNeftBtn = document.getElementById('copyNeftBtn');
+            var neftData = p.neft || (window._portalPayParams && window._portalPayParams.neft) || "";
+
+            if (neftData && neftData.length > 5 && neftData !== "-") {
+                if (neftContainer) neftContainer.style.display = 'block';
+                if (neftTextContent) neftTextContent.innerText = neftData;
+                if (copyNeftBtn) {
+                    copyNeftBtn.onclick = function() {
+                        navigator.clipboard.writeText(neftData).then(() => {
+                            alert("Bank NEFT Details copied:\n" + neftData);
+                        });
+                    };
+                }
+            } else {
+                if (neftContainer) neftContainer.style.display = 'none';
+            }
                 navigator.clipboard.writeText(payPhone).then(() => {
                     alert("UPI Phone number copied: " + payPhone);
                 });
