@@ -846,8 +846,7 @@
             <button type="button" onclick="closePaymentModal()" title="Close and return to form" style="position: absolute; top: 12px; right: 14px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: #64748b; cursor: pointer; transition: all 0.2s ease; z-index: 10;">✕</button>
 
             <div style="height: 55px; display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
-                <img src="./junglecubslogo512x512pixel.png" class="brand-logo" alt="JCG Logo" 
-                     onerror="this.onerror=null; this.src='https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png';">
+                <img src="https://i.ibb.co/hFn1fDjG/jcglogo512x512pixel.png" class="brand-logo" alt="JCG Logo">
             </div>
             
             <h2 id="paymentTitle" style="margin: 0 0 4px 0; font-size: 19px; font-weight: 800; color: #1e293b;">Payment Required</h2>
@@ -3151,10 +3150,6 @@
             } else {
                 if (neftContainer) neftContainer.style.display = 'none';
             }
-                navigator.clipboard.writeText(payPhone).then(() => {
-                    alert("UPI Phone number copied: " + payPhone);
-                });
-            };
 
             document.getElementById('btnSubmitProof').onclick = function() {
                 var fileInput = document.getElementById('screenshotInput');
