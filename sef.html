@@ -1024,7 +1024,7 @@
                             <option value="Malad West" data-code="M05" data-wa="9653198744">Malad West</option>
                             <option value="Borivali West" data-code="M09" data-wa="8591586326">Borivali West</option>
                             <option value="Goregaon" data-code="M17" data-wa="9653198744">Goregaon</option>
-                            <option value="Andheri" data-code="M18" data-wa="9653198744">Andheri</option>
+                            <option value="Vashi Navi Mumbai" data-code="M18" data-wa="8655891828">Vashi Navi Mumbai</option>
                             <option value="Thane Indo Scots Global" data-code="M06" data-wa="9136665247">Thane Indo Scots Global</option>
                             <option value="Thane Hiranandani Estate" data-code="M12" data-wa="9326068804">Thane Hiranandani Estate</option>
                             <option value="Sporty Sprouts Thane Hiranandani Estate" data-code="SS03" data-wa="9326068804">Sporty Sprouts Thane Hiranandani Estate</option>
@@ -1781,6 +1781,29 @@
 
             if (window._targetCentre) {
                 applyCentre(window._targetCentre);
+            }
+
+            // --- 🦁 DIRECT QUERY PARAM PRE-FILLING (e.g. from Internet Leads) ---
+            var qChildName = urlParams.get('childName') || urlParams.get('name');
+            var qDob = urlParams.get('dob') || urlParams.get('childDob');
+            var qGender = urlParams.get('gender') || urlParams.get('childSex') || urlParams.get('sex');
+            var qParentName = urlParams.get('parentName') || urlParams.get('parent1Name');
+            var qParentMobile = urlParams.get('phone') || urlParams.get('mobile') || urlParams.get('parent1Mobile') || urlParams.get('parentPhone');
+            var qLeadId = urlParams.get('leadId') || urlParams.get('id');
+
+            if (qChildName && document.getElementsByName('childName')[0]) document.getElementsByName('childName')[0].value = qChildName;
+            if (qDob && document.getElementsByName('dob')[0]) {
+                document.getElementsByName('dob')[0].value = qDob;
+                if (typeof calculateAge === 'function') calculateAge();
+            }
+            if (qGender && typeof selectGender === 'function') selectGender(qGender);
+            if (qParentName && document.getElementsByName('parent1Name')[0]) document.getElementsByName('parent1Name')[0].value = qParentName;
+            if (qParentMobile && document.getElementsByName('parent1Mobile')[0]) {
+                var cleanMob = qParentMobile.replace(/\D/g, '').slice(-10);
+                document.getElementsByName('parent1Mobile')[0].value = cleanMob;
+            }
+            if (qLeadId && document.getElementById('originTin')) {
+                document.getElementById('originTin').value = 'LEAD-' + qLeadId;
             }
         }
 
